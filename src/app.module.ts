@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CourseModule } from './course/course.module';
 import { CountryModule } from './country/country.module';
 import { UniversityModule } from './university/university.module';
+import { StudentModule } from './student/student.module';
 @Module({
   imports: [
     EducationModule,
@@ -13,6 +14,7 @@ import { UniversityModule } from './university/university.module';
     CourseModule,
     CountryModule,
     UniversityModule,
+    StudentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
