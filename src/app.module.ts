@@ -7,6 +7,8 @@ import { CourseModule } from './course/course.module';
 import { CountryModule } from './country/country.module';
 import { UniversityModule } from './university/university.module';
 import { StudentModule } from './student/student.module';
+import { CollegeModule } from './college/college.module';
+import { SharedService } from './shared/shared.service';
 @Module({
   imports: [
     EducationModule,
@@ -15,8 +17,9 @@ import { StudentModule } from './student/student.module';
     CountryModule,
     UniversityModule,
     StudentModule,
+    CollegeModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, SharedService],
 })
 export class AppModule {}

@@ -2,7 +2,7 @@ import { Injectable, HttpStatus } from '@nestjs/common';
 import { University } from './dto/university.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { APIReponse } from 'src/dto/api-response-dto';
+import { APIResponse } from 'src/dto/api-response-dto';
 import { CreateUniversityDto } from './dto/create-university.dto';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class UniversityService {
   async getAllUniversities(): Promise<any> {
     try {
       let universities = await this.universityModel.find();
-      let apiResponse: APIReponse = {
+      let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: universities,
         message: 'Request Successful!!!',
@@ -34,7 +34,7 @@ export class UniversityService {
         createUniversityDto,
       );
       console.log('create uni resp', createUniversityRes);
-      let apiResponse: APIReponse = {
+      let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: createUniversityRes,
         message: 'Request Successful!!!',

@@ -3,7 +3,7 @@ import { Student } from './dto/student.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateStudent, StudentLogin } from './dto/student.dto';
-import { APIReponse } from 'src/dto/api-response-dto';
+import { APIResponse } from 'src/dto/api-response-dto';
 import { Education } from 'src/education/dto/education.schema';
 import { Country } from 'src/country/dto/country.schema';
 import { Course } from 'src/course/dto/course.schema';
@@ -30,7 +30,7 @@ export class StudentService {
       };
       return response;
     } catch (error) {
-      let error_response: APIReponse = {
+      let error_response: APIResponse = {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         data: null,
         message: error,
@@ -69,7 +69,7 @@ export class StudentService {
       }
       return response;
     } catch (error) {
-      let error_response: APIReponse = {
+      let error_response: APIResponse = {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         data: null,
         message: error,

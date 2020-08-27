@@ -2,7 +2,7 @@ import { Injectable, HttpStatus, NotFoundException } from '@nestjs/common';
 import { Education } from './dto/education.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { APIReponse } from 'src/dto/api-response-dto';
+import { APIResponse } from 'src/dto/api-response-dto';
 import { CreateEducation } from './dto/create-education.dto';
 import { promises } from 'dns';
 import { create } from 'domain';
@@ -18,7 +18,7 @@ export class EducationService {
   async getAllEducations(): Promise<any> {
     try {
       const educationlist = await this.educationModel.find();
-      let response: APIReponse = {
+      let response: APIResponse = {
         statusCode: HttpStatus.OK,
         data: educationlist,
         message: 'Request Successfull!!!!',
@@ -65,7 +65,7 @@ export class EducationService {
       };
       return response;
     } catch (error) {
-      let error_response: APIReponse = {
+      let error_response: APIResponse = {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         data: null,
         message: error,

@@ -1,6 +1,6 @@
 import { Controller, HttpStatus, Get, Post, Body } from '@nestjs/common';
 import { UniversityService } from './university.service';
-import { APIReponse } from 'src/dto/api-response-dto';
+import { APIResponse } from 'src/dto/api-response-dto';
 import { CreateUniversityDto } from './dto/create-university.dto';
 @Controller('university')
 export class UniversityController {
@@ -13,7 +13,7 @@ export class UniversityController {
       const response = await this.universityService.getAllUniversities();
       return response;
     } catch (error) {
-      const apiResponse: APIReponse = {
+      const apiResponse: APIResponse = {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         data: null,
         message: error.message,
@@ -31,7 +31,7 @@ export class UniversityController {
       );
       return response;
     } catch (error) {
-      const apiResponse: APIReponse = {
+      const apiResponse: APIResponse = {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         data: null,
         message: error.message,

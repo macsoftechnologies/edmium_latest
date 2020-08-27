@@ -2,7 +2,7 @@ import { Injectable, HttpStatus, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Course } from './dto/course.schema';
-import { APIReponse } from 'src/dto/api-response-dto';
+import { APIResponse } from 'src/dto/api-response-dto';
 import { CreateCourseDto } from './dto/create-course.dto';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class CourseService {
     try {
       let courseList = await this.courseModel.find();
       console.log('courses', courseList);
-      let apiResponse: APIReponse = {
+      let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: courseList,
         message: 'Request Successfull !!!',
@@ -33,7 +33,7 @@ export class CourseService {
     try {
       const createCourseRes = await this.courseModel.create(createCourseDto);
       console.log('create', createCourseRes);
-      let apiResponse: APIReponse = {
+      let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: createCourseRes,
         message: 'Request Successfull !!!',
@@ -53,7 +53,7 @@ export class CourseService {
           createCourseDto,
         );
         console.log('update course', updateCourseRes);
-        let apiResponse: APIReponse = {
+        let apiResponse: APIResponse = {
           statusCode: HttpStatus.OK,
           data: updateCourseRes,
           message: 'Request Successfull !!!',
@@ -73,7 +73,7 @@ export class CourseService {
       if (found) {
         const deleteCourseRes = await this.courseModel.deleteOne({ _id: id });
         console.log('delete', deleteCourseRes);
-        let apiResponse: APIReponse = {
+        let apiResponse: APIResponse = {
           statusCode: HttpStatus.OK,
           data: deleteCourseRes,
           message: 'Request Successfull !!!',
