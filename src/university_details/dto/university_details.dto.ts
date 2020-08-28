@@ -135,3 +135,16 @@ export class CollegeDto {
   @IsString()
   study_level: string;
 }
+export class SearchUniversitiesByIntCourUniNameDto {
+  @ApiProperty()
+  @IsString()
+  university: string;
+
+  @ApiProperty()
+  @IsString()
+  course: string;
+
+  @ApiProperty()
+  @IsString()
+  intake: string;
+}

@@ -2,7 +2,7 @@ import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class College extends Document {
+export class UniversityDetails extends Document {
   @Prop()
   university: string;
 
@@ -91,9 +91,11 @@ export class College extends Document {
   study_level: string;
 }
 
-export const CollegeSchema = SchemaFactory.createForClass(College);
+export const UniversityDetailsSchema = SchemaFactory.createForClass(
+  UniversityDetails,
+);
 
-export interface ICollege extends Document {
+export interface IUniversityDetails extends Document {
   readonly university: string;
   readonly country: string;
   readonly course: string;

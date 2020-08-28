@@ -13,6 +13,7 @@ import {
   AddCollegeDto,
   CollegeDto,
   GetCollegeDto,
+  SearchUniversitiesByIntCourUniNameDto,
 } from './dto/university_details.dto';
 import { SharedService } from 'src/shared/shared.service';
 import { UniversityDetailsService } from './university_details.service';
@@ -62,6 +63,18 @@ export class UniversityDetailsController {
         data: null,
         errorMessage: error.message,
       };
+    }
+  }
+
+  /* Search universities by intake university name and course */
+  @Post()
+  async searchUniversitiesByIntakeUniCourse(
+    @Body()
+    searchUniversitiesByIntCourUniNameDto: SearchUniversitiesByIntCourUniNameDto,
+  ) {
+    try {
+    } catch (error) {
+      return error;
     }
   }
 }

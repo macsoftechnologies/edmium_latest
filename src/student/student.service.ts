@@ -7,6 +7,8 @@ import { APIResponse } from 'src/dto/api-response-dto';
 import { Education } from 'src/education/dto/education.schema';
 import { Country } from 'src/country/dto/country.schema';
 import { Course } from 'src/course/dto/course.schema';
+import { UniversityDetails } from 'src/university_details/dto/university_details.schema';
+import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
 
 @Injectable()
 export class StudentService {
@@ -15,6 +17,8 @@ export class StudentService {
     @InjectModel('Education') private educationModel: Model<Education>,
     @InjectModel('Country') private countryModel: Model<Country>,
     @InjectModel('Course') private courseModel: Model<Course>,
+    @InjectModel('UniversityDetails')
+    private UniversityDetailsModel: Model<UniversityDetails>,
   ) {}
 
   /* Create Education */
@@ -75,6 +79,35 @@ export class StudentService {
         message: error,
       };
       return error_response;
+    }
+  }
+
+  /* Get university list based on  intake course and university */
+  async getUniversitiesByIntakeCourseUniversity(
+    searchUniversitiesByIntCourUniNameDto: SearchUniversitiesByIntCourUniNameDto,
+  ) {
+    try {
+      console.log('req', searchUniversitiesByIntCourUniNameDto);
+      let universities = await this.UniversityDetailsModel.find({
+        university: searchUniversitiesByIntCourUniNameDto.university,
+        course: searchUniversitiesByIntCourUniNameDto.course,
+        intake: searchUniversitiesByIntCourUniNameDto.intake,
+      });
+
+      console.log('universities', universities);
+      let apiReponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: universities,
+        message: 'Request Successful!!!',
+      };
+      return apiReponse;
+    } catch (error) {
+      let errorApiResponse: APIResponse = {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        message: error,
+      };
+      return errorApiResponse;
     }
   }
 }
