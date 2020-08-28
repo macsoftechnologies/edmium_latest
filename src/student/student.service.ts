@@ -2,7 +2,11 @@ import { Injectable, HttpStatus } from '@nestjs/common';
 import { Student } from './dto/student.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateStudent, StudentLogin } from './dto/student.dto';
+import {
+  CreateStudent,
+  StudentLogin,
+  FavoriteListDto,
+} from './dto/student.dto';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { Education } from 'src/education/dto/education.schema';
 import { Country } from 'src/country/dto/country.schema';
@@ -18,7 +22,7 @@ export class StudentService {
     @InjectModel('Country') private countryModel: Model<Country>,
     @InjectModel('Course') private courseModel: Model<Course>,
     @InjectModel('UniversityDetails')
-    private UniversityDetailsModel: Model<UniversityDetails>,
+    private universityDetailsModel: Model<UniversityDetails>,
   ) {}
 
   /* Create Education */
@@ -88,7 +92,7 @@ export class StudentService {
   ) {
     try {
       console.log('req', searchUniversitiesByIntCourUniNameDto);
-      let universities = await this.UniversityDetailsModel.find({
+      let universities = await this.universityDetailsModel.find({
         university: searchUniversitiesByIntCourUniNameDto.university,
         course: searchUniversitiesByIntCourUniNameDto.course,
         intake: searchUniversitiesByIntCourUniNameDto.intake,
@@ -108,6 +112,60 @@ export class StudentService {
         message: error,
       };
       return errorApiResponse;
+    }
+  }
+
+  // Add Favorite University
+  async addFavoriteUniversity(params: FavoriteListDto): Promise<any> {
+    try {
+      await this.studentModel.updateOne(
+        { _id: params.studentId },
+        { $addToSet: { favoriteUniversities: params.universityId } },
+      );
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: null,
+        message: 'University added to favorite list successfully',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Remove Favorite University
+  async removeFavoriteUniversity(params: FavoriteListDto): Promise<any> {
+    try {
+      await this.studentModel.updateOne(
+        { _id: params.studentId },
+        { $pull: { favoriteUniversities: params.universityId } },
+      );
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: null,
+        message: 'University removed from favorite list successfully',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Get Favorite Universities
+  async getFavoriteUniversities(id: string): Promise<any> {
+    try {
+      const studentData = await this.studentModel.findById(id).populate({
+        path: 'favoriteUniversities',
+        model: this.universityDetailsModel,
+      });
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: studentData.favoriteUniversities,
+        message: 'Request Successful',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
     }
   }
 }

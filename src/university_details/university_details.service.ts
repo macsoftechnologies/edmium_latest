@@ -7,9 +7,11 @@ import {
   CollegeDto,
   GetCollegeDto,
   SearchUniversitiesByIntCourUniNameDto,
+  FilterByCourseDto,
 } from './dto/university_details.dto';
 import { University } from 'src/university/dto/university.schema';
 import { Country } from 'src/country/dto/country.schema';
+import { FavoriteListDto } from 'src/student/dto/student.dto';
 
 @Injectable()
 export class UniversityDetailsService {
@@ -44,22 +46,38 @@ export class UniversityDetailsService {
     }
   }
 
-  /* Get Colleges */
+  /* Get University Details */
   async getUniversityDetails(params: GetCollegeDto): Promise<any> {
-    let sortObject = {};
-    sortObject[params.orderBy] = parseInt(params.sortBy);
     try {
-      let colleges = await this.universityDetailsModel
-        .find({ university: params.university_id })
+      let universityDetails = await this.universityDetailsModel
+        .find({ university: params.universityId })
         .populate({ path: 'university', model: this.universityModel })
         .populate({ path: 'country', model: this.countryModel })
-        .skip(parseInt(params.start))
-        .limit(parseInt(params.limit))
-        .sort(sortObject);
-      //   console.log('countries list', colleges);
+        .skip(params.start)
+        .limit(params.limit);
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: colleges,
+        data: universityDetails,
+        message: 'Request Successful',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Filter By Course
+  async filterByCourse(params: FilterByCourseDto): Promise<any> {
+    try {
+      let universityDetails = await this.universityDetailsModel
+        .find({ country: params.country, course: params.course })
+        .populate({ path: 'university', model: this.universityModel })
+        .populate({ path: 'country', model: this.countryModel })
+        .skip(params.start)
+        .limit(params.limit);
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: universityDetails,
         message: 'Request Successful',
       };
       return apiResponse;
