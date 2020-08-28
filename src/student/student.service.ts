@@ -94,7 +94,7 @@ export class StudentService {
         intake: searchUniversitiesByIntCourUniNameDto.intake,
       });
 
-      console.log('universities', universities);
+      // console.log('universities', universities);
       let apiReponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: universities,
