@@ -1,14 +1,14 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { College } from './dto/college.schema';
+import { College } from './dto/university_details.schema';
 import { APIResponse } from 'src/dto/api-response-dto';
-import { CollegeDto, GetCollegeDto } from './dto/college.dto';
+import { CollegeDto, GetCollegeDto } from './dto/university_details.dto';
 import { University } from 'src/university/dto/university.schema';
 import { Country } from 'src/country/dto/country.schema';
 
 @Injectable()
-export class CollegeService {
+export class UniversityDetailsService {
   constructor(
     @InjectModel('College') private collegeModel: Model<College>,
     @InjectModel('University') private universityModel: Model<University>,
@@ -16,7 +16,7 @@ export class CollegeService {
   ) {}
 
   /* Add Colleges */
-  async addColleges(colleges: CollegeDto[]): Promise<any> {
+  async postUniversityDetails(colleges: CollegeDto[]): Promise<any> {
     try {
       //   console.log(createStudent);
       const createStudentRes = await this.collegeModel.create(colleges);
@@ -38,9 +38,9 @@ export class CollegeService {
   }
 
   /* Get Colleges */
-  async getColleges(params: GetCollegeDto): Promise<any> {
+  async getUniversityDetails(params: GetCollegeDto): Promise<any> {
     let sortObject = {};
-    sortObject[params.order_by] = parseInt(params.sort_order);
+    sortObject[params.orderBy] = parseInt(params.sortBy);
     try {
       let colleges = await this.collegeModel
         .find({ university: params.university_id })

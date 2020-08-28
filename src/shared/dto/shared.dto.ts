@@ -12,9 +12,9 @@ export class PaginationDto {
 
   @ApiProperty()
   @IsString()
-  order_by: string;
+  orderBy: string;
 
   @ApiProperty()
   @IsString()
-  sort_order: string;
+  sortBy: string;
 }

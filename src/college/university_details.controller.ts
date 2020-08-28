@@ -9,21 +9,28 @@ import {
   Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CollegeService } from './college.service';
-import { AddCollegeDto, CollegeDto, GetCollegeDto } from './dto/college.dto';
+import {
+  AddCollegeDto,
+  CollegeDto,
+  GetCollegeDto,
+} from './dto/university_details.dto';
 import { SharedService } from 'src/shared/shared.service';
+import { UniversityDetailsService } from './university_details.service';
 
-@Controller('college')
-export class CollegeController {
+@Controller('university_details')
+export class UniversityDetailsController {
   constructor(
-    private collegeService: CollegeService,
+    private collegeService: UniversityDetailsService,
     private sharedService: SharedService,
   ) {}
 
   /* Add Colleges */
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  async addColleges(@Body() body: AddCollegeDto, @UploadedFile() file) {
+  async postUniversityDetails(
+    @Body() body: AddCollegeDto,
+    @UploadedFile() file,
+  ) {
     try {
       const colleges: CollegeDto[] = await this.sharedService.excelToJSON(
         file.buffer,
@@ -32,7 +39,7 @@ export class CollegeController {
         college.university = body.university;
         college.country = body.country;
       });
-      let response = await this.collegeService.addColleges(colleges);
+      let response = await this.collegeService.postUniversityDetails(colleges);
       return response;
     } catch (error) {
       return {
@@ -45,9 +52,9 @@ export class CollegeController {
 
   /* Get Colleges */
   @Get()
-  async getColleges(@Query() params: GetCollegeDto) {
+  async getUniversityDetails(@Query() params: GetCollegeDto) {
     try {
-      const courses = await this.collegeService.getColleges(params);
+      const courses = await this.collegeService.getUniversityDetails(params);
       return courses;
     } catch (error) {
       return {
