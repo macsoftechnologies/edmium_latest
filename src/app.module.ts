@@ -8,7 +8,7 @@ import { CountryModule } from './country/country.module';
 import { UniversityModule } from './university/university.module';
 import { StudentModule } from './student/student.module';
 import { SharedService } from './shared/shared.service';
-import { UniversityDetailsModule } from './college/university_details.module';
+import { UniversityDetailsModule } from './university_details/university_details.module';
 @Module({
   imports: [
     EducationModule,
