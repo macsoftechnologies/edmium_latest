@@ -10,6 +10,7 @@ import { UserModule } from './user/user.module';
 import { SharedService } from './shared/shared.service';
 import { UniversityDetailsModule } from './university_details/university_details.module';
 import { IntakeModule } from './intake/intake.module';
+import { UserPersonalInfoModule } from './user-personal-info/user-personal-info.module';
 @Module({
   imports: [
     EducationModule,
@@ -20,6 +21,7 @@ import { IntakeModule } from './intake/intake.module';
     UserModule,
     UniversityDetailsModule,
     IntakeModule,
+    UserPersonalInfoModule,
   ],
   controllers: [AppController],
   providers: [AppService, SharedService],
