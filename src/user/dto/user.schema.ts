@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 import { IsOptional } from 'class-validator';
 
 @Schema({ timestamps: true })
-export class Student extends Document {
+export class User extends Document {
   @Prop()
   education: string;
 
@@ -29,13 +29,16 @@ export class Student extends Document {
   course: string;
 
   @Prop()
+  role: string;
+
+  @Prop()
   @IsOptional()
   favoriteUniversities?: string[];
 }
 
-export const StudentSchema = SchemaFactory.createForClass(Student);
+export const UserSchema = SchemaFactory.createForClass(User);
 
-export interface IStudent extends Document {
+export interface IUser extends Document {
   readonly education: string;
   readonly firstName: string;
   readonly lastName: string;
@@ -44,4 +47,5 @@ export interface IStudent extends Document {
   readonly password: string;
   readonly country: string;
   readonly course: string;
+  readonly role: string;
 }

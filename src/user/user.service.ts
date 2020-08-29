@@ -1,12 +1,8 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
-import { Student } from './dto/student.schema';
+import { User } from './dto/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import {
-  CreateStudent,
-  StudentLogin,
-  FavoriteListDto,
-} from './dto/student.dto';
+import { CreateUser, UserLogin, FavoriteListDto } from './dto/user.dto';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { Education } from 'src/education/dto/education.schema';
 import { Country } from 'src/country/dto/country.schema';
@@ -15,9 +11,9 @@ import { UniversityDetails } from 'src/university_details/dto/university_details
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
 
 @Injectable()
-export class StudentService {
+export class UserService {
   constructor(
-    @InjectModel('Student') private studentModel: Model<Student>,
+    @InjectModel('User') private userModel: Model<User>,
     @InjectModel('Education') private educationModel: Model<Education>,
     @InjectModel('Country') private countryModel: Model<Country>,
     @InjectModel('Course') private courseModel: Model<Course>,
@@ -26,14 +22,14 @@ export class StudentService {
   ) {}
 
   /* Create Education */
-  async createStudent(createStudent: CreateStudent): Promise<any> {
+  async createUser(createUser: any): Promise<any> {
     try {
-      console.log(createStudent);
-      const createStudentRes = await this.studentModel.create(createStudent);
-      console.log(createStudentRes);
+      createUser.role = 'student';
+      const createUserRes = await this.userModel.create(createUser);
+      console.log(createUserRes);
       let response = {
         statusCode: HttpStatus.OK,
-        data: createStudentRes,
+        data: createUserRes,
         message: 'Request Successful !!!!',
       };
       return response;
@@ -48,30 +44,30 @@ export class StudentService {
   }
 
   /* Create Education */
-  async studentLogIn(studentLogIn: StudentLogin): Promise<any> {
+  async userLogIn(userLogIn: UserLogin): Promise<any> {
     try {
-      console.log(studentLogIn);
+      console.log(userLogIn);
 
-      const student = await this.studentModel
+      const user = await this.userModel
         .findOne({
-          emailAddress: studentLogIn.emailAddress,
-          password: studentLogIn.password,
+          emailAddress: userLogIn.emailAddress,
+          password: userLogIn.password,
         })
         .populate({ path: 'education', model: this.educationModel })
         .populate({ path: 'country', model: this.countryModel })
         .populate({ path: 'course', model: this.courseModel });
-      console.log(student);
+      console.log(user);
       let response = {};
-      if (student) {
+      if (user) {
         response = {
           statusCode: HttpStatus.OK,
-          data: student,
+          data: user,
           message: 'LogIn Successful',
         };
       } else {
         response = {
           statusCode: HttpStatus.NOT_FOUND,
-          data: student,
+          data: user,
           message: 'Invalid Credentials',
         };
       }
@@ -118,8 +114,8 @@ export class StudentService {
   // Add Favorite University
   async addFavoriteUniversity(params: FavoriteListDto): Promise<any> {
     try {
-      await this.studentModel.updateOne(
-        { _id: params.studentId },
+      await this.userModel.updateOne(
+        { _id: params.userId },
         { $addToSet: { favoriteUniversities: params.universityId } },
       );
       let apiResponse: APIResponse = {
@@ -136,8 +132,8 @@ export class StudentService {
   // Remove Favorite University
   async removeFavoriteUniversity(params: FavoriteListDto): Promise<any> {
     try {
-      await this.studentModel.updateOne(
-        { _id: params.studentId },
+      await this.userModel.updateOne(
+        { _id: params.userId },
         { $pull: { favoriteUniversities: params.universityId } },
       );
       let apiResponse: APIResponse = {
@@ -154,13 +150,13 @@ export class StudentService {
   // Get Favorite Universities
   async getFavoriteUniversities(id: string): Promise<any> {
     try {
-      const studentData = await this.studentModel.findById(id).populate({
+      const userData = await this.userModel.findById(id).populate({
         path: 'favoriteUniversities',
         model: this.universityDetailsModel,
       });
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: studentData.favoriteUniversities,
+        data: userData.favoriteUniversities,
         message: 'Request Successful',
       };
       return apiResponse;

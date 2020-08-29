@@ -1,7 +1,7 @@
 import { IsString, IsNumber, IsEmail } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateStudent {
+export class CreateUser {
   @ApiProperty()
   @IsString()
   education: string;
@@ -35,7 +35,7 @@ export class CreateStudent {
   course: string;
 }
 
-export class StudentLogin {
+export class UserLogin {
   @ApiProperty()
   @IsEmail()
   emailAddress: string;
@@ -48,7 +48,7 @@ export class StudentLogin {
 export class FavoriteListDto {
   @ApiProperty()
   @IsString()
-  studentId: string;
+  userId: string;
 
   @ApiProperty()
   @IsString()

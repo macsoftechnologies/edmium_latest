@@ -1,22 +1,18 @@
 import { Controller, Post, Body, HttpStatus, Get, Param } from '@nestjs/common';
-import {
-  CreateStudent,
-  StudentLogin,
-  FavoriteListDto,
-} from './dto/student.dto';
-import { StudentService } from './student.service';
+import { CreateUser, UserLogin, FavoriteListDto } from './dto/user.dto';
+import { UserService } from './user.service';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
 
-@Controller('student')
-export class StudentController {
-  constructor(private studentService: StudentService) {}
+@Controller('user')
+export class UserController {
+  constructor(private userService: UserService) {}
 
-  /* Create Student  */
+  /* Create User  */
   @Post('/signUp')
-  async createStudent(@Body() createStudent: CreateStudent) {
+  async createUser(@Body() createUser: CreateUser) {
     try {
-      console.log(createStudent);
-      let response = await this.studentService.createStudent(createStudent);
+      console.log(createUser);
+      let response = await this.userService.createUser(createUser);
       return response;
     } catch (error) {
       return {
@@ -26,12 +22,12 @@ export class StudentController {
     }
   }
 
-  /* Student LogIn */
+  /* User LogIn */
   @Post('/logIn')
-  async studentLogIn(@Body() studentLogIn: StudentLogin) {
+  async userLogIn(@Body() userLogIn: UserLogin) {
     try {
-      console.log(studentLogIn);
-      let response = await this.studentService.studentLogIn(studentLogIn);
+      console.log(userLogIn);
+      let response = await this.userService.userLogIn(userLogIn);
       return response;
     } catch (error) {
       return {
@@ -48,7 +44,7 @@ export class StudentController {
     searchUniversitiesByIntCourUniNameDto: SearchUniversitiesByIntCourUniNameDto,
   ) {
     try {
-      let universities = await this.studentService.getUniversitiesByIntakeCourseUniversity(
+      let universities = await this.userService.getUniversitiesByIntakeCourseUniversity(
         searchUniversitiesByIntCourUniNameDto,
       );
       return universities;
@@ -61,7 +57,7 @@ export class StudentController {
   @Post('/addFavoriteUniversity')
   async addFavoriteUniversity(@Body() body: FavoriteListDto) {
     try {
-      let universities = await this.studentService.addFavoriteUniversity(body);
+      let universities = await this.userService.addFavoriteUniversity(body);
       return universities;
     } catch (error) {
       return error;
@@ -72,9 +68,7 @@ export class StudentController {
   @Post('/removeFavoriteUniversity')
   async removeFavoriteUniversity(@Body() body: FavoriteListDto) {
     try {
-      let universities = await this.studentService.removeFavoriteUniversity(
-        body,
-      );
+      let universities = await this.userService.removeFavoriteUniversity(body);
       return universities;
     } catch (error) {
       return error;
@@ -85,7 +79,7 @@ export class StudentController {
   @Get('/favoriteUniversities/:id')
   async getFavoriteUniversities(@Param('id') id: string) {
     try {
-      let universities = await this.studentService.getFavoriteUniversities(id);
+      let universities = await this.userService.getFavoriteUniversities(id);
       return universities;
     } catch (error) {
       return error;

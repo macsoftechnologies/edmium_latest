@@ -11,7 +11,7 @@ import {
 } from './dto/university_details.dto';
 import { University } from 'src/university/dto/university.schema';
 import { Country } from 'src/country/dto/country.schema';
-import { FavoriteListDto } from 'src/student/dto/student.dto';
+import { FavoriteListDto } from 'src/user/dto/user.dto';
 
 @Injectable()
 export class UniversityDetailsService {
@@ -25,14 +25,12 @@ export class UniversityDetailsService {
   /* Add Colleges */
   async postUniversityDetails(colleges: CollegeDto[]): Promise<any> {
     try {
-      //   console.log(createStudent);
-      const createStudentRes = await this.universityDetailsModel.create(
-        colleges,
-      );
-      console.log(createStudentRes);
+      //   console.log(createUser);
+      const createUserRes = await this.universityDetailsModel.create(colleges);
+      console.log(createUserRes);
       let response = {
         statusCode: HttpStatus.OK,
-        data: createStudentRes,
+        data: createUserRes,
         message: 'Colleges Added',
       };
       return response;

@@ -6,7 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CourseModule } from './course/course.module';
 import { CountryModule } from './country/country.module';
 import { UniversityModule } from './university/university.module';
-import { StudentModule } from './student/student.module';
+import { UserModule } from './user/user.module';
 import { SharedService } from './shared/shared.service';
 import { UniversityDetailsModule } from './university_details/university_details.module';
 import { IntakeModule } from './intake/intake.module';
@@ -17,7 +17,7 @@ import { IntakeModule } from './intake/intake.module';
     CourseModule,
     CountryModule,
     UniversityModule,
-    StudentModule,
+    UserModule,
     UniversityDetailsModule,
     IntakeModule,
   ],
