@@ -1,5 +1,9 @@
-import { Controller, Post, Body, HttpStatus } from '@nestjs/common';
-import { CreateStudent, StudentLogin } from './dto/student.dto';
+import { Controller, Post, Body, HttpStatus, Get, Param } from '@nestjs/common';
+import {
+  CreateStudent,
+  StudentLogin,
+  FavoriteListDto,
+} from './dto/student.dto';
 import { StudentService } from './student.service';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
 
@@ -47,6 +51,41 @@ export class StudentController {
       let universities = await this.studentService.getUniversitiesByIntakeCourseUniversity(
         searchUniversitiesByIntCourUniNameDto,
       );
+      return universities;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Add favorite University
+  @Post('/addFavoriteUniversity')
+  async addFavoriteUniversity(@Body() body: FavoriteListDto) {
+    try {
+      let universities = await this.studentService.addFavoriteUniversity(body);
+      return universities;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Remove favorite University
+  @Post('/removeFavoriteUniversity')
+  async removeFavoriteUniversity(@Body() body: FavoriteListDto) {
+    try {
+      let universities = await this.studentService.removeFavoriteUniversity(
+        body,
+      );
+      return universities;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Get favorite Universities
+  @Get('/favoriteUniversities/:id')
+  async getFavoriteUniversities(@Param('id') id: string) {
+    try {
+      let universities = await this.studentService.getFavoriteUniversities(id);
       return universities;
     } catch (error) {
       return error;

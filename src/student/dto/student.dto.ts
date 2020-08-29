@@ -44,3 +44,13 @@ export class StudentLogin {
   @IsString()
   password: string;
 }
+
+export class FavoriteListDto {
+  @ApiProperty()
+  @IsString()
+  studentId: string;
+
+  @ApiProperty()
+  @IsString()
+  universityId: string;
+}

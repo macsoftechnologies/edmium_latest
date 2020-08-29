@@ -5,7 +5,7 @@ import { PaginationDto } from 'src/shared/dto/shared.dto';
 export class GetCollegeDto extends PaginationDto {
   @ApiProperty()
   @IsString()
-  university_id: string;
+  universityId: string;
 }
 
 export class AddCollegeDto {
@@ -147,4 +147,14 @@ export class SearchUniversitiesByIntCourUniNameDto {
   @ApiProperty()
   @IsString()
   intake: string;
+}
+
+export class FilterByCourseDto extends PaginationDto {
+  @ApiProperty()
+  @IsString()
+  country: string;
+
+  @ApiProperty()
+  @IsString()
+  course: string;
 }
