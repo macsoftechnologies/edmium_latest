@@ -10,7 +10,6 @@ import {
 export class UserPersonalInfoDto {
   @ApiProperty()
   @IsString()
-  @IsOptional()
   userId: string;
 
   @ApiProperty()
