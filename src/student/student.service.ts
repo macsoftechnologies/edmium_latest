@@ -89,7 +89,7 @@ export class StudentService {
     try {
       console.log('req', searchUniversitiesByIntCourUniNameDto);
       let universities = await this.UniversityDetailsModel.find({
-        university: searchUniversitiesByIntCourUniNameDto.university,
+        country: searchUniversitiesByIntCourUniNameDto.country,
         course: searchUniversitiesByIntCourUniNameDto.course,
         intake: searchUniversitiesByIntCourUniNameDto.intake,
       });

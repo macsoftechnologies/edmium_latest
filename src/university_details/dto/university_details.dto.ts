@@ -138,7 +138,7 @@ export class CollegeDto {
 export class SearchUniversitiesByIntCourUniNameDto {
   @ApiProperty()
   @IsString()
-  university: string;
+  country: string;
 
   @ApiProperty()
   @IsString()
