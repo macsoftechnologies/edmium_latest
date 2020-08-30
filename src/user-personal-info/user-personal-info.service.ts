@@ -12,7 +12,7 @@ export class UserPersonalInfoService {
     private userPersonalInfoModel: Model<UserPersonalInfo>,
   ) {}
 
-  /* Create Education */
+  //   Add User Personal Info
   async addUserPersonalInfo(params: UserPersonalInfoDto): Promise<any> {
     try {
       const userPersonalInfo = await this.userPersonalInfoModel.findOne({

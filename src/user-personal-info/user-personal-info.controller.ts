@@ -23,7 +23,7 @@ export class UserPersonalInfoController {
     }
   }
 
-  /* Get EducationList */
+  // Get User Personal Info
   @Get('/:userId')
   async getUserPersonalInfoByUserId(@Param('userId') userId: string) {
     try {
