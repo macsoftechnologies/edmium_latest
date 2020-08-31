@@ -16,7 +16,10 @@ import { UserWorkInfoModule } from './user-work-info/user-work-info.module';
 @Module({
   imports: [
     EducationModule,
-    MongooseModule.forRoot('mongodb://localhost/edmium'),
+    // MongooseModule.forRoot('mongodb://localhost/edmium'),
+    MongooseModule.forRoot(
+      'mongodb://adimn:VakK8jKrS6T1XwqB3QyvbywWiudfbP773eZ9wg5egE0=@13.235.254.226:27017/edmium?authSource=admin',
+    ),
     CourseModule,
     CountryModule,
     UniversityModule,
