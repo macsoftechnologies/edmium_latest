@@ -13,6 +13,7 @@ import { IntakeModule } from './intake/intake.module';
 import { UserPersonalInfoModule } from './user-personal-info/user-personal-info.module';
 import { UserAcademicInfoModule } from './user-academic-info/user-academic-info.module';
 import { UserWorkInfoModule } from './user-work-info/user-work-info.module';
+import { UniversityApplicationsModule } from './university-applications/university-applications.module';
 @Module({
   imports: [
     EducationModule,
@@ -29,6 +30,7 @@ import { UserWorkInfoModule } from './user-work-info/user-work-info.module';
     UserPersonalInfoModule,
     UserAcademicInfoModule,
     UserWorkInfoModule,
+    UniversityApplicationsModule,
   ],
   controllers: [AppController],
   providers: [AppService, SharedService],

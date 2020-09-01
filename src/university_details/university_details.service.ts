@@ -11,7 +11,6 @@ import {
 } from './dto/university_details.dto';
 import { University } from 'src/university/dto/university.schema';
 import { Country } from 'src/country/dto/country.schema';
-import { FavoriteListDto } from 'src/user/dto/user.dto';
 
 @Injectable()
 export class UniversityDetailsService {
