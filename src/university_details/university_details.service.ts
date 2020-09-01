@@ -67,8 +67,23 @@ export class UniversityDetailsService {
   // Filter By Course
   async filterByCourse(params: FilterByCourseDto): Promise<any> {
     try {
+      let findObj = {
+        country: params.country,
+        course: params.course,
+        studyLevel: params.studyLevel,
+      };
+
+      if (params.englishTest && params.englishTestValue) {
+        findObj[params.englishTest.toLowerCase() + 'Min'] = {
+          $lte: params.englishTestValue,
+        };
+        findObj[params.englishTest.toLowerCase() + 'Max'] = {
+          $gte: params.englishTestValue,
+        };
+      }
+
       let universityDetails = await this.universityDetailsModel
-        .find({ country: params.country, course: params.course })
+        .find(findObj)
         .populate({ path: 'university', model: this.universityModel })
         .populate({ path: 'country', model: this.countryModel })
         .skip(params.start)
