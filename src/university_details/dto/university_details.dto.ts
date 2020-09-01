@@ -57,47 +57,47 @@ export class CollegeDto {
 
   @ApiProperty()
   @IsNumber()
-  IELTS: number;
+  ieltsMax: number;
 
   @ApiProperty()
   @IsNumber()
-  band_min: number;
+  ieltsMin: number;
 
   @ApiProperty()
   @IsNumber()
-  toefl_min: number;
+  toeflMin: number;
 
   @ApiProperty()
   @IsNumber()
-  toefl_max: number;
+  toeflMax: number;
 
   @ApiProperty()
   @IsNumber()
-  PTE: number;
+  pteMax: number;
 
   @ApiProperty()
   @IsNumber()
-  PTE_min: number;
+  pteMin: number;
 
   @ApiProperty()
   @IsString()
-  tuition_fee: string;
+  tuitionFee: string;
 
   @ApiProperty()
   @IsString()
-  GRE: string;
+  gre: string;
 
   @ApiProperty()
   @IsString()
-  GMAT: string;
+  gmat: string;
 
   @ApiProperty()
   @IsString()
-  english_tests_not_accepted_by_UNIV: string;
+  englishTestsNotAcceptedByUniv: string;
 
   @ApiProperty()
   @IsString()
-  SAT: string;
+  sat: string;
 
   @ApiProperty()
   @IsString()
@@ -105,23 +105,23 @@ export class CollegeDto {
 
   @ApiProperty()
   @IsString()
-  english_test_waiver: string;
+  englishTestWaiver: string;
 
   @ApiProperty()
   @IsString()
-  aptitude_test_waiver: string;
+  aptitudeTestWaiver: string;
 
   @ApiProperty()
   @IsString()
-  scholarship_available: string;
+  scholarshipAvailable: string;
 
   @ApiProperty()
   @IsString()
-  scholarship_details: string;
+  scholarshipDetails: string;
 
   @ApiProperty()
   @IsString()
-  entry_requirements: string;
+  entryRequirements: string;
 
   @ApiProperty()
   @IsString()
@@ -133,7 +133,7 @@ export class CollegeDto {
 
   @ApiProperty()
   @IsString()
-  study_level: string;
+  studyLevel: string;
 }
 export class SearchUniversitiesByIntCourUniNameDto {
   @ApiProperty()

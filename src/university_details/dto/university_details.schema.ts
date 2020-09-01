@@ -31,55 +31,55 @@ export class UniversityDetails extends Document {
   intake: string;
 
   @Prop()
-  IELTS: number;
+  ieltsMax: number;
 
   @Prop()
-  band_min: number;
+  ieltsMin: number;
 
   @Prop()
-  toefl_min: number;
+  toeflMin: number;
 
   @Prop()
-  toefl_max: number;
+  toeflMax: number;
 
   @Prop()
-  PTE: number;
+  pteMax: number;
 
   @Prop()
-  PTE_min: number;
+  pteMin: number;
 
   @Prop()
-  tuition_fee: string;
+  tuitionFee: string;
 
   @Prop()
-  GRE: string;
+  gre: string;
 
   @Prop()
-  GMAT: string;
+  gmat: string;
 
   @Prop()
-  english_tests_not_accepted_by_UNIV: string;
+  englishTestsNotAcceptedByUniv: string;
 
   @Prop()
-  SAT: string;
+  sat: string;
 
   @Prop()
   backlogs: string;
 
   @Prop()
-  english_test_waiver: string;
+  englishTestWaiver: string;
 
   @Prop()
-  aptitude_test_waiver: string;
+  aptitudeTestWaiver: string;
 
   @Prop()
-  scholarship_available: string;
+  scholarshipAvailable: string;
 
   @Prop()
-  scholarship_details: string;
+  scholarshipDetails: string;
 
   @Prop()
-  entry_requirements: string;
+  entryRequirements: string;
 
   @Prop()
   remarks: string;
@@ -88,7 +88,7 @@ export class UniversityDetails extends Document {
   website: string;
 
   @Prop()
-  study_level: string;
+  studyLevel: string;
 }
 
 export const UniversityDetailsSchema = SchemaFactory.createForClass(
@@ -105,24 +105,24 @@ export interface IUniversityDetails extends Document {
   readonly campus: string;
   readonly state: string;
   readonly intake: string;
-  readonly IELTS: number;
-  readonly band_min: number;
-  readonly toefl_min: number;
-  readonly toefl_max: number;
-  readonly PTE: number;
-  readonly PTE_min: number;
-  readonly tuition_fee: string;
-  readonly GRE: string;
-  readonly GMAT: string;
-  readonly english_tests_not_accepted_by_UNIV: string;
-  readonly SAT: string;
+  readonly ieltsMax: number;
+  readonly ieltsMin: number;
+  readonly toeflMin: number;
+  readonly toeflMax: number;
+  readonly pteMax: number;
+  readonly pteMin: number;
+  readonly tuitionFee: string;
+  readonly gre: string;
+  readonly gmat: string;
+  readonly englishTestsNotAcceptedByUniv: string;
+  readonly sat: string;
   readonly backlogs: string;
-  readonly english_test_waiver: string;
-  readonly aptitude_test_waiver: string;
-  readonly scholarship_available: string;
-  readonly scholarship_details: string;
-  readonly entry_requirements: string;
+  readonly englishTestWaiver: string;
+  readonly aptitudeTestWaiver: string;
+  readonly scholarshipAvailable: string;
+  readonly scholarshipDetails: string;
+  readonly entryRequirements: string;
   readonly remarks: string;
   readonly website: string;
-  readonly study_level: string;
+  readonly studyLevel: string;
 }
