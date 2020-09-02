@@ -8,6 +8,7 @@ import { CountrySchema } from 'src/country/dto/country.schema';
 import { CourseSchema } from 'src/course/dto/course.schema';
 import { UniversityDetailsService } from 'src/university_details/university_details.service';
 import { UniversityDetailsSchema } from 'src/university_details/dto/university_details.schema';
+import { UniversitySchema } from 'src/university/dto/university.schema';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UniversityDetailsSchema } from 'src/university_details/dto/university_d
       { name: 'Country', schema: CountrySchema },
       { name: 'Course', schema: CourseSchema },
       { name: 'UniversityDetails', schema: UniversityDetailsSchema },
+      { name: 'University', schema: UniversitySchema },
     ]),
   ],
   controllers: [UserController],

@@ -91,4 +91,85 @@ export class UniversityApplicationsService {
       return error;
     }
   }
+
+  // filterApplications
+  async filterApplications(params: any): Promise<any> {
+    try {
+      console.log(params);
+      let universityDetails = await this.universityApplicationModel
+        .aggregate([
+          { $match: { status: params.status } },
+          {
+            $lookup: {
+              from: 'universitydetails',
+              localField: 'universityDetails',
+              foreignField: '_id',
+              as: 'universityDetails',
+            },
+          },
+          { $unwind: '$universityDetails' },
+          {
+            $match: {
+              'universityDetails.course': params.course,
+              'universityDetails.intake': params.intake,
+            },
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'user',
+              foreignField: '_id',
+              as: 'user',
+            },
+          },
+          { $unwind: '$user' },
+        ])
+        // .find({ user: params.user })
+        // .populate({ path: 'user', model: this.userModel })
+        // .populate({
+        //   path: 'universityDetails',
+        //   model: this.universityDetailsModel,
+        // })
+        .skip(params.start)
+        .limit(params.limit);
+
+      console.log(universityDetails);
+
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: universityDetails,
+        message: 'Request Successful',
+      };
+      return apiResponse;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
+  async checkDuplicate(params: any): Promise<any> {
+    return await this.universityApplicationModel.find(params).countDocuments();
+  }
+
+  async getMaxUniqueId(): Promise<any> {
+    return await this.universityApplicationModel
+      .find()
+      .select('uniqueId')
+      .sort({ uniqueId: -1 })
+      .limit(1);
+  }
 }
+
+// db.universityapplications.aggregate([
+//   { "$match": { "status": "Application submitted to the Institution" }},
+//  { "$lookup": {
+//     "from": "universitydetails",
+//     "localField": "universityDetails",
+//     "foreignField": "_id",
+//     "as": "details"
+//   }},
+//   { "$unwind": "$details" },
+//   { "$match": { "details.course": "MRes Archaeology", "details.intake": " Sep" }},
+// //   { "$addFields": { "university_name": { "$arrayElemAt": ["$details.concentration", 1] }}},
+// //   { "$project": { "_id": 0 }}
+// ])

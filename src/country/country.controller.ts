@@ -9,7 +9,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import { CountryService } from './country.service';
-import { CreateCourseDto } from 'src/course/dto/create-course.dto';
 import { CreateCountryDto } from './dto/create-country.dto';
 
 @Controller('country')

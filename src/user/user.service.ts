@@ -9,6 +9,7 @@ import { Country } from 'src/country/dto/country.schema';
 import { Course } from 'src/course/dto/course.schema';
 import { UniversityDetails } from 'src/university_details/dto/university_details.schema';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
+import { University } from 'src/university/dto/university.schema';
 
 @Injectable()
 export class UserService {
@@ -19,6 +20,8 @@ export class UserService {
     @InjectModel('Course') private courseModel: Model<Course>,
     @InjectModel('UniversityDetails')
     private universityDetailsModel: Model<UniversityDetails>,
+    @InjectModel('University')
+    private universityModel: Model<University>,
   ) {}
 
   /* Create Education */
@@ -153,6 +156,16 @@ export class UserService {
       const userData = await this.userModel.findById(id).populate({
         path: 'favoriteUniversities',
         model: this.universityDetailsModel,
+        populate: [
+          {
+            path: 'university',
+            model: this.universityModel,
+          },
+          {
+            path: 'country',
+            model: this.countryModel,
+          },
+        ],
       });
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,

@@ -14,13 +14,15 @@ import { UserPersonalInfoModule } from './user-personal-info/user-personal-info.
 import { UserAcademicInfoModule } from './user-academic-info/user-academic-info.module';
 import { UserWorkInfoModule } from './user-work-info/user-work-info.module';
 import { UniversityApplicationsModule } from './university-applications/university-applications.module';
+import { ApplicationStatusModule } from './application-status/application-status.module';
+import { ApplicationChatModule } from './application-chat/application-chat.module';
 @Module({
   imports: [
     EducationModule,
-    // MongooseModule.forRoot('mongodb://localhost/edmium'),
-    MongooseModule.forRoot(
-      'mongodb://adimn:VakK8jKrS6T1XwqB3QyvbywWiudfbP773eZ9wg5egE0=@13.235.254.226:27017/edmium?authSource=admin',
-    ),
+    MongooseModule.forRoot('mongodb://localhost/edmium'),
+    // MongooseModule.forRoot(
+    //   'mongodb://adimn:VakK8jKrS6T1XwqB3QyvbywWiudfbP773eZ9wg5egE0=@13.235.254.226:27017/edmium?authSource=admin',
+    // ),
     CourseModule,
     CountryModule,
     UniversityModule,
@@ -31,6 +33,8 @@ import { UniversityApplicationsModule } from './university-applications/universi
     UserAcademicInfoModule,
     UserWorkInfoModule,
     UniversityApplicationsModule,
+    ApplicationStatusModule,
+    ApplicationChatModule,
   ],
   controllers: [AppController],
   providers: [AppService, SharedService],
