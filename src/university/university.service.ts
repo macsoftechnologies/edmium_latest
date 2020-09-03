@@ -28,7 +28,7 @@ export class UniversityService {
   }
 
   /* Create University */
-  async createUniversity(createUniversityDto: CreateUniversityDto) {
+  async createUniversity(createUniversityDto: any) {
     try {
       const createUniversityRes = await this.universityModel.create(
         createUniversityDto,

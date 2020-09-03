@@ -1,7 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
 const xlsx = require('xlsx');
+const AWS = require('aws-sdk');
 
+const config = {
+  AWS_ACCESS_KEY: 'AKIAJRWPZ3BTWK7YU3AQ',
+  AWS_SECRET_KEY: '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',
+  AWS_BUCKET: 'edmium',
+};
+
+const s3 = new AWS.S3({
+  accessKeyId: config.AWS_ACCESS_KEY,
+  secretAccessKey: config.AWS_SECRET_KEY,
+});
 @Injectable()
 export class SharedService {
   async excelToJSON(fileData): Promise<any> {
@@ -58,5 +69,29 @@ export class SharedService {
     table.push(record);
 
     return table;
+  }
+
+  async uploadFileToAWSBucket(file, path) {
+    let fileName = file.originalname;
+    fileName = fileName.replace(/\//g, '-');
+    fileName = fileName.replace(/ /g, '_');
+    fileName = fileName.replace(/[()]/g, '');
+    let index = fileName.lastIndexOf('.');
+    if (index === -1) index = fileName.length;
+    fileName =
+      fileName.substring(0, index) +
+      '-' +
+      new Date().getTime() +
+      fileName.substring(index);
+
+    return await s3
+      .upload({
+        Bucket: config.AWS_BUCKET,
+        Key: path + '/' + fileName, // File name you want to save as in S3
+        Body: file.buffer,
+        ACL: 'public-read',
+        ContentType: file.mimetype,
+      })
+      .promise();
   }
 }

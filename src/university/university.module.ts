@@ -3,6 +3,7 @@ import { UniversityController } from './university.controller';
 import { UniversityService } from './university.service';
 import { UniversitySchema } from './dto/university.schema';
 import { MongooseModule } from '@nestjs/mongoose';
+import { SharedService } from 'src/shared/shared.service';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -10,6 +11,6 @@ import { MongooseModule } from '@nestjs/mongoose';
     ]),
   ],
   controllers: [UniversityController],
-  providers: [UniversityService],
+  providers: [UniversityService, SharedService],
 })
 export class UniversityModule {}

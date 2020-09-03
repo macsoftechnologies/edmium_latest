@@ -7,16 +7,16 @@ export class University extends Document {
   universityName: string;
 
   @Prop({ default: null })
-  universityProfileImg: string;
+  universityProfileImage: string;
 
   @Prop({ default: null })
-  universityBackgroundProfileImg: string;
+  universityBackgroundImage: string;
 }
 
 export const UniversitySchema = SchemaFactory.createForClass(University);
 
 export interface IUniversity extends Document {
   readonly universityName: string;
-  readonly universityProfileImg: string;
-  readonly universityBackgroundProfileImg: string;
+  readonly universityProfileImage: string;
+  readonly universityBackgroundImage: string;
 }

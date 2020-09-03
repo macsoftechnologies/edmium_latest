@@ -6,13 +6,13 @@ export class CreateUniversityDto {
   @IsString()
   universityName: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  universityProfileImg: string;
+  // @ApiProperty()
+  // @IsString()
+  // @IsOptional()
+  // universityProfileImage: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  universityBackgroundProfileImg: string;
+  // @ApiProperty()
+  // @IsString()
+  // @IsOptional()
+  // universityBackgroundImage: string;
 }
