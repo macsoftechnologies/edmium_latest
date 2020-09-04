@@ -52,6 +52,9 @@ export class UniversityDetails extends Document {
   tuitionFee: string;
 
   @Prop()
+  currency: string;
+
+  @Prop()
   gre: string;
 
   @Prop()
@@ -89,6 +92,9 @@ export class UniversityDetails extends Document {
 
   @Prop()
   studyLevel: string;
+
+  @Prop()
+  applicationFee: string;
 }
 
 export const UniversityDetailsSchema = SchemaFactory.createForClass(

@@ -19,11 +19,15 @@ export class SharedService {
     var result = xlsx.read(fileData, {
       type: 'buffer',
     });
-    const excelData = result.Sheets.Sheet1;
-    const keys = Object.keys(result.Sheets.Sheet1);
+
+    const sheets = Object.keys(result.Sheets);
+
+    const excelData = result.Sheets[sheets[0]];
+    const keys = Object.keys(result.Sheets[sheets[0]]);
 
     keys.splice(keys.indexOf('!ref'), 1);
     keys.splice(keys.indexOf('!margins'), 1);
+    keys.splice(keys.indexOf('!rows'), 1);
 
     const table = [];
 
@@ -32,6 +36,7 @@ export class SharedService {
     const headerIndex = parseInt(
       keys[0].substring(keys[0].length - 1, keys[0].length),
     );
+
     var i = 0;
     for (; i < keys.length; i++) {
       if (

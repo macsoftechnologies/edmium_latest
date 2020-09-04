@@ -54,18 +54,25 @@ export class UniversityController {
     console.log(files);
     console.log(body);
     try {
-      const profileImage = await this.sharedService.uploadFileToAWSBucket(
-        files.profileImage[0],
-        'university/profile-images',
-      );
-      const backgroundImage = await this.sharedService.uploadFileToAWSBucket(
-        files.backgroundImage[0],
-        'university/background-images',
-      );
+      let profileImage, backgroundImage;
+      if (files.profileImage) {
+        profileImage = await this.sharedService.uploadFileToAWSBucket(
+          files.profileImage[0],
+          'university/profile-images',
+        );
+      }
+      if (files.backgroundImage) {
+        backgroundImage = await this.sharedService.uploadFileToAWSBucket(
+          files.backgroundImage[0],
+          'university/background-images',
+        );
+      }
       const response = await this.universityService.createUniversity({
         universityName: body.universityName,
-        universityProfileImage: profileImage.Location,
-        universityBackgroundImage: backgroundImage.Location,
+        universityProfileImage: profileImage ? profileImage.Location : null,
+        universityBackgroundImage: backgroundImage
+          ? backgroundImage.Location
+          : null,
       });
       return response;
     } catch (error) {

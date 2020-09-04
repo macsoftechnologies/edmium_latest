@@ -85,6 +85,10 @@ export class CollegeDto {
 
   @ApiProperty()
   @IsString()
+  currency: string;
+
+  @ApiProperty()
+  @IsString()
   gre: string;
 
   @ApiProperty()
@@ -134,7 +138,12 @@ export class CollegeDto {
   @ApiProperty()
   @IsString()
   studyLevel: string;
+
+  @ApiProperty()
+  @IsString()
+  applicationFee: string;
 }
+
 export class SearchUniversitiesByIntCourUniNameDto {
   @ApiProperty()
   @IsString()
