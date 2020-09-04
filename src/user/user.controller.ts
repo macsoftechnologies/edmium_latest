@@ -56,7 +56,7 @@ export class UserController {
   @UseInterceptors(FileInterceptor('file'))
   async addProfileImage(@UploadedFile() file, @Param('id') id: string) {
     try {
-      let profileImage = await this.sharedService.uploadFileToAWSBucket(
+      const profileImage = await this.sharedService.uploadFileToAWSBucket(
         file,
         'user/profile-image',
       );

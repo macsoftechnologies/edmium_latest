@@ -16,6 +16,7 @@ import { UserWorkInfoModule } from './user-work-info/user-work-info.module';
 import { UniversityApplicationsModule } from './university-applications/university-applications.module';
 import { ApplicationStatusModule } from './application-status/application-status.module';
 import { ApplicationChatModule } from './application-chat/application-chat.module';
+import { UserDocumentsModule } from './user-documents/user-documents.module';
 @Module({
   imports: [
     EducationModule,
@@ -35,6 +36,7 @@ import { ApplicationChatModule } from './application-chat/application-chat.modul
     UniversityApplicationsModule,
     ApplicationStatusModule,
     ApplicationChatModule,
+    UserDocumentsModule,
   ],
   controllers: [AppController],
   providers: [AppService, SharedService],
