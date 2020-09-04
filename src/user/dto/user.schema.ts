@@ -34,6 +34,10 @@ export class User extends Document {
   @Prop()
   @IsOptional()
   favoriteUniversities?: string[];
+
+  @Prop()
+  @IsOptional()
+  profileImage?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

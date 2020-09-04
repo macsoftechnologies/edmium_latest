@@ -1,11 +1,25 @@
-import { Controller, Post, Body, HttpStatus, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpStatus,
+  Get,
+  Param,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { CreateUser, UserLogin, FavoriteListDto } from './dto/user.dto';
 import { UserService } from './user.service';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { SharedService } from 'src/shared/shared.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private sharedService: SharedService,
+  ) {}
 
   /* Create User  */
   @Post('/signUp')
@@ -28,6 +42,27 @@ export class UserController {
     try {
       console.log(userLogIn);
       let response = await this.userService.userLogIn(userLogIn);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Add Profile Image
+  @Post('/profileImage/:id')
+  @UseInterceptors(FileInterceptor('file'))
+  async addProfileImage(@UploadedFile() file, @Param('id') id: string) {
+    try {
+      let profileImage = await this.sharedService.uploadFileToAWSBucket(
+        file,
+        'user/profile-image',
+      );
+      const response = await this.userService.updateUser(id, {
+        profileImage: profileImage.Location,
+      });
       return response;
     } catch (error) {
       return {

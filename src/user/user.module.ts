@@ -9,6 +9,7 @@ import { CourseSchema } from 'src/course/dto/course.schema';
 import { UniversityDetailsService } from 'src/university_details/university_details.service';
 import { UniversityDetailsSchema } from 'src/university_details/dto/university_details.schema';
 import { UniversitySchema } from 'src/university/dto/university.schema';
+import { SharedService } from 'src/shared/shared.service';
 
 @Module({
   imports: [
@@ -22,6 +23,6 @@ import { UniversitySchema } from 'src/university/dto/university.schema';
     ]),
   ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, SharedService],
 })
 export class UserModule {}

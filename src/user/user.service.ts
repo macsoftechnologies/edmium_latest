@@ -177,4 +177,19 @@ export class UserService {
       return error;
     }
   }
+
+  // Update User
+  async updateUser(userId: string, params: any): Promise<any> {
+    try {
+      await this.userModel.updateOne({ _id: userId }, params);
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: null,
+        message: 'Updated successfully',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
 }
