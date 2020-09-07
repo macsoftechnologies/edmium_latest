@@ -1,8 +1,6 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-import { ObjectID } from 'mongodb';
-
 @Schema({ timestamps: true })
 export class UniversityApplication extends Document {
   @Prop({ default: 12345 })
@@ -15,7 +13,7 @@ export class UniversityApplication extends Document {
   user: string;
 
   @Prop()
-  universityDetails: ObjectID;
+  universityDetails: string;
 
   @Prop({ default: 'Application submitted to the Institution' })
   status?: string;

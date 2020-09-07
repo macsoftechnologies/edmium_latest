@@ -1,5 +1,6 @@
-import { IsString, IsNumber, IsEmail } from 'class-validator';
+import { IsString, IsNumber, IsEmail, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { PaginationDto } from 'src/shared/dto/shared.dto';
 
 export class CreateUser {
   @ApiProperty()
@@ -53,4 +54,26 @@ export class FavoriteListDto {
   @ApiProperty()
   @IsString()
   universityId: string;
+}
+
+export class FilterStudentsDto extends PaginationDto {
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  country: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  intake: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  status: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  searchString: string;
 }

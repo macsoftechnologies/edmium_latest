@@ -5,12 +5,33 @@ import {
   IsBoolean,
   IsArray,
   IsOptional,
+  IsNumber,
 } from 'class-validator';
 
 export class UserPersonalInfoDto {
   @ApiProperty()
   @IsString()
   userId: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  firstName: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  lastName: string;
+
+  @ApiProperty()
+  @IsEmail()
+  @IsOptional()
+  emailAddress: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  mobileNumber: number;
 
   @ApiProperty()
   @IsString()

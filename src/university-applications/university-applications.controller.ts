@@ -2,6 +2,8 @@ import { Controller, Post, Body, HttpStatus, Get, Param } from '@nestjs/common';
 import {
   UniversityApplicationDto,
   ApplicationsOfStudentDto,
+  UpdateStatusDto,
+  ApplicationsFilterDto,
 } from './dto/university-applications.dto';
 import { UniversityApplicationsService } from './university-applications.service';
 import { PaginationDto } from 'src/shared/dto/shared.dto';
@@ -90,9 +92,26 @@ export class UniversityApplicationsController {
 
   // Get User Academic Info
   @Post('/filter-by-criteria')
-  async filterApplications(@Body() params: ApplicationsOfStudentDto) {
+  async filterApplications(@Body() params: ApplicationsFilterDto) {
     try {
       let response = await this.universityApplicationService.filterApplications(
+        params,
+      );
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Update Status
+  @Post('/status/:id')
+  async updateStatus(@Body() params: UpdateStatusDto, @Param('id') id: string) {
+    try {
+      let response = await this.universityApplicationService.updateStatus(
+        id,
         params,
       );
       return response;

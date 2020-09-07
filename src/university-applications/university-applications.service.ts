@@ -2,6 +2,7 @@ import { Injectable, HttpStatus } from '@nestjs/common';
 import {
   UniversityApplicationDto,
   ApplicationsOfStudentDto,
+  UpdateStatusDto,
 } from './dto/university-applications.dto';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -96,44 +97,105 @@ export class UniversityApplicationsService {
   async filterApplications(params: any): Promise<any> {
     try {
       console.log(params);
+
+      let match: any = {};
+      let likeMatch = {};
+
+      if (params.status) {
+        match['status'] = params.status;
+      }
+
+      if (params.course) {
+        match['universityDetails.course'] = params.course;
+      }
+
+      if (params.intake) {
+        match['universityDetails.intake'] = params.intake;
+      }
+
+      if (params.searchString) {
+        likeMatch['$or'] = [
+          {
+            'university.universityName': {
+              $regex: '.*' + params.searchString + '.*',
+              $options: 'i',
+            },
+          },
+          {
+            'user.firstName': {
+              $regex: '.*' + params.searchString + '.*',
+              $options: 'i',
+            },
+          },
+          {
+            'user.lastName': {
+              $regex: '.*' + params.searchString + '.*',
+              $options: 'i',
+            },
+          },
+        ];
+      }
+
       let universityDetails = await this.universityApplicationModel
         .aggregate([
-          { $match: { status: params.status } },
+          {
+            $addFields: {
+              universityDetailsId: {
+                $toObjectId: '$universityDetails',
+              },
+            },
+          },
           {
             $lookup: {
               from: 'universitydetails',
-              localField: 'universityDetails',
+              localField: 'universityDetailsId',
               foreignField: '_id',
               as: 'universityDetails',
             },
           },
           { $unwind: '$universityDetails' },
+
           {
-            $match: {
-              'universityDetails.course': params.course,
-              'universityDetails.intake': params.intake,
+            $addFields: {
+              universityId: {
+                $toObjectId: '$universityDetails.university',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'universities',
+              localField: 'universityId',
+              foreignField: '_id',
+              as: 'university',
+            },
+          },
+          { $unwind: '$university' },
+          {
+            $addFields: {
+              userId: {
+                $toObjectId: '$user',
+              },
             },
           },
           {
             $lookup: {
               from: 'users',
-              localField: 'user',
+              localField: 'userId',
               foreignField: '_id',
               as: 'user',
             },
           },
           { $unwind: '$user' },
+          {
+            $match: match,
+          },
+          {
+            $match: likeMatch,
+          },
         ])
-        // .find({ user: params.user })
-        // .populate({ path: 'user', model: this.userModel })
-        // .populate({
-        //   path: 'universityDetails',
-        //   model: this.universityDetailsModel,
-        // })
         .skip(params.start)
         .limit(params.limit);
-
-      console.log(universityDetails);
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
@@ -158,18 +220,28 @@ export class UniversityApplicationsService {
       .sort({ uniqueId: -1 })
       .limit(1);
   }
-}
 
-// db.universityapplications.aggregate([
-//   { "$match": { "status": "Application submitted to the Institution" }},
-//  { "$lookup": {
-//     "from": "universitydetails",
-//     "localField": "universityDetails",
-//     "foreignField": "_id",
-//     "as": "details"
-//   }},
-//   { "$unwind": "$details" },
-//   { "$match": { "details.course": "MRes Archaeology", "details.intake": " Sep" }},
-// //   { "$addFields": { "university_name": { "$arrayElemAt": ["$details.concentration", 1] }}},
-// //   { "$project": { "_id": 0 }}
-// ])
+  //   Update Status
+  async updateStatus(id: string, params: UpdateStatusDto): Promise<any> {
+    try {
+      const data = await this.universityApplicationModel.updateOne(
+        { _id: id },
+        params,
+      );
+
+      let response = {
+        statusCode: HttpStatus.OK,
+        data: data,
+        message: 'Request Successful',
+      };
+      return response;
+    } catch (error) {
+      let error_response: APIResponse = {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        message: error,
+      };
+      return error_response;
+    }
+  }
+}

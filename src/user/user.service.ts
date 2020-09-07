@@ -2,7 +2,12 @@ import { Injectable, HttpStatus } from '@nestjs/common';
 import { User } from './dto/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateUser, UserLogin, FavoriteListDto } from './dto/user.dto';
+import {
+  CreateUser,
+  UserLogin,
+  FavoriteListDto,
+  FilterStudentsDto,
+} from './dto/user.dto';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { Education } from 'src/education/dto/education.schema';
 import { Country } from 'src/country/dto/country.schema';
@@ -189,6 +194,117 @@ export class UserService {
       };
       return apiResponse;
     } catch (error) {
+      return error;
+    }
+  }
+
+  // Filter Students
+  async filterStudents(params: FilterStudentsDto): Promise<any> {
+    try {
+      console.log(params);
+
+      let match: any = {};
+      let likeMatch = {};
+      if (params.country) {
+        match['universityApplications.universityDetails.country'] =
+          params.country;
+      }
+
+      if (params.intake) {
+        match['universityApplications.universityDetails.intake'] =
+          params.intake;
+      }
+
+      if (params.status) {
+        match['universityApplications.status'] = params.status;
+      }
+
+      if (params.searchString) {
+        likeMatch['$or'] = [
+          {
+            firstName: {
+              $regex: '.*' + params.searchString + '.*',
+              $options: 'i',
+            },
+          },
+          {
+            lastName: {
+              $regex: '.*' + params.searchString + '.*',
+              $options: 'i',
+            },
+          },
+          {
+            emailAddress: {
+              $regex: '.*' + params.searchString + '.*',
+              $options: 'i',
+            },
+          },
+        ];
+      }
+
+      let universityDetails = await this.userModel
+        .aggregate([
+          {
+            $addFields: {
+              userId: {
+                $toString: '$_id',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'universityapplications',
+              localField: 'userId',
+              foreignField: 'user',
+              as: 'universityApplications',
+            },
+          },
+          { $unwind: '$universityApplications' },
+          {
+            $addFields: {
+              universityDetailsId: {
+                $toObjectId: '$universityApplications.universityDetails',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'universitydetails',
+              localField: 'universityDetailsId',
+              foreignField: '_id',
+              as: 'universityApplications.universityDetails',
+            },
+          },
+          { $unwind: '$universityApplications.universityDetails' },
+          {
+            $match: match,
+          },
+          {
+            $match: likeMatch,
+          },
+          {
+            $group: {
+              _id: '$_id',
+              firstName: { $first: '$firstName' },
+              lastName: { $first: '$lastName' },
+              emailAddress: { $first: '$emailAddress' },
+              mobileNumber: { $first: '$mobileNumber' },
+              createdAt: { $first: '$createdAt' },
+              universityApplications: { $push: '$universityApplications' },
+            },
+          },
+        ])
+        .skip(params.start)
+        .limit(params.limit);
+
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: universityDetails,
+        message: 'Request Successful',
+      };
+      return apiResponse;
+    } catch (error) {
+      console.log(error);
       return error;
     }
   }

@@ -8,7 +8,12 @@ import {
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
-import { CreateUser, UserLogin, FavoriteListDto } from './dto/user.dto';
+import {
+  CreateUser,
+  UserLogin,
+  FavoriteListDto,
+  FilterStudentsDto,
+} from './dto/user.dto';
 import { UserService } from './user.service';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -118,6 +123,20 @@ export class UserController {
       return universities;
     } catch (error) {
       return error;
+    }
+  }
+
+  // Filter students
+  @Post('/filter-by-criteria')
+  async filterStudents(@Body() params: FilterStudentsDto) {
+    try {
+      let response = await this.userService.filterStudents(params);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
     }
   }
 }
