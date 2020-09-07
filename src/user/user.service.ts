@@ -184,7 +184,7 @@ export class UserService {
       await this.userModel.updateOne({ _id: userId }, params);
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: null,
+        data: await this.userModel.findById(userId),
         message: 'Updated successfully',
       };
       return apiResponse;
