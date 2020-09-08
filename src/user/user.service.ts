@@ -259,7 +259,12 @@ export class UserService {
               as: 'universityApplications',
             },
           },
-          { $unwind: '$universityApplications' },
+          {
+            $unwind: {
+              path: '$universityApplications',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
           {
             $addFields: {
               universityDetailsId: {
@@ -275,7 +280,12 @@ export class UserService {
               as: 'universityApplications.universityDetails',
             },
           },
-          { $unwind: '$universityApplications.universityDetails' },
+          {
+            $unwind: {
+              path: '$universityApplications.universityDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
           {
             $match: match,
           },
@@ -296,6 +306,11 @@ export class UserService {
         ])
         .skip(params.start)
         .limit(params.limit);
+
+      for (const details of universityDetails) {
+        if (!details.universityApplications[0]._id)
+          details.universityApplications = [];
+      }
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
