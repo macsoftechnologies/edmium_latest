@@ -13,6 +13,7 @@ import {
   UserLogin,
   FavoriteListDto,
   FilterStudentsDto,
+  SwitchFavoriteUniversityRanksDto,
 } from './dto/user.dto';
 import { UserService } from './user.service';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
@@ -109,6 +110,21 @@ export class UserController {
   async removeFavoriteUniversity(@Body() body: FavoriteListDto) {
     try {
       let universities = await this.userService.removeFavoriteUniversity(body);
+      return universities;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Switch Favorite University Ranks
+  @Post('/switchFavoriteUniversityRanks')
+  async switchFavoriteUniversityRanks(
+    @Body() body: SwitchFavoriteUniversityRanksDto,
+  ) {
+    try {
+      let universities = await this.userService.switchFavoriteUniversityRanks(
+        body,
+      );
       return universities;
     } catch (error) {
       return error;

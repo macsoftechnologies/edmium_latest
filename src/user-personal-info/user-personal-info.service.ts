@@ -35,6 +35,11 @@ export class UserPersonalInfoService {
         updateUserData = true;
       }
 
+      if (params.mobileNumber) {
+        userData.mobileNumber = params.mobileNumber;
+        updateUserData = true;
+      }
+
       if (updateUserData) {
         await this.userModel.update({ _id: params.userId }, userData);
       }
@@ -75,7 +80,8 @@ export class UserPersonalInfoService {
         .populate({
           path: 'userId',
           model: this.userModel,
-          select: '_id firstName lastName emailAddress profileImage',
+          select:
+            '_id firstName lastName emailAddress mobileNumber profileImage',
         })
         .lean();
 
@@ -83,6 +89,7 @@ export class UserPersonalInfoService {
         data.firstName = data.userId.firstName;
         data.lastName = data.userId.lastName;
         data.emailAddress = data.userId.emailAddress;
+        data.mobileNumber = data.userId.mobileNumber;
         data.profileImage = data.userId.profileImage;
         data.userId = data.userId._id;
       }

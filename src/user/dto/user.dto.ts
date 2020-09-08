@@ -77,3 +77,17 @@ export class FilterStudentsDto extends PaginationDto {
   @IsOptional()
   searchString: string;
 }
+
+export class SwitchFavoriteUniversityRanksDto {
+  @ApiProperty()
+  @IsString()
+  userId: string;
+
+  @ApiProperty()
+  @IsString()
+  universityDetailsId1: string;
+
+  @ApiProperty()
+  @IsString()
+  universityDetailsId2: string;
+}

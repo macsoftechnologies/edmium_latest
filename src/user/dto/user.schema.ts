@@ -33,7 +33,7 @@ export class User extends Document {
 
   @Prop()
   @IsOptional()
-  favoriteUniversities?: string[];
+  favoriteUniversities?: object[];
 
   @Prop()
   @IsOptional()

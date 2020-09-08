@@ -7,6 +7,7 @@ import {
   UserLogin,
   FavoriteListDto,
   FilterStudentsDto,
+  SwitchFavoriteUniversityRanksDto,
 } from './dto/user.dto';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { Education } from 'src/education/dto/education.schema';
@@ -15,6 +16,8 @@ import { Course } from 'src/course/dto/course.schema';
 import { UniversityDetails } from 'src/university_details/dto/university_details.schema';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
 import { University } from 'src/university/dto/university.schema';
+
+import * as _ from 'lodash';
 
 @Injectable()
 export class UserService {
@@ -122,10 +125,23 @@ export class UserService {
   // Add Favorite University
   async addFavoriteUniversity(params: FavoriteListDto): Promise<any> {
     try {
-      await this.userModel.updateOne(
-        { _id: params.userId },
-        { $addToSet: { favoriteUniversities: params.universityId } },
+      const user: any = await this.userModel.findById(params.userId);
+      var index = user.favoriteUniversities.findIndex(
+        fu => fu.universityId == params.universityId,
       );
+      if (index == -1) {
+        await this.userModel.updateOne(
+          { _id: params.userId },
+          {
+            $push: {
+              favoriteUniversities: {
+                universityId: params.universityId,
+                rank: parseInt(user.favoriteUniversities.length + 1),
+              },
+            },
+          },
+        );
+      }
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: null,
@@ -140,10 +156,22 @@ export class UserService {
   // Remove Favorite University
   async removeFavoriteUniversity(params: FavoriteListDto): Promise<any> {
     try {
-      await this.userModel.updateOne(
-        { _id: params.userId },
-        { $pull: { favoriteUniversities: params.universityId } },
+      const user: any = await this.userModel.findById(params.userId);
+      var index = user.favoriteUniversities.findIndex(
+        fu => fu.universityId == params.universityId,
       );
+      if (index != -1) {
+        user.favoriteUniversities.splice(index, 1);
+
+        for (var i = index; i < user.favoriteUniversities.length; i++) {
+          --user.favoriteUniversities[i].rank;
+        }
+
+        await this.userModel.updateOne(
+          { _id: params.userId },
+          { $set: { favoriteUniversities: user.favoriteUniversities } },
+        );
+      }
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: null,
@@ -155,11 +183,51 @@ export class UserService {
     }
   }
 
+  async switchFavoriteUniversityRanks(
+    params: SwitchFavoriteUniversityRanksDto,
+  ): Promise<any> {
+    try {
+      const user: any = await this.userModel.findById(params.userId);
+      var index1 = user.favoriteUniversities.findIndex(
+        fu => fu.universityId == params.universityDetailsId1,
+      );
+
+      var index2 = user.favoriteUniversities.findIndex(
+        fu => fu.universityId == params.universityDetailsId2,
+      );
+
+      if (index1 != -1 && index2 !== -1) {
+        const rank = user.favoriteUniversities[index1].rank;
+        user.favoriteUniversities[index1].rank =
+          user.favoriteUniversities[index2].rank;
+        user.favoriteUniversities[index2].rank = rank;
+
+        const favoriteUniversities = _.sortBy(
+          user.favoriteUniversities,
+          'rank',
+        );
+
+        await this.userModel.updateOne(
+          { _id: params.userId },
+          { $set: { favoriteUniversities: favoriteUniversities } },
+        );
+      }
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: null,
+        message: 'Switched University ranks successfully',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
   // Get Favorite Universities
   async getFavoriteUniversities(id: string): Promise<any> {
     try {
       const userData = await this.userModel.findById(id).populate({
-        path: 'favoriteUniversities',
+        path: 'favoriteUniversities.universityId',
         model: this.universityDetailsModel,
         populate: [
           {
