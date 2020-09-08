@@ -13,9 +13,4 @@ export class ApplicationChatDto {
   @ApiProperty()
   @IsString()
   comment: string;
-
-  @ApiProperty()
-  @IsArray()
-  @IsOptional()
-  attachments?: string[];
 }

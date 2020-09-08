@@ -11,6 +11,8 @@ import { UniversityApplication } from './dto/university-applications.schema';
 import { PaginationDto } from 'src/shared/dto/shared.dto';
 import { User } from 'src/user/dto/user.schema';
 import { UniversityDetails } from 'src/university_details/dto/university_details.schema';
+import { University } from 'src/university/dto/university.schema';
+import { Country } from 'src/country/dto/country.schema';
 
 @Injectable()
 export class UniversityApplicationsService {
@@ -20,6 +22,9 @@ export class UniversityApplicationsService {
     @InjectModel('User') private userModel: Model<User>,
     @InjectModel('UniversityDetails')
     private universityDetailsModel: Model<UniversityDetails>,
+    @InjectModel('University')
+    private universityModel: Model<University>,
+    @InjectModel('Country') private countryModel: Model<Country>,
   ) {}
 
   //   Add User Academic Info
@@ -54,6 +59,16 @@ export class UniversityApplicationsService {
         .populate({
           path: 'universityDetails',
           model: this.universityDetailsModel,
+          populate: [
+            {
+              path: 'university',
+              model: this.universityModel,
+            },
+            {
+              path: 'country',
+              model: this.countryModel,
+            },
+          ],
         })
         .skip(params.start)
         .limit(params.limit);

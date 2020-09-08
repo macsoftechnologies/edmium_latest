@@ -4,6 +4,7 @@ import { ApplicationChatService } from './application-chat.service';
 import { ApplicationChatSchema } from './dto/application-chat.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from 'src/user/dto/user.schema';
+import { SharedService } from 'src/shared/shared.service';
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { UserSchema } from 'src/user/dto/user.schema';
     ]),
   ],
   controllers: [ApplicationChatController],
-  providers: [ApplicationChatService],
+  providers: [ApplicationChatService, SharedService],
 })
 export class ApplicationChatModule {}
