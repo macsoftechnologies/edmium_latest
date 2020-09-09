@@ -226,23 +226,105 @@ export class UserService {
   // Get Favorite Universities
   async getFavoriteUniversities(id: string): Promise<any> {
     try {
-      const userData = await this.userModel.findById(id).populate({
-        path: 'favoriteUniversities.universityId',
-        model: this.universityDetailsModel,
-        populate: [
-          {
-            path: 'university',
-            model: this.universityModel,
+      let userData = await this.userModel.aggregate([
+        {
+          $addFields: {
+            userId: {
+              $toString: '$_id',
+            },
           },
-          {
-            path: 'country',
-            model: this.countryModel,
+        },
+        {
+          $match: { userId: id },
+        },
+        { $unwind: '$favoriteUniversities' },
+        {
+          $lookup: {
+            from: 'universityapplications',
+            localField: 'favoriteUniversities.universityId',
+            foreignField: 'universityDetails',
+            as: 'favoriteUniversities.universityApplications',
           },
-        ],
-      });
+        },
+        {
+          $unwind: {
+            path: '$favoriteUniversities.universityApplications',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $match: {
+            $or: [
+              { 'favoriteUniversities.universityApplications.user': id },
+              { 'favoriteUniversities.universityApplications': undefined },
+            ],
+          },
+        },
+        {
+          $addFields: {
+            universityDetailsId: {
+              $toObjectId: '$favoriteUniversities.universityId',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universitydetails',
+            localField: 'universityDetailsId',
+            foreignField: '_id',
+            as: 'favoriteUniversities.universityDetails',
+          },
+        },
+        {
+          $unwind: '$favoriteUniversities.universityDetails',
+        },
+        {
+          $addFields: {
+            universityId: {
+              $toObjectId: '$favoriteUniversities.universityDetails.university',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universities',
+            localField: 'universityId',
+            foreignField: '_id',
+            as: 'favoriteUniversities.universityDetails.university',
+          },
+        },
+        {
+          $unwind: '$favoriteUniversities.universityDetails.university',
+        },
+        {
+          $addFields: {
+            countryId: {
+              $toObjectId: '$favoriteUniversities.universityDetails.country',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'countries',
+            localField: 'countryId',
+            foreignField: '_id',
+            as: 'favoriteUniversities.universityDetails.country',
+          },
+        },
+        {
+          $unwind: '$favoriteUniversities.universityDetails.country',
+        },
+        {
+          $group: {
+            _id: '$_id',
+            favoriteUniversities: { $push: '$favoriteUniversities' },
+          },
+        },
+      ]);
+
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: userData.favoriteUniversities,
+        data: userData[0].favoriteUniversities,
         message: 'Request Successful',
       };
       return apiResponse;

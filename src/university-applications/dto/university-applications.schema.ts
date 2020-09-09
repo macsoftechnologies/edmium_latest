@@ -15,7 +15,7 @@ export class UniversityApplication extends Document {
   @Prop()
   universityDetails: string;
 
-  @Prop({ default: 'Application submitted to the Institution' })
+  @Prop({ default: 'Application submitted to the University' })
   status?: string;
 }
 
