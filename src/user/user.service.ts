@@ -241,8 +241,22 @@ export class UserService {
         {
           $lookup: {
             from: 'universityapplications',
-            localField: 'favoriteUniversities.universityId',
-            foreignField: 'universityDetails',
+            let: {
+              universityId: '$favoriteUniversities.universityId',
+              userId: '$userId',
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$universityDetails', '$$universityId'] },
+                      { $gte: ['$user', '$$userId'] },
+                    ],
+                  },
+                },
+              },
+            ],
             as: 'favoriteUniversities.universityApplications',
           },
         },
@@ -250,14 +264,6 @@ export class UserService {
           $unwind: {
             path: '$favoriteUniversities.universityApplications',
             preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $match: {
-            $or: [
-              { 'favoriteUniversities.universityApplications.user': id },
-              { 'favoriteUniversities.universityApplications': undefined },
-            ],
           },
         },
         {
@@ -324,7 +330,10 @@ export class UserService {
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: userData[0].favoriteUniversities,
+        data:
+          userData && userData[0] && userData[0].favoriteUniversities
+            ? userData[0].favoriteUniversities
+            : [],
         message: 'Request Successful',
       };
       return apiResponse;
