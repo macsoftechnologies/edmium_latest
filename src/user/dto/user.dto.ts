@@ -36,6 +36,32 @@ export class CreateUser {
   course: string;
 }
 
+export class AddCounselorDto {
+  @ApiProperty()
+  @IsString()
+  firstName: string;
+
+  @ApiProperty()
+  @IsString()
+  lastName: string;
+
+  @ApiProperty()
+  @IsEmail()
+  emailAddress: string;
+
+  @ApiProperty()
+  @IsNumber()
+  mobileNumber: number;
+
+  @ApiProperty()
+  @IsString()
+  password: string;
+
+  @ApiProperty()
+  @IsString()
+  country: string;
+}
+
 export class UserLogin {
   @ApiProperty()
   @IsEmail()

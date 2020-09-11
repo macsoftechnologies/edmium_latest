@@ -35,7 +35,7 @@ export class UserService {
   /* Create Education */
   async createUser(createUser: any): Promise<any> {
     try {
-      createUser.role = 'student';
+      createUser.role = createUser.role ? createUser.role : 'student';
       const createUserRes = await this.userModel.create(createUser);
       console.log(createUserRes);
       let response = {
@@ -342,6 +342,31 @@ export class UserService {
     }
   }
 
+  // Get Users
+  async getUsers(params: any): Promise<any> {
+    try {
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: await this.userModel
+          .find(
+            { isDeleted: false, ...params },
+            {
+              firstName: 1,
+              lastName: 1,
+              emailAddress: 1,
+              mobileNumber: 1,
+              country: 1,
+            },
+          )
+          .populate({ path: 'country', model: this.countryModel }),
+        message: 'Request successfully',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
   // Update User
   async updateUser(userId: string, params: any): Promise<any> {
     try {
@@ -479,6 +504,21 @@ export class UserService {
       return apiResponse;
     } catch (error) {
       console.log(error);
+      return error;
+    }
+  }
+
+  // Update User
+  async deleteUser(userId: string): Promise<any> {
+    try {
+      await this.userModel.updateOne({ _id: userId }, { isDeleted: true });
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: null,
+        message: 'Deleted successfully',
+      };
+      return apiResponse;
+    } catch (error) {
       return error;
     }
   }

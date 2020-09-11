@@ -7,6 +7,8 @@ import {
   Param,
   UseInterceptors,
   UploadedFile,
+  Put,
+  Delete,
 } from '@nestjs/common';
 import {
   CreateUser,
@@ -14,6 +16,7 @@ import {
   FavoriteListDto,
   FilterStudentsDto,
   SwitchFavoriteUniversityRanksDto,
+  AddCounselorDto,
 } from './dto/user.dto';
 import { UserService } from './user.service';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
@@ -147,6 +150,69 @@ export class UserController {
   async filterStudents(@Body() params: FilterStudentsDto) {
     try {
       let response = await this.userService.filterStudents(params);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Add Counselor
+  @Post('/addCounselor')
+  async addCounselor(@Body() body: AddCounselorDto) {
+    try {
+      console.log(body);
+      const params: any = body;
+      params.role = 'counselor';
+      let response = await this.userService.createUser(params);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Get Counselor
+  @Get('/counselors')
+  async getCounselors() {
+    try {
+      let response = await this.userService.getUsers({ role: 'counselor' });
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Update Counselor
+  @Put('/:id')
+  async updateCounselor(
+    @Body() body: AddCounselorDto,
+    @Param('id') id: string,
+  ) {
+    try {
+      console.log(body);
+      let response = await this.userService.updateUser(id, body);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Delete Counselor
+  @Delete('/:id')
+  async deleteCounselor(@Param('id') id: string) {
+    try {
+      let response = await this.userService.deleteUser(id);
       return response;
     } catch (error) {
       return {

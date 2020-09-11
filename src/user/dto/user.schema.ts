@@ -38,6 +38,10 @@ export class User extends Document {
   @Prop()
   @IsOptional()
   profileImage?: string;
+
+  @Prop({ default: false })
+  @IsOptional()
+  isDeleted?: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
