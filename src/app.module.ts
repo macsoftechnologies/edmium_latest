@@ -17,6 +17,8 @@ import { UniversityApplicationsModule } from './university-applications/universi
 import { ApplicationStatusModule } from './application-status/application-status.module';
 import { ApplicationChatModule } from './application-chat/application-chat.module';
 import { UserDocumentsModule } from './user-documents/user-documents.module';
+import { UserAuthenticationModule } from './user-authentication/user-authentication.module';
+import { UserAttachmentsModule } from './user-attachments/user-attachments.module';
 @Module({
   imports: [
     EducationModule,
@@ -37,6 +39,8 @@ import { UserDocumentsModule } from './user-documents/user-documents.module';
     ApplicationStatusModule,
     ApplicationChatModule,
     UserDocumentsModule,
+    UserAuthenticationModule,
+    UserAttachmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService, SharedService],

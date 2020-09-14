@@ -259,4 +259,8 @@ export class UniversityApplicationsService {
       return error_response;
     }
   }
+
+  async getApplicationById(id: string): Promise<any> {
+    return await this.universityApplicationModel.findById(id);
+  }
 }

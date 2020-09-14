@@ -166,6 +166,10 @@ export class UserPersonalInfo extends Document {
   @Prop()
   @IsOptional()
   emergencyContactRelation: string;
+
+  @Prop({ default: false })
+  @IsOptional()
+  isDeleted?: boolean;
 }
 
 export const UserPersonalInfoSchema = SchemaFactory.createForClass(

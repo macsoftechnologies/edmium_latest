@@ -10,6 +10,7 @@ import { UniversityDetailsService } from 'src/university_details/university_deta
 import { UniversityDetailsSchema } from 'src/university_details/dto/university_details.schema';
 import { UniversitySchema } from 'src/university/dto/university.schema';
 import { SharedService } from 'src/shared/shared.service';
+import { UserAuthenticationSchema } from 'src/user-authentication/dto/user-authentication.schema';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SharedService } from 'src/shared/shared.service';
       { name: 'Course', schema: CourseSchema },
       { name: 'UniversityDetails', schema: UniversityDetailsSchema },
       { name: 'University', schema: UniversitySchema },
+      { name: 'UserAuthentication', schema: UserAuthenticationSchema },
     ]),
   ],
   controllers: [UserController],

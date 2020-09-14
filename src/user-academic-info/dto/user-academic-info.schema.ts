@@ -34,6 +34,10 @@ export class UserAcademicInfo extends Document {
 
   @Prop()
   endDate: string;
+
+  @Prop({ default: false })
+  @IsOptional()
+  isDeleted?: boolean;
 }
 
 export const UserAcademicInfoSchema = SchemaFactory.createForClass(

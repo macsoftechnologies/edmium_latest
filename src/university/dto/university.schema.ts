@@ -1,4 +1,5 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
+import { IsOptional } from 'class-validator';
 import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
@@ -11,6 +12,10 @@ export class University extends Document {
 
   @Prop({ default: null })
   universityBackgroundImage: string;
+
+  @Prop({ default: false })
+  @IsOptional()
+  isDeleted?: boolean;
 }
 
 export const UniversitySchema = SchemaFactory.createForClass(University);

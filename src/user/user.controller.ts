@@ -17,6 +17,7 @@ import {
   FilterStudentsDto,
   SwitchFavoriteUniversityRanksDto,
   AddCounselorDto,
+  AssignStudentToCounselorDto,
 } from './dto/user.dto';
 import { UserService } from './user.service';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
@@ -213,6 +214,25 @@ export class UserController {
   async deleteCounselor(@Param('id') id: string) {
     try {
       let response = await this.userService.deleteUser(id);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Assign student to Counselor
+  @Post('/assignStudentToCounselor')
+  async assignStudentToCounselor(@Body() body: AssignStudentToCounselorDto) {
+    try {
+      console.log(body);
+      const params: any = body;
+      params.role = 'counselor';
+      let response = await this.userService.updateUser(body.userId, {
+        assignedTo: body.counselorId,
+      });
       return response;
     } catch (error) {
       return {

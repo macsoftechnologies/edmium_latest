@@ -20,7 +20,8 @@ export class User extends Document {
   mobileNumber: number;
 
   @Prop()
-  password: string;
+  @IsOptional()
+  password?: string;
 
   @Prop()
   country: string;
@@ -42,6 +43,16 @@ export class User extends Document {
   @Prop({ default: false })
   @IsOptional()
   isDeleted?: boolean;
+
+  @Prop({ default: false })
+  @IsOptional()
+  studentAssigned?: boolean;
+
+  @Prop()
+  assignedTo: string;
+
+  @Prop()
+  createdBy: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

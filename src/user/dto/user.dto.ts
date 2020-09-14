@@ -117,3 +117,13 @@ export class SwitchFavoriteUniversityRanksDto {
   @IsString()
   universityDetailsId2: string;
 }
+
+export class AssignStudentToCounselorDto {
+  @ApiProperty()
+  @IsString()
+  userId: string;
+
+  @ApiProperty()
+  @IsString()
+  counselorId: string;
+}

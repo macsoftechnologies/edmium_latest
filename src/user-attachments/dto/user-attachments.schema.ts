@@ -3,25 +3,21 @@ import { Document } from 'mongoose';
 import { IsOptional } from 'class-validator';
 
 @Schema({ timestamps: true })
-export class ApplicationChat extends Document {
+export class UserAttachment extends Document {
   @Prop()
-  application: string;
+  userId: string;
 
   @Prop()
-  user: string;
+  attachment: string;
 
   @Prop()
-  comment: string;
-
-  @Prop()
-  @IsOptional()
-  attachments?: string[];
+  category: string;
 
   @Prop({ default: false })
   @IsOptional()
   isDeleted?: boolean;
 }
 
-export const ApplicationChatSchema = SchemaFactory.createForClass(
-  ApplicationChat,
+export const UserAttachmentSchema = SchemaFactory.createForClass(
+  UserAttachment,
 );

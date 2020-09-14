@@ -29,6 +29,10 @@ export class UserWorkInfo extends Document {
 
   @Prop()
   currentlyWorkingHere: boolean;
+
+  @Prop({ default: false })
+  @IsOptional()
+  isDeleted?: boolean;
 }
 
 export const UserWorkInfoSchema = SchemaFactory.createForClass(UserWorkInfo);

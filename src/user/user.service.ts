@@ -18,6 +18,7 @@ import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dt
 import { University } from 'src/university/dto/university.schema';
 
 import * as _ from 'lodash';
+import { UserAuthentication } from 'src/user-authentication/dto/user-authentication.schema';
 
 @Injectable()
 export class UserService {
@@ -30,14 +31,99 @@ export class UserService {
     private universityDetailsModel: Model<UniversityDetails>,
     @InjectModel('University')
     private universityModel: Model<University>,
+    @InjectModel('UserAuthentication')
+    private userAuthenticationModel: Model<UserAuthentication>,
   ) {}
 
   /* Create Education */
   async createUser(createUser: any): Promise<any> {
     try {
       createUser.role = createUser.role ? createUser.role : 'student';
+
+      const duplicateEmail = await this.userModel.findOne({
+        emailAddress: createUser.emailAddress,
+        isDeleted: false,
+      });
+
+      if (duplicateEmail) {
+        return {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          data: null,
+          message: 'Email Address already registered',
+        };
+      }
+
+      const duplicateMobileNumber = await this.userModel.findOne({
+        mobileNumber: createUser.mobileNumber,
+        isDeleted: false,
+      });
+
+      if (duplicateMobileNumber) {
+        return {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          data: null,
+          message: 'Mobile Number already registered',
+        };
+      }
+
+      const password = createUser.password;
+      delete createUser.password;
+
+      const counselors = await this.userModel.find({
+        role: 'counselor',
+        country: createUser.country,
+        isDeleted: false,
+      });
+
+      if (counselors.length === 1) {
+        createUser.createdBy = counselors[0]._id;
+        createUser.assignedTo = counselors[0]._id;
+
+        await this.userModel.updateOne(
+          { _id: counselors[0]._id },
+          { studentAssigned: true },
+        );
+      } else if (counselors.length > 1) {
+        const index = _.findIndex(
+          counselors,
+          counselor => {
+            return counselor.studentAssigned == true;
+          },
+          0,
+        );
+
+        if (index == -1) {
+          createUser.createdBy = counselors[0]._id;
+          createUser.assignedTo = counselors[0]._id;
+
+          await this.userModel.updateOne(
+            { _id: counselors[0]._id },
+            { studentAssigned: true },
+          );
+        } else {
+          const nextIndex = counselors.length - 2 < index ? 0 : index + 1;
+
+          createUser.createdBy = counselors[nextIndex]._id;
+          createUser.assignedTo = counselors[nextIndex]._id;
+
+          await this.userModel.updateOne(
+            { _id: counselors[index]._id },
+            { studentAssigned: false },
+          );
+
+          await this.userModel.updateOne(
+            { _id: counselors[nextIndex]._id },
+            { studentAssigned: true },
+          );
+        }
+      }
       const createUserRes = await this.userModel.create(createUser);
-      console.log(createUserRes);
+      // console.log(createUserRes);
+
+      await this.userAuthenticationModel.create({
+        user: createUserRes._id,
+        password: password,
+      });
       let response = {
         statusCode: HttpStatus.OK,
         data: createUserRes,
@@ -62,27 +148,32 @@ export class UserService {
       const user = await this.userModel
         .findOne({
           emailAddress: userLogIn.emailAddress,
-          password: userLogIn.password,
+          isDeleted: false,
         })
         .populate({ path: 'education', model: this.educationModel })
         .populate({ path: 'country', model: this.countryModel })
         .populate({ path: 'course', model: this.courseModel });
-      console.log(user);
-      let response = {};
+
       if (user) {
-        response = {
-          statusCode: HttpStatus.OK,
-          data: user,
-          message: 'LogIn Successful',
-        };
-      } else {
-        response = {
-          statusCode: HttpStatus.NOT_FOUND,
-          data: user,
-          message: 'Invalid Credentials',
-        };
+        const userAuthentication = await this.userAuthenticationModel.findOne({
+          user: user._id,
+          password: userLogIn.password,
+          isDeleted: false,
+        });
+
+        if (userAuthentication) {
+          return {
+            statusCode: HttpStatus.OK,
+            data: user,
+            message: 'LogIn Successful',
+          };
+        }
       }
-      return response;
+      return {
+        statusCode: HttpStatus.NOT_FOUND,
+        data: null,
+        message: 'Invalid Credentials',
+      };
     } catch (error) {
       let error_response: APIResponse = {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,

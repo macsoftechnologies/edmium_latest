@@ -94,6 +94,10 @@ export class UserDocuments extends Document {
   @Prop()
   @IsOptional()
   additionalDocuments?: string;
+
+  @Prop({ default: false })
+  @IsOptional()
+  isDeleted?: boolean;
 }
 
 export const UserDocumentsSchema = SchemaFactory.createForClass(UserDocuments);
