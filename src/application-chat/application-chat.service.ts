@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { User } from 'src/user/dto/user.schema';
-import { UserAttachment } from 'src/user-attachments/dto/user-attachments.schema';
+import { Attachment } from 'src/attachments/dto/attachments.schema';
 
 @Injectable()
 export class ApplicationChatService {
@@ -13,8 +13,8 @@ export class ApplicationChatService {
     @InjectModel('ApplicationChat')
     private applicationChatModel: Model<ApplicationChat>,
     @InjectModel('User') private userModel: Model<User>,
-    @InjectModel('UserAttachment')
-    private userAttachmentModel: Model<UserAttachment>,
+    @InjectModel('Attachment')
+    private attachmentModel: Model<Attachment>,
   ) {}
 
   //  Add Application Status
@@ -38,7 +38,7 @@ export class ApplicationChatService {
         .find({
           application: applicationId,
         })
-        .populate({ path: 'attachments', model: this.userAttachmentModel });
+        .populate({ path: 'attachments', model: this.attachmentModel });
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: response,

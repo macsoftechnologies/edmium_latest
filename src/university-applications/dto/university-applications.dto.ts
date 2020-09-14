@@ -22,17 +22,27 @@ export class ApplicationsFilterDto extends PaginationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  status: string;
+  fromDate: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  course: string;
+  toDate: string;
 
   @ApiProperty()
-  @IsString()
   @IsOptional()
-  intake: string;
+  @IsOptional()
+  status: string[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsOptional()
+  course: string[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsOptional()
+  intake: string[];
 
   @ApiProperty()
   @IsString()

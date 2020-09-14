@@ -18,6 +18,7 @@ import {
   SwitchFavoriteUniversityRanksDto,
   AddCounselorDto,
   AssignStudentToCounselorDto,
+  RegisterStudentDto,
 } from './dto/user.dto';
 import { UserService } from './user.service';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
@@ -233,6 +234,21 @@ export class UserController {
       let response = await this.userService.updateUser(body.userId, {
         assignedTo: body.counselorId,
       });
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  /* Create User  */
+  @Post('/registerStudent')
+  async registerStudent(@Body() body: RegisterStudentDto) {
+    try {
+      console.log(body);
+      let response = await this.userService.createUser(body);
       return response;
     } catch (error) {
       return {

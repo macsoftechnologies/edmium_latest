@@ -12,14 +12,14 @@ import { ApplicationChatService } from './application-chat.service';
 import { ApplicationChatDto } from './dto/application-chat.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { SharedService } from 'src/shared/shared.service';
-import { UserAttachmentsService } from 'src/user-attachments/user-attachments.service';
+import { AttachmentsService } from 'src/attachments/attachments.service';
 import { UniversityApplicationsService } from 'src/university-applications/university-applications.service';
 
 @Controller('application-chat')
 export class ApplicationChatController {
   constructor(
     private applicationChatService: ApplicationChatService,
-    private userAttachmentsService: UserAttachmentsService,
+    private attachmentsService: AttachmentsService,
     private universityApplicationsService: UniversityApplicationsService,
     private sharedService: SharedService,
   ) {}
@@ -36,7 +36,7 @@ export class ApplicationChatController {
     try {
       const attachments = [];
 
-      if (files.attachments) {
+      if (files && files.attachments) {
         const application = await this.universityApplicationsService.getApplicationById(
           body.application,
         );
@@ -46,13 +46,11 @@ export class ApplicationChatController {
             'university-application/chat',
           );
 
-          const attachmentObject = await this.userAttachmentsService.addAttachment(
-            {
-              userId: application.user,
-              attachment: res.Location,
-              category: 'chat',
-            },
-          );
+          const attachmentObject = await this.attachmentsService.addAttachment({
+            userId: application.user,
+            attachment: res.Location,
+            category: 'chat',
+          });
 
           attachments.push(attachmentObject.data._id);
         }

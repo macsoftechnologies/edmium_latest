@@ -86,17 +86,27 @@ export class FilterStudentsDto extends PaginationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  country: string;
+  fromDate: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  intake: string;
+  toDate: string;
 
   @ApiProperty()
-  @IsString()
   @IsOptional()
-  status: string;
+  @IsOptional()
+  country: string[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsOptional()
+  intake: string[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsOptional()
+  status: string[];
 
   @ApiProperty()
   @IsString()
@@ -126,4 +136,42 @@ export class AssignStudentToCounselorDto {
   @ApiProperty()
   @IsString()
   counselorId: string;
+}
+
+export class RegisterStudentDto {
+  @ApiProperty()
+  @IsString()
+  education: string;
+
+  @ApiProperty()
+  @IsString()
+  firstName: string;
+
+  @ApiProperty()
+  @IsString()
+  lastName: string;
+
+  @ApiProperty()
+  @IsEmail()
+  emailAddress: string;
+
+  @ApiProperty()
+  @IsNumber()
+  mobileNumber: number;
+
+  @ApiProperty()
+  @IsString()
+  password: string;
+
+  @ApiProperty()
+  @IsString()
+  country: string;
+
+  @ApiProperty()
+  @IsString()
+  course: string;
+
+  @ApiProperty()
+  @IsString()
+  createdBy: string;
 }

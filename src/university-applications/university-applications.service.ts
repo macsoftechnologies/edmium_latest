@@ -3,6 +3,7 @@ import {
   UniversityApplicationDto,
   ApplicationsOfStudentDto,
   UpdateStatusDto,
+  ApplicationsFilterDto,
 } from './dto/university-applications.dto';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -109,27 +110,47 @@ export class UniversityApplicationsService {
   }
 
   // filterApplications
-  async filterApplications(params: any): Promise<any> {
+  async filterApplications(params: ApplicationsFilterDto): Promise<any> {
     try {
       console.log(params);
 
       let match: any = {};
-      let likeMatch = {};
+      let searchFilter = {};
+      let fromDateFilter = {};
+      let toDateFilter = {};
+
+      if (params.fromDate && params.toDate) {
+        const toDate = new Date(params.toDate);
+        toDate.setDate(toDate.getDate() + 1);
+
+        fromDateFilter['createdAt'] = {
+          $gt: new Date(params.fromDate),
+        };
+        toDateFilter['createdAt'] = {
+          $lt: toDate,
+        };
+      }
 
       if (params.status) {
-        match['status'] = params.status;
+        match['status'] = {
+          $in: params.status,
+        };
       }
 
       if (params.course) {
-        match['universityDetails.course'] = params.course;
+        match['universityDetails.course'] = {
+          $in: params.course,
+        };
       }
 
       if (params.intake) {
-        match['universityDetails.intake'] = params.intake;
+        match['universityDetails.intake'] = {
+          $in: params.intake,
+        };
       }
 
       if (params.searchString) {
-        likeMatch['$or'] = [
+        searchFilter['$or'] = [
           {
             'university.universityName': {
               $regex: '.*' + params.searchString + '.*',
@@ -154,6 +175,12 @@ export class UniversityApplicationsService {
       let universityDetails = await this.universityApplicationModel
         .aggregate([
           {
+            $match: fromDateFilter,
+          },
+          {
+            $match: toDateFilter,
+          },
+          {
             $addFields: {
               universityDetailsId: {
                 $toObjectId: '$universityDetails',
@@ -169,7 +196,6 @@ export class UniversityApplicationsService {
             },
           },
           { $unwind: '$universityDetails' },
-
           {
             $addFields: {
               universityId: {
@@ -206,7 +232,7 @@ export class UniversityApplicationsService {
             $match: match,
           },
           {
-            $match: likeMatch,
+            $match: searchFilter,
           },
         ])
         .skip(params.start)

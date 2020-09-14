@@ -2,19 +2,19 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { APIResponse } from 'src/dto/api-response-dto';
-import { UserAttachment } from './dto/user-attachments.schema';
+import { Attachment } from './dto/attachments.schema';
 
 @Injectable()
-export class UserAttachmentsService {
+export class AttachmentsService {
   constructor(
-    @InjectModel('UserAttachment')
-    private userAttachmentModel: Model<UserAttachment>,
+    @InjectModel('Attachment')
+    private attachmentModel: Model<Attachment>,
   ) {}
 
   //   Add Attachment
   async addAttachment(addAttachment: any) {
     try {
-      const response = await this.userAttachmentModel.create(addAttachment);
+      const response = await this.attachmentModel.create(addAttachment);
       console.log('addAttachment', response);
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
@@ -27,10 +27,13 @@ export class UserAttachmentsService {
     }
   }
 
-  //   Fetch All
-  async fetchAll(userId: string) {
+  //   Get User Attachments
+  async getAttachments(params: any) {
     try {
-      const response = await this.userAttachmentModel.find({ userId: userId });
+      const response = await this.attachmentModel.find({
+        isDeleted: false,
+        ...params,
+      });
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: response,

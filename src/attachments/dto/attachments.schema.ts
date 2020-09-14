@@ -3,9 +3,14 @@ import { Document } from 'mongoose';
 import { IsOptional } from 'class-validator';
 
 @Schema({ timestamps: true })
-export class UserAttachment extends Document {
+export class Attachment extends Document {
   @Prop()
-  userId: string;
+  @IsOptional()
+  userId?: string;
+
+  @Prop()
+  @IsOptional()
+  countryId?: string;
 
   @Prop()
   attachment: string;
@@ -18,6 +23,4 @@ export class UserAttachment extends Document {
   isDeleted?: boolean;
 }
 
-export const UserAttachmentSchema = SchemaFactory.createForClass(
-  UserAttachment,
-);
+export const AttachmentSchema = SchemaFactory.createForClass(Attachment);

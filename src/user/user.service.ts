@@ -35,7 +35,7 @@ export class UserService {
     private userAuthenticationModel: Model<UserAuthentication>,
   ) {}
 
-  /* Create Education */
+  //  Create User
   async createUser(createUser: any): Promise<any> {
     try {
       createUser.role = createUser.role ? createUser.role : 'student';
@@ -69,30 +69,16 @@ export class UserService {
       const password = createUser.password;
       delete createUser.password;
 
-      const counselors = await this.userModel.find({
-        role: 'counselor',
-        country: createUser.country,
-        isDeleted: false,
-      });
+      if (createUser.createdBy) {
+        createUser.assignedTo = createUser.createdBy;
+      } else {
+        const counselors = await this.userModel.find({
+          role: 'counselor',
+          country: createUser.country,
+          isDeleted: false,
+        });
 
-      if (counselors.length === 1) {
-        createUser.createdBy = counselors[0]._id;
-        createUser.assignedTo = counselors[0]._id;
-
-        await this.userModel.updateOne(
-          { _id: counselors[0]._id },
-          { studentAssigned: true },
-        );
-      } else if (counselors.length > 1) {
-        const index = _.findIndex(
-          counselors,
-          counselor => {
-            return counselor.studentAssigned == true;
-          },
-          0,
-        );
-
-        if (index == -1) {
+        if (counselors.length === 1) {
           createUser.createdBy = counselors[0]._id;
           createUser.assignedTo = counselors[0]._id;
 
@@ -100,21 +86,39 @@ export class UserService {
             { _id: counselors[0]._id },
             { studentAssigned: true },
           );
-        } else {
-          const nextIndex = counselors.length - 2 < index ? 0 : index + 1;
-
-          createUser.createdBy = counselors[nextIndex]._id;
-          createUser.assignedTo = counselors[nextIndex]._id;
-
-          await this.userModel.updateOne(
-            { _id: counselors[index]._id },
-            { studentAssigned: false },
+        } else if (counselors.length > 1) {
+          const index = _.findIndex(
+            counselors,
+            counselor => {
+              return counselor.studentAssigned == true;
+            },
+            0,
           );
 
-          await this.userModel.updateOne(
-            { _id: counselors[nextIndex]._id },
-            { studentAssigned: true },
-          );
+          if (index == -1) {
+            createUser.createdBy = counselors[0]._id;
+            createUser.assignedTo = counselors[0]._id;
+
+            await this.userModel.updateOne(
+              { _id: counselors[0]._id },
+              { studentAssigned: true },
+            );
+          } else {
+            const nextIndex = counselors.length - 2 < index ? 0 : index + 1;
+
+            createUser.createdBy = counselors[nextIndex]._id;
+            createUser.assignedTo = counselors[nextIndex]._id;
+
+            await this.userModel.updateOne(
+              { _id: counselors[index]._id },
+              { studentAssigned: false },
+            );
+
+            await this.userModel.updateOne(
+              { _id: counselors[nextIndex]._id },
+              { studentAssigned: true },
+            );
+          }
         }
       }
       const createUserRes = await this.userModel.create(createUser);
@@ -479,23 +483,42 @@ export class UserService {
       console.log(params);
 
       let match: any = {};
-      let likeMatch = {};
+      let searchFilter = {};
+      let fromDateFilter = {};
+      let toDateFilter = {};
+
+      if (params.fromDate && params.toDate) {
+        const toDate = new Date(params.toDate);
+        toDate.setDate(toDate.getDate() + 1);
+
+        fromDateFilter['createdAt'] = {
+          $gt: new Date(params.fromDate),
+        };
+        toDateFilter['createdAt'] = {
+          $lt: toDate,
+        };
+      }
+
       if (params.country) {
-        match['universityApplications.universityDetails.country'] =
-          params.country;
+        match['universityApplications.universityDetails.country'] = {
+          $in: params.country,
+        };
       }
 
       if (params.intake) {
-        match['universityApplications.universityDetails.intake'] =
-          params.intake;
+        match['universityApplications.universityDetails.intake'] = {
+          $in: params.intake,
+        };
       }
 
       if (params.status) {
-        match['universityApplications.status'] = params.status;
+        match['universityApplications.status'] = {
+          $in: params.status,
+        };
       }
 
       if (params.searchString) {
-        likeMatch['$or'] = [
+        searchFilter['$or'] = [
           {
             firstName: {
               $regex: '.*' + params.searchString + '.*',
@@ -525,6 +548,15 @@ export class UserService {
                 $toString: '$_id',
               },
             },
+          },
+          {
+            $match: fromDateFilter,
+          },
+          {
+            $match: toDateFilter,
+          },
+          {
+            $match: searchFilter,
           },
           {
             $lookup: {
@@ -563,9 +595,6 @@ export class UserService {
           },
           {
             $match: match,
-          },
-          {
-            $match: likeMatch,
           },
           {
             $group: {
