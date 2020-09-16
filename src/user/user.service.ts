@@ -544,13 +544,6 @@ export class UserService {
       let universityDetails = await this.userModel
         .aggregate([
           {
-            $addFields: {
-              userId: {
-                $toString: '$_id',
-              },
-            },
-          },
-          {
             $match: fromDateFilter,
           },
           {
@@ -581,6 +574,13 @@ export class UserService {
             $unwind: {
               path: '$country',
               preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $addFields: {
+              userId: {
+                $toString: '$_id',
+              },
             },
           },
           {

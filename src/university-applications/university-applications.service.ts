@@ -14,6 +14,7 @@ import { User } from 'src/user/dto/user.schema';
 import { UniversityDetails } from 'src/university_details/dto/university_details.schema';
 import { University } from 'src/university/dto/university.schema';
 import { Country } from 'src/country/dto/country.schema';
+import { ApplicationStatus } from 'src/application-status/dto/application-status.schema';
 
 @Injectable()
 export class UniversityApplicationsService {
@@ -26,6 +27,8 @@ export class UniversityApplicationsService {
     @InjectModel('University')
     private universityModel: Model<University>,
     @InjectModel('Country') private countryModel: Model<Country>,
+    @InjectModel('ApplicationStatus')
+    private applicationStatusModel: Model<ApplicationStatus>,
   ) {}
 
   //   Add User Academic Info
@@ -58,6 +61,7 @@ export class UniversityApplicationsService {
       let universityDetails = await this.universityApplicationModel
         .find()
         .populate({ path: 'user', model: this.userModel })
+        .populate({ path: 'status', model: this.applicationStatusModel })
         .populate({
           path: 'universityDetails',
           model: this.universityDetailsModel,

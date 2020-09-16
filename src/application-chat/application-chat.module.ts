@@ -12,6 +12,7 @@ import { UniversityDetailsSchema } from 'src/university_details/dto/university_d
 import { UniversitySchema } from 'src/university/dto/university.schema';
 import { CountrySchema } from 'src/country/dto/country.schema';
 import { AttachmentsService } from 'src/attachments/attachments.service';
+import { ApplicationStatusSchema } from 'src/application-status/dto/application-status.schema';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AttachmentsService } from 'src/attachments/attachments.service';
       { name: 'UniversityDetails', schema: UniversityDetailsSchema },
       { name: 'University', schema: UniversitySchema },
       { name: 'Country', schema: CountrySchema },
+      { name: 'ApplicationStatus', schema: ApplicationStatusSchema },
     ]),
   ],
   controllers: [ApplicationChatController],
