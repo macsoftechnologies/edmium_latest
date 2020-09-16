@@ -33,6 +33,7 @@ export class UniversityApplicationsService {
     params: UniversityApplicationDto,
   ): Promise<any> {
     try {
+      console.log(params);
       const data = await this.universityApplicationModel.create(params);
 
       let response = {
@@ -114,10 +115,12 @@ export class UniversityApplicationsService {
     try {
       console.log(params);
 
-      let match: any = {};
+      let intakeFilter: any = {};
       let searchFilter = {};
       let fromDateFilter = {};
       let toDateFilter = {};
+      let statusFilter = {};
+      let UniversityFilter = {};
 
       if (params.fromDate && params.toDate) {
         const toDate = new Date(params.toDate);
@@ -132,19 +135,19 @@ export class UniversityApplicationsService {
       }
 
       if (params.status) {
-        match['status'] = {
+        statusFilter['status'] = {
           $in: params.status,
         };
       }
 
-      if (params.course) {
-        match['universityDetails.course'] = {
-          $in: params.course,
+      if (params.university) {
+        UniversityFilter['universityDetails.university'] = {
+          $in: params.university,
         };
       }
 
       if (params.intake) {
-        match['universityDetails.intake'] = {
+        intakeFilter['universityDetails.intake'] = {
           $in: params.intake,
         };
       }
@@ -181,6 +184,26 @@ export class UniversityApplicationsService {
             $match: toDateFilter,
           },
           {
+            $match: statusFilter,
+          },
+          {
+            $addFields: {
+              statusId: {
+                $toObjectId: '$status',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'applicationstatuses',
+              localField: 'statusId',
+              foreignField: '_id',
+              as: 'status',
+            },
+          },
+          { $unwind: '$status' },
+
+          {
             $addFields: {
               universityDetailsId: {
                 $toObjectId: '$universityDetails',
@@ -196,6 +219,9 @@ export class UniversityApplicationsService {
             },
           },
           { $unwind: '$universityDetails' },
+          {
+            $match: UniversityFilter,
+          },
           {
             $addFields: {
               universityId: {
@@ -229,7 +255,7 @@ export class UniversityApplicationsService {
           },
           { $unwind: '$user' },
           {
-            $match: match,
+            $match: intakeFilter,
           },
           {
             $match: searchFilter,
@@ -251,7 +277,9 @@ export class UniversityApplicationsService {
   }
 
   async checkDuplicate(params: any): Promise<any> {
-    return await this.universityApplicationModel.find(params).countDocuments();
+    return await this.universityApplicationModel
+      .find({ isDeleted: false, ...params })
+      .countDocuments();
   }
 
   async getMaxUniqueId(): Promise<any> {

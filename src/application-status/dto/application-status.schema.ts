@@ -7,6 +7,16 @@ export class ApplicationStatus extends Document {
   @Prop()
   status: string;
 
+  @Prop()
+  @IsOptional()
+  parentStatus?: string;
+
+  @Prop({ default: false })
+  isParentStatus?: boolean;
+
+  @Prop({ default: false })
+  isDefault?: boolean;
+
   @Prop({ default: false })
   @IsOptional()
   isDeleted?: boolean;

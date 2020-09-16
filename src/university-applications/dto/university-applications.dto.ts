@@ -37,7 +37,7 @@ export class ApplicationsFilterDto extends PaginationDto {
   @ApiProperty()
   @IsOptional()
   @IsOptional()
-  course: string[];
+  university: string[];
 
   @ApiProperty()
   @IsOptional()

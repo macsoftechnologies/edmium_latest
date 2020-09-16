@@ -15,11 +15,10 @@ export class ApplicationStatusService {
   //  Add Application Status
   async addApplicationStatus(params: ApplicationStatusDto) {
     try {
-      const createCountryRes = await this.applicationStatusModel.create(params);
-      console.log('createCountry', createCountryRes);
+      const response = await this.applicationStatusModel.create(params);
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: createCountryRes,
+        data: response,
         message: 'Request Successful !!!',
       };
       return apiResponse;
@@ -28,9 +27,12 @@ export class ApplicationStatusService {
     }
   }
 
-  async getAll() {
+  async getAll(params: any) {
     try {
-      const response = await this.applicationStatusModel.find();
+      const response = await this.applicationStatusModel.find({
+        isDeleted: false,
+        ...params,
+      });
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: response,

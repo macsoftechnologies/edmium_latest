@@ -9,12 +9,14 @@ import { UniversityApplicationsService } from './university-applications.service
 import { PaginationDto } from 'src/shared/dto/shared.dto';
 
 import moment = require('moment');
+import { ApplicationStatusService } from 'src/application-status/application-status.service';
 var mongoose = require('mongoose');
 
 @Controller('university-applications')
 export class UniversityApplicationsController {
   constructor(
     private universityApplicationService: UniversityApplicationsService,
+    private applicationStatusService: ApplicationStatusService,
   ) {}
 
   //   Apply for University
@@ -44,7 +46,16 @@ export class UniversityApplicationsController {
       params.universityDetails = mongoose.Types.ObjectId(
         params.universityDetails,
       );
-      params.user = mongoose.Types.ObjectId(params.user);
+      // params.user = mongoose.Types.ObjectId(params.user);
+
+      const status = await this.applicationStatusService.getAll({
+        isDefault: true,
+      });
+
+      console.log(status);
+
+      if (status.data && status.data[0] && status.data[0]._id)
+        params.status = status.data[0]._id;
       let response = await this.universityApplicationService.addUniversityApplication(
         params,
       );

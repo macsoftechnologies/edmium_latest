@@ -486,6 +486,7 @@ export class UserService {
       let searchFilter = {};
       let fromDateFilter = {};
       let toDateFilter = {};
+      let countryFilter = {};
 
       if (params.fromDate && params.toDate) {
         const toDate = new Date(params.toDate);
@@ -500,7 +501,7 @@ export class UserService {
       }
 
       if (params.country) {
-        match['universityApplications.universityDetails.country'] = {
+        countryFilter['country'] = {
           $in: params.country,
         };
       }
@@ -559,6 +560,30 @@ export class UserService {
             $match: searchFilter,
           },
           {
+            $match: countryFilter,
+          },
+          {
+            $addFields: {
+              countryId: {
+                $toObjectId: '$country',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'countries',
+              localField: 'countryId',
+              foreignField: '_id',
+              as: 'country',
+            },
+          },
+          {
+            $unwind: {
+              path: '$country',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
             $lookup: {
               from: 'universityapplications',
               localField: 'userId',
@@ -597,12 +622,34 @@ export class UserService {
             $match: match,
           },
           {
+            $addFields: {
+              statusId: {
+                $toObjectId: '$universityApplications.status',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'applicationstatuses',
+              localField: 'statusId',
+              foreignField: '_id',
+              as: 'universityApplications.status',
+            },
+          },
+          {
+            $unwind: {
+              path: '$universityApplications.status',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
             $group: {
               _id: '$_id',
               firstName: { $first: '$firstName' },
               lastName: { $first: '$lastName' },
               emailAddress: { $first: '$emailAddress' },
               mobileNumber: { $first: '$mobileNumber' },
+              country: { $first: '$country' },
               createdAt: { $first: '$createdAt' },
               universityApplications: { $push: '$universityApplications' },
             },
