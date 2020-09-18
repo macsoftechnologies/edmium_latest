@@ -19,6 +19,7 @@ import { University } from 'src/university/dto/university.schema';
 
 import * as _ from 'lodash';
 import { UserAuthentication } from 'src/user-authentication/dto/user-authentication.schema';
+import { ApplicationStatus } from 'src/application-status/dto/application-status.schema';
 
 @Injectable()
 export class UserService {
@@ -33,6 +34,8 @@ export class UserService {
     private universityModel: Model<University>,
     @InjectModel('UserAuthentication')
     private userAuthenticationModel: Model<UserAuthentication>,
+    @InjectModel('ApplicationStatus')
+    private applicationStatusModel: Model<ApplicationStatus>,
   ) {}
 
   //  Create User
@@ -154,9 +157,21 @@ export class UserService {
           emailAddress: userLogIn.emailAddress,
           isDeleted: false,
         })
-        .populate({ path: 'education', model: this.educationModel })
-        .populate({ path: 'country', model: this.countryModel })
-        .populate({ path: 'course', model: this.courseModel });
+        .populate({
+          path: 'education',
+          model: this.educationModel,
+          retainNullValues: true,
+        })
+        .populate({
+          path: 'country',
+          model: this.countryModel,
+          retainNullValues: true,
+        })
+        .populate({
+          path: 'course',
+          model: this.courseModel,
+          retainNullValues: true,
+        });
 
       if (user) {
         const userAuthentication = await this.userAuthenticationModel.findOne({
@@ -643,6 +658,57 @@ export class UserService {
             },
           },
           {
+            $addFields: {
+              createdById: {
+                $convert: {
+                  input: '$createdBy',
+                  to: 'objectId',
+                  onError: null,
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'createdById',
+              foreignField: '_id',
+              as: 'createdBy',
+            },
+          },
+          {
+            $unwind: {
+              path: '$createdBy',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
+          {
+            $addFields: {
+              assignedToId: {
+                $convert: {
+                  input: '$assignedTo',
+                  to: 'objectId',
+                  onError: null,
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'assignedToId',
+              foreignField: '_id',
+              as: 'assignedTo',
+            },
+          },
+          {
+            $unwind: {
+              path: '$assignedTo',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
             $group: {
               _id: '$_id',
               firstName: { $first: '$firstName' },
@@ -651,6 +717,8 @@ export class UserService {
               mobileNumber: { $first: '$mobileNumber' },
               country: { $first: '$country' },
               createdAt: { $first: '$createdAt' },
+              createdBy: { $first: '$createdBy' },
+              assignedTo: { $first: '$assignedTo' },
               universityApplications: { $push: '$universityApplications' },
             },
           },
@@ -683,6 +751,106 @@ export class UserService {
         statusCode: HttpStatus.OK,
         data: null,
         message: 'Deleted successfully',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Update User
+  async applicationsStatus(counselorId: string): Promise<any> {
+    try {
+      const response = await this.userModel.aggregate([
+        {
+          $match: { assignedTo: counselorId },
+        },
+        {
+          $addFields: {
+            userId: {
+              $toString: '$_id',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universityapplications',
+            localField: 'userId',
+            foreignField: 'user',
+            as: 'applications',
+          },
+        },
+        {
+          $unwind: {
+            path: '$applications',
+          },
+        },
+        {
+          $addFields: {
+            statusId: {
+              $toObjectId: '$applications.status',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'applicationstatuses',
+            localField: 'statusId',
+            foreignField: '_id',
+            as: 'status',
+          },
+        },
+        {
+          $unwind: {
+            path: '$status',
+          },
+        },
+        {
+          $addFields: {
+            parentStatusId: {
+              $toObjectId: '$status.parentStatus',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'applicationstatuses',
+            localField: 'parentStatusId',
+            foreignField: '_id',
+            as: 'parentStatus',
+          },
+        },
+        {
+          $unwind: {
+            path: '$parentStatus',
+          },
+        },
+      ]);
+
+      const statusResponse: any[] = await this.applicationStatusModel
+        .find({ isDeleted: false, isParentStatus: true })
+        .select('status')
+        .lean();
+
+      statusResponse.map((res: any) => {
+        res.count = 0;
+      });
+
+      response.map((res: any) => {
+        const index = _.findIndex(
+          statusResponse,
+          status => {
+            return status.status == res.parentStatus.status;
+          },
+          0,
+        );
+        statusResponse[index].count++;
+      });
+
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: statusResponse,
+        message: 'Request successfully',
       };
       return apiResponse;
     } catch (error) {

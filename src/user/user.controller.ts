@@ -257,4 +257,17 @@ export class UserController {
       };
     }
   }
+
+  @Get('/counselor/applicationsStatus/:counselorId')
+  async applicationsStatus(@Param('counselorId') counselorId: string) {
+    try {
+      let response = await this.userService.applicationsStatus(counselorId);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
 }

@@ -11,6 +11,7 @@ import { UniversityDetailsSchema } from 'src/university_details/dto/university_d
 import { UniversitySchema } from 'src/university/dto/university.schema';
 import { SharedService } from 'src/shared/shared.service';
 import { UserAuthenticationSchema } from 'src/user-authentication/dto/user-authentication.schema';
+import { ApplicationStatusSchema } from 'src/application-status/dto/application-status.schema';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UserAuthenticationSchema } from 'src/user-authentication/dto/user-authe
       { name: 'UniversityDetails', schema: UniversityDetailsSchema },
       { name: 'University', schema: UniversitySchema },
       { name: 'UserAuthentication', schema: UserAuthenticationSchema },
+      { name: 'ApplicationStatus', schema: ApplicationStatusSchema },
     ]),
   ],
   controllers: [UserController],

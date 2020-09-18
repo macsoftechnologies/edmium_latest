@@ -75,28 +75,24 @@ export class UserPersonalInfoService {
   //   Get User Personal Info By userId
   async getUserPersonalInfoByUserId(userId): Promise<any> {
     try {
-      const data: any = await this.userPersonalInfoModel
+      let data: any = await this.userPersonalInfoModel
         .findOne({ userId: userId })
-        .populate({
-          path: 'userId',
-          model: this.userModel,
-          select:
-            '_id firstName lastName emailAddress mobileNumber profileImage',
-        })
         .lean();
 
-      if (data && data.userId) {
-        data.firstName = data.userId.firstName;
-        data.lastName = data.userId.lastName;
-        data.emailAddress = data.userId.emailAddress;
-        data.mobileNumber = data.userId.mobileNumber;
-        data.profileImage = data.userId.profileImage;
-        data.userId = data.userId._id;
+      data = data ? data : {};
+      const userData = await this.userModel.findById(userId);
+
+      if (userData) {
+        data.firstName = userData.firstName;
+        data.lastName = userData.lastName;
+        data.emailAddress = userData.emailAddress;
+        data.mobileNumber = userData.mobileNumber;
+        data.profileImage = userData.profileImage;
       }
 
       return {
         statusCode: HttpStatus.OK,
-        data: data ? data : {},
+        data: data,
         message: 'Request Successful!',
       };
     } catch (error) {

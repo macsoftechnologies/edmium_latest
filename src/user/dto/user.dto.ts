@@ -5,10 +5,6 @@ import { PaginationDto } from 'src/shared/dto/shared.dto';
 export class CreateUser {
   @ApiProperty()
   @IsString()
-  education: string;
-
-  @ApiProperty()
-  @IsString()
   firstName: string;
 
   @ApiProperty()
@@ -29,11 +25,18 @@ export class CreateUser {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   country: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   course: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  education: string;
 }
 
 export class AddCounselorDto {
@@ -59,6 +62,7 @@ export class AddCounselorDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   country: string;
 }
 
@@ -141,10 +145,6 @@ export class AssignStudentToCounselorDto {
 export class RegisterStudentDto {
   @ApiProperty()
   @IsString()
-  education: string;
-
-  @ApiProperty()
-  @IsString()
   firstName: string;
 
   @ApiProperty()
@@ -165,11 +165,18 @@ export class RegisterStudentDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   country: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   course: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  education: string;
 
   @ApiProperty()
   @IsString()
