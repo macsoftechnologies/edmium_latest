@@ -24,6 +24,7 @@ import { UserService } from './user.service';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SharedService } from 'src/shared/shared.service';
+import { PaginationDto } from 'src/shared/dto/shared.dto';
 
 @Controller('user')
 export class UserController {
@@ -262,6 +263,36 @@ export class UserController {
   async applicationsStatus(@Param('counselorId') counselorId: string) {
     try {
       let response = await this.userService.applicationsStatus(counselorId);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Get Users For Eligibility Check
+  @Post('/forEligibilityCheck')
+  async getUsersForEligibilityCheck(@Body() body: PaginationDto) {
+    try {
+      let response = await this.userService.getUsersForEligibilityCheck({
+        role: 'student',
+      });
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Get Users For Eligibility Check
+  @Get('/relatedUniversities/:id')
+  async relatedUniversities(@Param('id') id: string) {
+    try {
+      let response = await this.userService.relatedUniversities(id);
       return response;
     } catch (error) {
       return {

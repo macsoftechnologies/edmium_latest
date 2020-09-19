@@ -25,9 +25,7 @@ export class ApplicationStatusController {
   @Get()
   async getAll() {
     try {
-      return await this.applicationStatusService.getAll({
-        isParentStatus: false,
-      });
+      return await this.applicationStatusService.getAll();
     } catch (error) {
       return {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,

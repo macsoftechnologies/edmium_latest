@@ -48,7 +48,7 @@ export class UniversityApplicationsController {
       );
       // params.user = mongoose.Types.ObjectId(params.user);
 
-      const status = await this.applicationStatusService.getAll({
+      const status = await this.applicationStatusService.find({
         isDefault: true,
       });
 

@@ -861,4 +861,81 @@ export class UserService {
       return error;
     }
   }
+
+  // Get Users
+  async getUsersForEligibilityCheck(params: any): Promise<any> {
+    try {
+      const data = await this.userModel
+        .find({ isDeleted: false, ...params })
+        .populate({
+          path: 'country',
+          model: this.countryModel,
+          retainNullValues: true,
+        })
+        .populate({
+          path: 'course',
+          model: this.courseModel,
+          retainNullValues: true,
+        })
+        .populate({
+          path: 'education',
+          model: this.educationModel,
+          retainNullValues: true,
+        })
+        .sort({ createdAt: -1 })
+        .skip(params.start)
+        .limit(params.limit);
+
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: data,
+        message: 'Request successfully',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Related Universities
+  async relatedUniversities(id: string): Promise<any> {
+    try {
+      const user: any = await this.userModel.findById(id).populate({
+        path: 'course',
+        model: this.courseModel,
+        retainNullValues: true,
+      });
+
+      const params: any = {
+        isDeleted: false,
+      };
+
+      if (user.country) params.country = user.country;
+      if (user.course) params.course = user.course.areaOfInterest;
+
+      console.log(params);
+
+      const data = await this.universityDetailsModel
+        .find(params)
+        .populate({
+          path: 'university',
+          model: this.universityModel,
+          retainNullValues: true,
+        })
+        .populate({
+          path: 'country',
+          model: this.countryModel,
+          retainNullValues: true,
+        });
+
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: data,
+        message: 'Request successfully',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
 }
