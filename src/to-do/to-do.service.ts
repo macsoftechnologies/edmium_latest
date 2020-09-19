@@ -20,7 +20,6 @@ export class ToDoService {
         user: counselorId,
         isDeleted: false,
       });
-      console.log('countries list', response);
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: response,
@@ -36,7 +35,21 @@ export class ToDoService {
   async addToDo(params: ToDoDto) {
     try {
       const response = await this.toDoModel.create(params);
-      console.log('createCountry', response);
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: response,
+        message: 'Request Successful',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Add ToDo
+  async update(id: string, params: any) {
+    try {
+      const response = await this.toDoModel.updateOne({ _id: id }, params);
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: response,

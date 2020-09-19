@@ -559,6 +559,9 @@ export class UserService {
       let universityDetails = await this.userModel
         .aggregate([
           {
+            $match: { role: 'student', isDeleted: false },
+          },
+          {
             $match: fromDateFilter,
           },
           {
@@ -723,6 +726,7 @@ export class UserService {
             },
           },
         ])
+        .sort({ createdAt: -1 })
         .skip(params.start)
         .limit(params.limit);
 

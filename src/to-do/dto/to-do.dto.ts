@@ -14,3 +14,9 @@ export class ToDoDto {
   @IsOptional()
   createdBy: string;
 }
+
+export class UpdateToDoStatusDto {
+  @ApiProperty()
+  @IsString()
+  status: string;
+}

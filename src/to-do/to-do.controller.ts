@@ -1,6 +1,14 @@
-import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { CreateCountryDto } from 'src/country/dto/create-country.dto';
-import { ToDoDto } from './dto/to-do.dto';
+import { ToDoDto, UpdateToDoStatusDto } from './dto/to-do.dto';
 import { ToDoService } from './to-do.service';
 
 @Controller('to-do')
@@ -27,6 +35,24 @@ export class ToDoController {
   async addToDo(@Body() body: ToDoDto) {
     try {
       const response = this.toDoService.addToDo(body);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  //   Add ToDo
+  @Put('/status/:id')
+  async updateToDoStatus(
+    @Body() body: UpdateToDoStatusDto,
+    @Param('id') id: string,
+  ) {
+    try {
+      const response = this.toDoService.update(id, body);
       return response;
     } catch (error) {
       return {
