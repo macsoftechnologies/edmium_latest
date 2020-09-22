@@ -938,4 +938,70 @@ export class UserService {
       return error;
     }
   }
+
+  // Add Suggested University
+  async addSuggestedUniversity(params: FavoriteListDto): Promise<any> {
+    try {
+      await this.userModel.updateOne(
+        { _id: params.userId },
+        {
+          $addToSet: {
+            suggestedUniversities: params.universityId,
+          },
+        },
+      );
+
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: null,
+        message: 'University added to suggested list successfully',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Remove Suggested University
+  async removeSuggestedUniversity(params: FavoriteListDto): Promise<any> {
+    try {
+      await this.userModel.updateOne(
+        { _id: params.userId },
+        { $pull: { suggestedUniversities: params.universityId } },
+      );
+
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: null,
+        message: 'University removed from suggested list successfully',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Get Suggested Universities
+  async getSuggestedUniversities(id: string): Promise<any> {
+    try {
+      const data = await this.userModel
+        .findById(id)
+        .populate({
+          path: 'suggestedUniversities',
+          model: this.universityDetailsModel,
+          retainNullValues: true,
+        })
+        .select('suggestedUniversities');
+
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data:
+          data && data.suggestedUniversities ? data.suggestedUniversities : [],
+        message: 'Request successful',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
 }

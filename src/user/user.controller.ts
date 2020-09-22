@@ -301,4 +301,80 @@ export class UserController {
       };
     }
   }
+
+  // Add Suggested University
+  @Post('/addSuggestedUniversity')
+  async addSuggestedUniversity(@Body() body: FavoriteListDto) {
+    try {
+      let response = await this.userService.addSuggestedUniversity(body);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Remove Suggested University
+  @Post('/removeSuggestedUniversity')
+  async removeSuggestedUniversity(@Body() body: FavoriteListDto) {
+    try {
+      let response = await this.userService.removeSuggestedUniversity(body);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Get Suggested University
+  @Post('/getSuggestedUniversities/:id')
+  async getSuggestedUniversities(@Param('id') id: string) {
+    try {
+      let response = await this.userService.getSuggestedUniversities(id);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Add Agent
+  @Post('/addAgent')
+  async addAgent(@Body() body: AddCounselorDto) {
+    try {
+      console.log(body);
+      const params: any = body;
+      params.role = 'agent';
+      let response = await this.userService.createUser(params);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Add Agent Counselor
+  @Post('/addAgentCounselor')
+  async addAgentCounselor(@Body() body: AddCounselorDto) {
+    try {
+      console.log(body);
+      const params: any = body;
+      params.role = 'agent-counselor';
+      let response = await this.userService.createUser(params);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
 }

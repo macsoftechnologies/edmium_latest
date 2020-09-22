@@ -49,6 +49,10 @@ export class User extends Document {
   studentAssigned?: boolean;
 
   @Prop()
+  @IsOptional()
+  suggestedUniversities?: string[];
+
+  @Prop()
   assignedTo: string;
 
   @Prop()
