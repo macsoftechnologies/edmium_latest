@@ -64,6 +64,11 @@ export class AddCounselorDto {
   @IsString()
   @IsOptional()
   country: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  createdBy: string;
 }
 
 export class UserLogin {
