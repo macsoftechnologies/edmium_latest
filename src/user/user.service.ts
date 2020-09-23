@@ -1004,4 +1004,24 @@ export class UserService {
       return error;
     }
   }
+
+  //Get agents
+  async getUsersByRole(role,params):Promise<any>{
+    try {
+      const data = await this.userModel
+        .find({role:role, isDeleted: false})
+        .skip(params.start)
+        .limit(params.limit)
+
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data:
+          data ,
+        message: 'Request successful',
+      };
+      return apiResponse;
+    } catch (error) {
+      
+    }
+  }
 }

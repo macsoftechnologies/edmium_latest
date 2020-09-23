@@ -361,6 +361,20 @@ export class UserController {
     }
   }
 
+  //Get Agents
+  @Post('/:role')
+  async getUsersByRole(@Param('role') role:string, @Body() body:PaginationDto){
+    try{
+      let response = await this.userService.getUsersByRole(role,body);
+      return response;
+    }catch(error){
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
   // Add Agent Counselor
   @Post('/addAgentCounselor')
   async addAgentCounselor(@Body() body: AddCounselorDto) {
@@ -377,4 +391,7 @@ export class UserController {
       };
     }
   }
+
+ 
+
 }
