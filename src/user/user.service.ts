@@ -1008,22 +1008,23 @@ export class UserService {
   }
 
   //Get agents
-  async getUsersByRole(role,params):Promise<any>{
+  async getUsersByRole(role, params): Promise<any> {
     try {
+      const sortObject = {};
+      sortObject[params.sortBy] = params.sortOrder == 'ASC' ? 1 : -1;
+
       const data = await this.userModel
-        .find({role:role, isDeleted: false})
+        .find({ role: role, isDeleted: false })
         .skip(params.start)
         .limit(params.limit)
+        .sort(sortObject);
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data:
-          data ,
+        data: data,
         message: 'Request successful',
       };
       return apiResponse;
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   }
 }

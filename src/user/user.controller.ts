@@ -362,12 +362,19 @@ export class UserController {
   }
 
   //Get Agents
-  @Post('/:role')
-  async getUsersByRole(@Param('role') role:string, @Body() body:PaginationDto){
-    try{
-      let response = await this.userService.getUsersByRole(role,body);
+  @Post('/roles/:role')
+  async getUsersByRole(
+    @Param('role') role: string,
+    @Body() body: PaginationDto,
+  ) {
+    try {
+      console.log(body);
+      const paginationObject = await this.sharedService.getPaginationObject();
+      body = Object.assign(paginationObject, body);
+      console.log(body);
+      let response = await this.userService.getUsersByRole(role, body);
       return response;
-    }catch(error){
+    } catch (error) {
       return {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         errorMessage: error.message,
@@ -391,7 +398,4 @@ export class UserController {
       };
     }
   }
-
- 
-
 }

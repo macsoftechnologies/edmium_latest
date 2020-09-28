@@ -99,4 +99,13 @@ export class SharedService {
       })
       .promise();
   }
+
+  async getPaginationObject(): Promise<any> {
+    return {
+      start: 0,
+      limit: 20,
+      sortBy: 'createdAt',
+      sortOrder: 'DESC',
+    };
+  }
 }
