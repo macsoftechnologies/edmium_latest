@@ -31,7 +31,7 @@ export class CreateUser {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  course: string;
+  concentration: string;
 
   @ApiProperty()
   @IsString()
@@ -176,7 +176,7 @@ export class RegisterStudentDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  course: string;
+  concentration: string;
 
   @ApiProperty()
   @IsString()
@@ -186,4 +186,11 @@ export class RegisterStudentDto {
   @ApiProperty()
   @IsString()
   createdBy: string;
+}
+
+export class FetchUsersDto extends PaginationDto {
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  role: string;
 }

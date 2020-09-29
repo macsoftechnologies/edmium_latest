@@ -66,11 +66,15 @@ export class CountryController {
       };
     }
   }
+
   /* Delete Country */
   @Delete('/:id')
   async deleteCourse(@Param('id') id: string) {
     try {
-      const deleteCountryResponse = this.countryService.deleteCountry(id);
+      const deleteCountryResponse = this.countryService.updateCountry(
+        { isDeleted: true },
+        id,
+      );
       return deleteCountryResponse;
     } catch (error) {
       return {

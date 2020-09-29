@@ -5,10 +5,10 @@ import { Document } from 'mongoose';
 @Schema({ timestamps: true })
 export class Course extends Document {
   @Prop()
-  code: string;
+  concentration?: string;
 
   @Prop()
-  areaOfInterest: string;
+  name: string;
 
   @Prop({ default: false })
   @IsOptional()

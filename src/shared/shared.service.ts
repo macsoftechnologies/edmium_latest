@@ -9,6 +9,13 @@ const config = {
   AWS_BUCKET: 'edmium',
 };
 
+const paginationObject = {
+  start: 0,
+  limit: 1000,
+  sortBy: 'createdAt',
+  sortOrder: 'DESC',
+};
+
 const s3 = new AWS.S3({
   accessKeyId: config.AWS_ACCESS_KEY,
   secretAccessKey: config.AWS_SECRET_KEY,
@@ -100,12 +107,23 @@ export class SharedService {
       .promise();
   }
 
-  async getPaginationObject(): Promise<any> {
-    return {
-      start: 0,
-      limit: 20,
-      sortBy: 'createdAt',
-      sortOrder: 'DESC',
+  async prepareParams(params: any): Promise<any> {
+    params = Object.assign(params, paginationObject);
+    const config = {
+      paginationObject: {
+        start: params.start,
+        limit: params.limit,
+        sortBy: params.sortBy,
+        sortOrder: params.sortOrder,
+      },
+      findObject: params,
     };
+
+    delete config.findObject.start;
+    delete config.findObject.limit;
+    delete config.findObject.sortBy;
+    delete config.findObject.sortOrder;
+
+    return config;
   }
 }

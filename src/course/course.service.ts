@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Course } from './dto/course.schema';
 import { APIResponse } from 'src/dto/api-response-dto';
-import { CreateCourseDto } from './dto/create-course.dto';
+import { CreateCourseDto, GetCoursesDto } from './dto/course.dto';
+import { FetchParamsDto } from 'src/shared/dto/shared.dto';
 
 @Injectable()
 export class CourseService {
@@ -13,14 +14,22 @@ export class CourseService {
   ) {}
 
   /* Get all courses */
-  async getAllCourses(): Promise<any> {
+  async getAllCourses(params: FetchParamsDto): Promise<any> {
     try {
-      let courseList = await this.courseModel.find();
-      console.log('courses', courseList);
+      const sortObject = {};
+      sortObject[params.paginationObject.sortBy] =
+        params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
+
+      let courseList = await this.courseModel
+        .find({ isDeleted: false, ...params.findObject })
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit)
+        .sort(sortObject);
+
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: courseList,
-        message: 'Request Successfull !!!',
+        message: 'Request Successful',
       };
       return apiResponse;
     } catch (error) {
@@ -36,51 +45,32 @@ export class CourseService {
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: createCourseRes,
-        message: 'Request Successfull !!!',
+        message: 'Request Successful',
       };
       return apiResponse;
     } catch (error) {
       return error;
     }
   }
+
   /* Update Country */
-  async updateCourse(createCourseDto: CreateCourseDto, id): Promise<any> {
+  async updateCourse(params: any, id): Promise<any> {
     try {
       const found = this.courseModel.findOne({ _id: id });
       if (found) {
         const updateCourseRes = await this.courseModel.updateOne(
           { _id: id },
-          createCourseDto,
+          params,
         );
-        console.log('update course', updateCourseRes);
+
         let apiResponse: APIResponse = {
           statusCode: HttpStatus.OK,
           data: updateCourseRes,
-          message: 'Request Successfull !!!',
+          message: 'Request Successful',
         };
         return apiResponse;
       } else {
         throw new NotFoundException(`There is no course map with id ${id} `);
-      }
-    } catch (error) {
-      return error;
-    }
-  }
-  /* Delete country */
-  async deleteCourse(id): Promise<any> {
-    try {
-      const found = this.courseModel.findOne({ _id: id });
-      if (found) {
-        const deleteCourseRes = await this.courseModel.deleteOne({ _id: id });
-        console.log('delete', deleteCourseRes);
-        let apiResponse: APIResponse = {
-          statusCode: HttpStatus.OK,
-          data: deleteCourseRes,
-          message: 'Request Successfull !!!',
-        };
-        return apiResponse;
-      } else {
-        throw new NotFoundException(`There is no country map with id ${id} `);
       }
     } catch (error) {
       return error;

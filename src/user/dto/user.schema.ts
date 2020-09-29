@@ -27,7 +27,7 @@ export class User extends Document {
   country: string;
 
   @Prop()
-  course: string;
+  concentration: string;
 
   @Prop()
   role: string;
@@ -60,15 +60,3 @@ export class User extends Document {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-
-export interface IUser extends Document {
-  readonly education: string;
-  readonly firstName: string;
-  readonly lastName: string;
-  readonly emailAddress: string;
-  readonly mobileNumber: number;
-  readonly password: string;
-  readonly country: string;
-  readonly course: string;
-  readonly role: string;
-}

@@ -12,6 +12,7 @@ import {
 import { APIResponse } from 'src/dto/api-response-dto';
 import { Education } from 'src/education/dto/education.schema';
 import { Country } from 'src/country/dto/country.schema';
+import { Concentration } from 'src/concentration/dto/concentration.schema';
 import { Course } from 'src/course/dto/course.schema';
 import { UniversityDetails } from 'src/university_details/dto/university_details.schema';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
@@ -20,6 +21,7 @@ import { University } from 'src/university/dto/university.schema';
 import * as _ from 'lodash';
 import { UserAuthentication } from 'src/user-authentication/dto/user-authentication.schema';
 import { ApplicationStatus } from 'src/application-status/dto/application-status.schema';
+import { FetchParamsDto } from 'src/shared/dto/shared.dto';
 
 @Injectable()
 export class UserService {
@@ -28,6 +30,8 @@ export class UserService {
     @InjectModel('Education') private educationModel: Model<Education>,
     @InjectModel('Country') private countryModel: Model<Country>,
     @InjectModel('Course') private courseModel: Model<Course>,
+    @InjectModel('Concentration')
+    private concentrationModel: Model<Concentration>,
     @InjectModel('UniversityDetails')
     private universityDetailsModel: Model<UniversityDetails>,
     @InjectModel('University')
@@ -170,8 +174,8 @@ export class UserService {
           retainNullValues: true,
         })
         .populate({
-          path: 'course',
-          model: this.courseModel,
+          path: 'concentration',
+          model: this.concentrationModel,
           retainNullValues: true,
         });
 
@@ -213,7 +217,7 @@ export class UserService {
       console.log('req', searchUniversitiesByIntCourUniNameDto);
       let universities = await this.universityDetailsModel.find({
         country: searchUniversitiesByIntCourUniNameDto.country,
-        course: searchUniversitiesByIntCourUniNameDto.course,
+        concentration: searchUniversitiesByIntCourUniNameDto.concentration,
         intake: searchUniversitiesByIntCourUniNameDto.intake,
       });
 
@@ -875,8 +879,8 @@ export class UserService {
           retainNullValues: true,
         })
         .populate({
-          path: 'course',
-          model: this.courseModel,
+          path: 'concentration',
+          model: this.concentrationModel,
           retainNullValues: true,
         })
         .populate({
@@ -903,8 +907,8 @@ export class UserService {
   async relatedUniversities(id: string): Promise<any> {
     try {
       const user: any = await this.userModel.findById(id).populate({
-        path: 'course',
-        model: this.courseModel,
+        path: 'concentration',
+        model: this.concentrationModel,
         retainNullValues: true,
       });
 
@@ -913,7 +917,7 @@ export class UserService {
       };
 
       if (user.country) params.country = user.country;
-      if (user.course) params.course = user.course.areaOfInterest;
+      if (user.concentration) params.concentration = user.concentration.name;
 
       console.log(params);
 
@@ -1008,15 +1012,16 @@ export class UserService {
   }
 
   //Get agents
-  async getUsersByRole(role, params): Promise<any> {
+  async fetchAll(params: FetchParamsDto): Promise<any> {
     try {
       const sortObject = {};
-      sortObject[params.sortBy] = params.sortOrder == 'ASC' ? 1 : -1;
+      sortObject[params.paginationObject.sortBy] =
+        params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
       const data = await this.userModel
-        .find({ role: role, isDeleted: false })
-        .skip(params.start)
-        .limit(params.limit)
+        .find({ isDeleted: false, ...params.findObject })
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit)
         .sort(sortObject);
 
       let apiResponse: APIResponse = {

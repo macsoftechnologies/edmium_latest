@@ -19,6 +19,7 @@ import {
   AddCounselorDto,
   AssignStudentToCounselorDto,
   RegisterStudentDto,
+  FetchUsersDto,
 } from './dto/user.dto';
 import { UserService } from './user.service';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
@@ -362,17 +363,14 @@ export class UserController {
   }
 
   //Get Agents
-  @Post('/roles/:role')
-  async getUsersByRole(
-    @Param('role') role: string,
-    @Body() body: PaginationDto,
-  ) {
+  @Post('/fetchAll')
+  async fetchAll(@Body() body: FetchUsersDto) {
     try {
       console.log(body);
-      const paginationObject = await this.sharedService.getPaginationObject();
-      body = Object.assign(paginationObject, body);
-      console.log(body);
-      let response = await this.userService.getUsersByRole(role, body);
+      const params = await this.sharedService.prepareParams(body);
+      // body = Object.assign(paginationObject, body);
+      console.log(params);
+      let response = await this.userService.fetchAll(params);
       return response;
     } catch (error) {
       return {

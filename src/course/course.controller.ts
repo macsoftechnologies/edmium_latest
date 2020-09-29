@@ -8,18 +8,24 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { SharedService } from 'src/shared/shared.service';
 import { CourseService } from './course.service';
-import { CreateCourseDto } from './dto/create-course.dto';
+import { CreateCourseDto, GetCoursesDto } from './dto/course.dto';
 
 @Controller('course')
 export class CourseController {
-  constructor(private readonly courseService: CourseService) {}
+  constructor(
+    private readonly courseService: CourseService,
+    private sharedService: SharedService,
+  ) {}
 
   /* Get Courses */
-  @Get()
-  async getCourses() {
+  @Post('/fetchAll')
+  async getCourses(@Body() body: GetCoursesDto) {
     try {
-      const courses = await this.courseService.getAllCourses();
+      const params = await this.sharedService.prepareParams(body);
+      console.log(params);
+      const courses = await this.courseService.getAllCourses(params);
       return courses;
     } catch (error) {
       return {
@@ -46,6 +52,7 @@ export class CourseController {
       };
     }
   }
+
   /* Update Course */
   @Put('/:id')
   async updateCourse(
@@ -66,11 +73,15 @@ export class CourseController {
       };
     }
   }
+
   /* Delete Course */
   @Delete('/:id')
   async deleteCourse(@Param('id') id: string) {
     try {
-      const deleteCourseResponse = this.courseService.deleteCourse(id);
+      const deleteCourseResponse = this.courseService.updateCourse(
+        { isDeleted: true },
+        id,
+      );
       return deleteCourseResponse;
     } catch (error) {
       return {

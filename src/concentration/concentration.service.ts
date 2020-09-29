@@ -1,22 +1,23 @@
 import { Injectable, HttpStatus, NotFoundException } from '@nestjs/common';
-import { Country } from './dto/country.schema';
+import { Concentration } from './dto/concentration.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { APIResponse } from 'src/dto/api-response-dto';
-import { CreateCountryDto } from './dto/create-country.dto';
+import { CreateConcentrationDto } from './dto/concentration.dto';
 
 @Injectable()
-export class CountryService {
+export class ConcentrationService {
   constructor(
-    @InjectModel('Country')
-    private countryModel: Model<Country>,
+    @InjectModel('Concentration')
+    private concentrationModel: Model<Concentration>,
   ) {}
 
   /* Get all countries */
-  async getAllCountries(): Promise<any> {
+  async getAllConcentrations(): Promise<any> {
     try {
-      let countriesList = await this.countryModel.find({ isDeleted: false });
-      console.log('countries list', countriesList);
+      let countriesList = await this.concentrationModel.find({
+        isDeleted: false,
+      });
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: countriesList,
@@ -28,14 +29,15 @@ export class CountryService {
     }
   }
 
-  /* Create country */
-  async createCountry(createCountryDto: CreateCountryDto) {
+  /* Create concentration */
+  async createConcentration(createConcentrationDto: CreateConcentrationDto) {
     try {
-      const createCountryRes = await this.countryModel.create(createCountryDto);
-      console.log('createCountry', createCountryRes);
+      const createConcentrationRes = await this.concentrationModel.create(
+        createConcentrationDto,
+      );
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: createCountryRes,
+        data: createConcentrationRes,
         message: 'Request Successful',
       };
       return apiResponse;
@@ -44,14 +46,16 @@ export class CountryService {
     }
   }
 
-  /* Update Country */
-  async updateCountry(params: any, id) {
+  /* Update Concentration */
+  async updateConcentration(params: any, id) {
     try {
-      const updateCountryRes = this.countryModel.updateOne({ _id: id }, params);
-      console.log('updateCountryResp', updateCountryRes);
+      const updateConcentrationRes = this.concentrationModel.updateOne(
+        { _id: id },
+        params,
+      );
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: updateCountryRes,
+        data: updateConcentrationRes,
         message: 'Request Successful',
       };
       return apiResponse;

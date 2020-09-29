@@ -3,7 +3,10 @@ import { IsOptional } from 'class-validator';
 import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class Country extends Document {
+export class Concentration extends Document {
+  @Prop()
+  code: string;
+
   @Prop()
   name: string;
 
@@ -12,4 +15,4 @@ export class Country extends Document {
   isDeleted?: boolean;
 }
 
-export const CountrySchema = SchemaFactory.createForClass(Country);
+export const ConcentrationSchema = SchemaFactory.createForClass(Concentration);

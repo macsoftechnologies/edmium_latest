@@ -56,10 +56,10 @@ export class UniversityDetailsController {
   @Post('/listing')
   async getUniversityDetails(@Body() params: GetCollegeDto) {
     try {
-      const courses = await this.universityDetailsService.getUniversityDetails(
+      const universities = await this.universityDetailsService.getUniversityDetails(
         params,
       );
-      return courses;
+      return universities;
     } catch (error) {
       return {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,

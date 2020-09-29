@@ -22,3 +22,8 @@ export class PaginationDto {
   @IsOptional()
   sortOrder: string;
 }
+
+export class FetchParamsDto {
+  paginationObject: PaginationDto;
+  findObject: object;
+}

@@ -20,6 +20,7 @@ import { UserDocumentsModule } from './user-documents/user-documents.module';
 import { UserAuthenticationModule } from './user-authentication/user-authentication.module';
 import { AttachmentsModule } from './attachments/attachments.module';
 import { ToDoModule } from './to-do/to-do.module';
+import { ConcentrationModule } from './concentration/concentration.module';
 @Module({
   imports: [
     EducationModule,
@@ -43,6 +44,7 @@ import { ToDoModule } from './to-do/to-do.module';
     UserAuthenticationModule,
     AttachmentsModule,
     ToDoModule,
+    ConcentrationModule,
   ],
   controllers: [AppController],
   providers: [AppService, SharedService],

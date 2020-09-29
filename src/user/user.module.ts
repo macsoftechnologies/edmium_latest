@@ -12,6 +12,7 @@ import { UniversitySchema } from 'src/university/dto/university.schema';
 import { SharedService } from 'src/shared/shared.service';
 import { UserAuthenticationSchema } from 'src/user-authentication/dto/user-authentication.schema';
 import { ApplicationStatusSchema } from 'src/application-status/dto/application-status.schema';
+import { ConcentrationSchema } from 'src/concentration/dto/concentration.schema';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ApplicationStatusSchema } from 'src/application-status/dto/application-
       { name: 'User', schema: UserSchema },
       { name: 'Education', schema: EducationSchema },
       { name: 'Country', schema: CountrySchema },
+      { name: 'Concentration', schema: ConcentrationSchema },
       { name: 'Course', schema: CourseSchema },
       { name: 'UniversityDetails', schema: UniversityDetailsSchema },
       { name: 'University', schema: UniversitySchema },

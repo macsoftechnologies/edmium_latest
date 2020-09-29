@@ -151,7 +151,7 @@ export class SearchUniversitiesByIntCourUniNameDto {
 
   @ApiProperty()
   @IsString()
-  course: string;
+  concentration: string;
 
   @ApiProperty()
   @IsString()
