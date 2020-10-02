@@ -23,6 +23,7 @@ import { ToDoModule } from './to-do/to-do.module';
 import { ConcentrationModule } from './concentration/concentration.module';
 import { NotificationModule } from './notification/notification.module';
 import { NotificationService } from './notification/notification.service';
+import { AgentCommissionModule } from './agent-commission/agent-commission.module';
 @Module({
   imports: [
     EducationModule,
@@ -48,6 +49,7 @@ import { NotificationService } from './notification/notification.service';
     ToDoModule,
     ConcentrationModule,
     NotificationModule,
+    AgentCommissionModule,
   ],
   controllers: [AppController],
   providers: [AppService, SharedService],
