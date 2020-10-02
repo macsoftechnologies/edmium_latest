@@ -5,10 +5,18 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AgentCommissionSchema } from './dto/agent-commission.schema';
 import { CountrySchema } from 'src/country/dto/country.schema';
 import { UniversitySchema } from 'src/university/dto/university.schema';
+import { EducationSchema } from 'src/education/dto/education.schema';
 
 @Module({
-  imports:[MongooseModule.forFeature([{name:'AgentCommission' , schema:AgentCommissionSchema} , {name:'Country' , schema:CountrySchema} ,{ name: 'University', schema: UniversitySchema }])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'AgentCommission', schema: AgentCommissionSchema },
+      { name: 'Country', schema: CountrySchema },
+      { name: 'University', schema: UniversitySchema },
+      { name: 'Education', schema: EducationSchema },
+    ]),
+  ],
   providers: [AgentCommissionService],
-  controllers: [AgentCommissionController]
+  controllers: [AgentCommissionController],
 })
 export class AgentCommissionModule {}
