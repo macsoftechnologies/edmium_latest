@@ -11,6 +11,7 @@ import {
 } from './dto/university_details.dto';
 import { University } from 'src/university/dto/university.schema';
 import { Country } from 'src/country/dto/country.schema';
+import { FetchParamsDto } from 'src/shared/dto/shared.dto';
 
 @Injectable()
 export class UniversityDetailsService {
@@ -64,29 +65,37 @@ export class UniversityDetailsService {
   }
 
   // Filter By Course
-  async filterByCourse(params: FilterByCourseDto): Promise<any> {
+  async filterByCourse(params: FetchParamsDto): Promise<any> {
     try {
-      let findObj = {
-        country: params.country,
-        course: params.course,
-        studyLevel: params.studyLevel,
-      };
+      console.log(params);
+      const sortObject = {};
+      sortObject[params.paginationObject.sortBy] =
+        params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
-      if (params.englishTest && params.englishTestValue) {
-        findObj[params.englishTest.toLowerCase() + 'Min'] = {
-          $lte: params.englishTestValue,
+      if (params.findObject.englishTest && params.findObject.englishTestValue) {
+        params.findObject[
+          params.findObject.englishTest.toLowerCase() + 'Min'
+        ] = {
+          $lte: params.findObject.englishTestValue,
         };
-        findObj[params.englishTest.toLowerCase() + 'Max'] = {
-          $gte: params.englishTestValue,
+        params.findObject[
+          params.findObject.englishTest.toLowerCase() + 'Max'
+        ] = {
+          $gte: params.findObject.englishTestValue,
         };
+
+        delete params.findObject.englishTest;
+        delete params.findObject.englishTestValue;
       }
 
       let universityDetails = await this.universityDetailsModel
-        .find(findObj)
+        .find({ isDeleted: false, ...params.findObject })
         .populate({ path: 'university', model: this.universityModel })
         .populate({ path: 'country', model: this.countryModel })
-        .skip(params.start)
-        .limit(params.limit);
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit)
+        .sort(sortObject);
+
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: universityDetails,

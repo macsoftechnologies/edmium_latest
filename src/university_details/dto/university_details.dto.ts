@@ -161,14 +161,22 @@ export class SearchUniversitiesByIntCourUniNameDto {
 export class FilterByCourseDto extends PaginationDto {
   @ApiProperty()
   @IsString()
+  @IsOptional()
   country: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   studyLevel: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
+  concentration: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
   course: string;
 
   @ApiProperty()

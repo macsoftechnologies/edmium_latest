@@ -415,6 +415,25 @@ export class UserService {
         },
         {
           $addFields: {
+            statusId: {
+              $toObjectId:
+                '$favoriteUniversities.universityApplications.status',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'applicationstatuses',
+            localField: 'statusId',
+            foreignField: '_id',
+            as: 'favoriteUniversities.universityApplications.status',
+          },
+        },
+        {
+          $unwind: '$favoriteUniversities.universityApplications.status',
+        },
+        {
+          $addFields: {
             universityDetailsId: {
               $toObjectId: '$favoriteUniversities.universityId',
             },
