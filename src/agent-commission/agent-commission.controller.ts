@@ -5,7 +5,7 @@ import {
   HttpStatus,
   Put,
   Get,
-  Param,
+  Param, Delete
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PaginationDto } from 'src/shared/dto/shared.dto';
@@ -75,6 +75,23 @@ export class AgentCommissionController {
       const params = await this.sharedService.prepareParams(body);
       const response = await this.agentCommission.getCommissions(params);
       return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        errorMessage: error.message,
+      };
+    }
+  }
+  @ApiTags('AgentCommission')
+  @Delete('/:CommissionId')
+  async deleteCommission(@Param('CommissionId') CommissionId: string) {
+    try {
+      const deleteCourseResponse = this.agentCommission.updateCommissionStatus(
+        { isDeleted: true },
+        CommissionId,
+      );
+      return deleteCourseResponse;
     } catch (error) {
       return {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
