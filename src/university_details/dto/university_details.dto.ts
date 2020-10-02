@@ -6,7 +6,7 @@ export class GetCollegeDto extends PaginationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  universityId: string;
+  university: string;
 }
 
 export class AddCollegeDto {

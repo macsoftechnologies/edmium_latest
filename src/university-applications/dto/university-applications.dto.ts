@@ -31,16 +31,13 @@ export class ApplicationsFilterDto extends PaginationDto {
 
   @ApiProperty()
   @IsOptional()
-  @IsOptional()
   status: string[];
 
   @ApiProperty()
   @IsOptional()
-  @IsOptional()
   university: string[];
 
   @ApiProperty()
-  @IsOptional()
   @IsOptional()
   intake: string[];
 
