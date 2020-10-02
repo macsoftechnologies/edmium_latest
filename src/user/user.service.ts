@@ -22,6 +22,8 @@ import * as _ from 'lodash';
 import { UserAuthentication } from 'src/user-authentication/dto/user-authentication.schema';
 import { ApplicationStatus } from 'src/application-status/dto/application-status.schema';
 import { FetchParamsDto } from 'src/shared/dto/shared.dto';
+import { NotificationService } from 'src/notification/notification.service';
+import { NotificationDto } from 'src/notification/dto/notification.dto';
 
 @Injectable()
 export class UserService {
@@ -40,7 +42,8 @@ export class UserService {
     private userAuthenticationModel: Model<UserAuthentication>,
     @InjectModel('ApplicationStatus')
     private applicationStatusModel: Model<ApplicationStatus>,
-  ) {}
+    private notificationService: NotificationService
+  ) { }
 
   //  Create User
   async createUser(createUser: any): Promise<any> {
@@ -74,7 +77,12 @@ export class UserService {
       }
 
       const password = createUser.password;
+      const deviceToken = createUser.deviceToken;
+      const deviceType = createUser.deviceType;
       delete createUser.password;
+      delete createUser.deviceToken;
+      delete createUser.deviceType;
+
 
       if (createUser.role === 'student') {
         if (createUser.createdBy) {
@@ -136,7 +144,20 @@ export class UserService {
       await this.userAuthenticationModel.create({
         user: createUserRes._id,
         password: password,
+        deviceToken: deviceToken,
+        deviceType: deviceType
       });
+
+      const notificationObj = {
+        notification: {
+          title: "Hey there",
+          body: "Subscribe to Edmium News letters"
+        },
+        to: deviceToken
+      }
+
+      await this.notificationService.sendNotifications(notificationObj)
+
       let response = {
         statusCode: HttpStatus.OK,
         data: createUserRes,
@@ -180,6 +201,7 @@ export class UserService {
         });
 
       if (user) {
+        console.log('user' , user)
         const userAuthentication = await this.userAuthenticationModel.findOne({
           user: user._id,
           password: userLogIn.password,
@@ -187,6 +209,15 @@ export class UserService {
         });
 
         if (userAuthentication) {
+
+          console.log('userAuthentication' , userAuthentication)
+
+          const id = userAuthentication._id
+          const deviceToken = userLogIn.deviceToken
+          const deviceType = userLogIn.deviceType
+
+          await this.userAuthenticationModel.updateOne({ _id: id }, { $set: { deviceToken: deviceToken, deviceType: deviceType } })
+
           return {
             statusCode: HttpStatus.OK,
             data: user,
@@ -1030,6 +1061,6 @@ export class UserService {
         message: 'Request successful',
       };
       return apiResponse;
-    } catch (error) {}
+    } catch (error) { }
   }
 }

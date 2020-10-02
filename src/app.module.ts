@@ -21,6 +21,8 @@ import { UserAuthenticationModule } from './user-authentication/user-authenticat
 import { AttachmentsModule } from './attachments/attachments.module';
 import { ToDoModule } from './to-do/to-do.module';
 import { ConcentrationModule } from './concentration/concentration.module';
+import { NotificationModule } from './notification/notification.module';
+import { NotificationService } from './notification/notification.service';
 @Module({
   imports: [
     EducationModule,
@@ -45,6 +47,7 @@ import { ConcentrationModule } from './concentration/concentration.module';
     AttachmentsModule,
     ToDoModule,
     ConcentrationModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService, SharedService],

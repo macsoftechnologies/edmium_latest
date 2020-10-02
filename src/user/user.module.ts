@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -13,6 +13,7 @@ import { SharedService } from 'src/shared/shared.service';
 import { UserAuthenticationSchema } from 'src/user-authentication/dto/user-authentication.schema';
 import { ApplicationStatusSchema } from 'src/application-status/dto/application-status.schema';
 import { ConcentrationSchema } from 'src/concentration/dto/concentration.schema';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Module({
   imports: [
@@ -27,8 +28,14 @@ import { ConcentrationSchema } from 'src/concentration/dto/concentration.schema'
       { name: 'UserAuthentication', schema: UserAuthenticationSchema },
       { name: 'ApplicationStatus', schema: ApplicationStatusSchema },
     ]),
+    HttpModule.registerAsync({
+      useFactory: () => ({
+        timeout: 50000,
+        maxRedirects: 5
+      })
+    })
   ],
   controllers: [UserController],
-  providers: [UserService, SharedService],
+  providers: [UserService, SharedService , NotificationService],
 })
 export class UserModule {}

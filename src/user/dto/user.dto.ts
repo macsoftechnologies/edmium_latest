@@ -37,6 +37,14 @@ export class CreateUser {
   @IsString()
   @IsOptional()
   education: string;
+
+  @ApiProperty()
+  @IsString()
+  deviceToken: string
+
+  @ApiProperty()
+  @IsString()
+  deviceType: string
 }
 
 export class AddCounselorDto {
@@ -67,6 +75,14 @@ export class AddCounselorDto {
 
   @ApiProperty()
   @IsString()
+  deviceToken: string
+
+  @ApiProperty()
+  @IsString()
+  deviceType
+
+  @ApiProperty()
+  @IsString()
   @IsOptional()
   createdBy: string;
 }
@@ -79,6 +95,14 @@ export class UserLogin {
   @ApiProperty()
   @IsString()
   password: string;
+
+  @ApiProperty()
+  @IsString()
+  deviceToken: string
+
+  @ApiProperty()
+  @IsString()
+  deviceType: string
 }
 
 export class FavoriteListDto {

@@ -10,6 +10,12 @@ export class UserAuthentication extends Document {
   @Prop()
   password: string;
 
+  @Prop()
+  deviceToken: string
+
+  @Prop()
+  deviceType: string
+
   @Prop({ default: false })
   @IsOptional()
   isDeleted?: boolean;
