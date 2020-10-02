@@ -46,14 +46,20 @@ export class UniversityDetailsService {
   }
 
   /* Get University Details */
-  async getUniversityDetails(params: GetCollegeDto): Promise<any> {
+  async getUniversityDetails(params: FetchParamsDto): Promise<any> {
     try {
+      console.log(params);
+      const sortObject = {};
+      sortObject[params.paginationObject.sortBy] =
+        params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
+
       let universityDetails = await this.universityDetailsModel
-        .find({ university: params.universityId })
+        .find({ isDeleted: false, ...params.findObject })
         .populate({ path: 'university', model: this.universityModel })
         .populate({ path: 'country', model: this.countryModel })
-        .skip(params.start)
-        .limit(params.limit);
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit)
+        .sort(sortObject);
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: universityDetails,

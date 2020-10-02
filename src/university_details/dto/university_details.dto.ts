@@ -5,6 +5,7 @@ import { PaginationDto } from 'src/shared/dto/shared.dto';
 export class GetCollegeDto extends PaginationDto {
   @ApiProperty()
   @IsString()
+  @IsOptional()
   universityId: string;
 }
 

@@ -57,8 +57,9 @@ export class UniversityDetailsController {
 
   /* Get University Details */
   @Post('/listing')
-  async getUniversityDetails(@Body() params: GetCollegeDto) {
+  async getUniversityDetails(@Body() body: GetCollegeDto) {
     try {
+      const params = await this.sharedService.prepareParams(body);
       const universities = await this.universityDetailsService.getUniversityDetails(
         params,
       );
