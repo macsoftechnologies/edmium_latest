@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsArray } from 'class-validator';
 import { PaginationDto } from 'src/shared/dto/shared.dto';
 
 export class GetCollegeDto extends PaginationDto {
@@ -44,8 +44,8 @@ export class CollegeDto {
   duration: string;
 
   @ApiProperty()
-  @IsString()
-  campus: string;
+  @IsArray()
+  campus: string[];
 
   @ApiProperty()
   @IsString()

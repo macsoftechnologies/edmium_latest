@@ -23,7 +23,7 @@ export class UniversityDetails extends Document {
   duration: string;
 
   @Prop()
-  campus: string;
+  campus: string[];
 
   @Prop()
   state: string;
@@ -113,7 +113,7 @@ export interface IUniversityDetails extends Document {
   readonly field: string;
   readonly concentration: string;
   readonly duration: string;
-  readonly campus: string;
+  readonly campus: string[];
   readonly state: string;
   readonly intake: string;
   readonly ieltsMax: number;

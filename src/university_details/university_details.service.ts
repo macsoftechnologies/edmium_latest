@@ -12,6 +12,7 @@ import {
 import { University } from 'src/university/dto/university.schema';
 import { Country } from 'src/country/dto/country.schema';
 import { FetchParamsDto } from 'src/shared/dto/shared.dto';
+import * as _ from 'lodash';
 
 @Injectable()
 export class UniversityDetailsService {
@@ -99,6 +100,49 @@ export class UniversityDetailsService {
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: universityDetails,
+        message: 'Request Successful',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Fetch Countries
+  async fetchCountries(universityId: string): Promise<any> {
+    try {
+      let universityDetails = await this.universityDetailsModel
+        .find({ university: universityId }, { country: 1 })
+        .populate({ path: 'country', model: this.countryModel });
+
+      const countries = universityDetails.map(
+        (details: any) => details.country,
+      );
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: _.uniqBy(countries, '_id'),
+        message: 'Request Successful',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Fetch Campuses
+  async getCampuses(universityId: string, countryId: string): Promise<any> {
+    try {
+      let universityDetails = await this.universityDetailsModel.findOne(
+        { university: universityId, country: countryId },
+        { campus: 1 },
+      );
+
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data:
+          universityDetails && universityDetails.campus
+            ? universityDetails.campus
+            : [],
         message: 'Request Successful',
       };
       return apiResponse;

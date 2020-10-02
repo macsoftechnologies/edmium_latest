@@ -5,6 +5,8 @@ import {
   Post,
   UseInterceptors,
   UploadedFile,
+  Get,
+  Param,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -16,6 +18,7 @@ import {
 } from './dto/university_details.dto';
 import { SharedService } from 'src/shared/shared.service';
 import { UniversityDetailsService } from './university_details.service';
+import { APIResponse } from 'src/dto/api-response-dto';
 
 @Controller('university_details')
 export class UniversityDetailsController {
@@ -32,12 +35,12 @@ export class UniversityDetailsController {
     @UploadedFile() file,
   ) {
     try {
-      const colleges: CollegeDto[] = await this.sharedService.excelToJSON(
-        file.buffer,
-      );
+      const colleges: any[] = await this.sharedService.excelToJSON(file.buffer);
       colleges.map(college => {
         college.university = body.university;
         college.country = body.country;
+        college.campus = college.campus.split(',');
+        college.campus = college.campus.map((campus: string) => campus.trim());
       });
       let response = await this.universityDetailsService.postUniversityDetails(
         colleges,
@@ -96,6 +99,46 @@ export class UniversityDetailsController {
         data: null,
         errorMessage: error.message,
       };
+    }
+  }
+
+  /* Get Countries of Universities */
+  @Get('/countries/:universityId')
+  async getCountries(@Param('universityId') universityId: string) {
+    try {
+      const response = await this.universityDetailsService.fetchCountries(
+        universityId,
+      );
+      return response;
+    } catch (error) {
+      const apiResponse: APIResponse = {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        message: error.message,
+      };
+      return apiResponse;
+    }
+  }
+
+  /* Get Countries of Universities */
+  @Get('/campus/:universityId/:countryId')
+  async getCampuses(
+    @Param('universityId') universityId: string,
+    @Param('countryId') countryId: string,
+  ) {
+    try {
+      const response = await this.universityDetailsService.getCampuses(
+        universityId,
+        countryId,
+      );
+      return response;
+    } catch (error) {
+      const apiResponse: APIResponse = {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        message: error.message,
+      };
+      return apiResponse;
     }
   }
 }
