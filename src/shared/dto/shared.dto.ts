@@ -25,5 +25,5 @@ export class PaginationDto {
 
 export class FetchParamsDto {
   paginationObject: PaginationDto;
-  findObject: object;
+  findObject: any;
 }

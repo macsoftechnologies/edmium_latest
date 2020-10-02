@@ -83,8 +83,9 @@ export class UniversityDetailsController {
 
   // Filter By Course
   @Post('/filterByCourse')
-  async filterByCourse(@Body() params: FilterByCourseDto) {
+  async filterByCourse(@Body() body: FilterByCourseDto) {
     try {
+      const params = await this.sharedService.prepareParams(body);
       const courses = await this.universityDetailsService.filterByCourse(
         params,
       );
