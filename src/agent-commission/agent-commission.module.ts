@@ -6,6 +6,7 @@ import { AgentCommissionSchema } from './dto/agent-commission.schema';
 import { CountrySchema } from 'src/country/dto/country.schema';
 import { UniversitySchema } from 'src/university/dto/university.schema';
 import { EducationSchema } from 'src/education/dto/education.schema';
+import { SharedService } from 'src/shared/shared.service';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { EducationSchema } from 'src/education/dto/education.schema';
       { name: 'Education', schema: EducationSchema },
     ]),
   ],
-  providers: [AgentCommissionService],
+  providers: [AgentCommissionService, SharedService],
   controllers: [AgentCommissionController],
 })
 export class AgentCommissionModule {}

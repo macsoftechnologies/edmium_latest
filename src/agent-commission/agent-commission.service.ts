@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Country } from 'src/country/dto/country.schema';
 import { Education } from 'src/education/dto/education.schema';
+import { FetchParamsDto } from 'src/shared/dto/shared.dto';
 import { University } from 'src/university/dto/university.schema';
 import { CommissionDto, CommissionUpdateDto } from './dto/agent-commission.cto';
 import { AgentCommission } from './dto/agent-commission.schema';
@@ -137,8 +138,13 @@ export class AgentCommissionService {
     }
   }
 
-  async getCommissions() {
+  async getCommissions(params: FetchParamsDto) {
     try {
+      console.log(params);
+      const sortObject = {};
+      sortObject[params.paginationObject.sortBy] =
+        params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
+
       const response = await this.agentCommissionModel
         .find()
         .populate({
@@ -156,6 +162,9 @@ export class AgentCommissionService {
           model: this.educationModel,
           retainNullValues: true,
         })
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit)
+        .sort(sortObject)
         .lean();
 
       return {

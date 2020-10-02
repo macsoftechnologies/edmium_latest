@@ -108,13 +108,15 @@ export class SharedService {
   }
 
   async prepareParams(params: any): Promise<any> {
-    params = Object.assign(params, paginationObject);
+    // params = Object.assign(params, paginationObject);
     const config = {
       paginationObject: {
-        start: params.start,
-        limit: params.limit,
-        sortBy: params.sortBy,
-        sortOrder: params.sortOrder,
+        start: params.start ? params.start : paginationObject.start,
+        limit: params.limit ? params.limit : paginationObject.limit,
+        sortBy: params.sortBy ? params.sortBy : paginationObject.sortBy,
+        sortOrder: params.sortOrder
+          ? params.sortOrder
+          : paginationObject.sortOrder,
       },
       findObject: params,
     };
