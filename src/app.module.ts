@@ -24,6 +24,7 @@ import { ConcentrationModule } from './concentration/concentration.module';
 import { NotificationModule } from './notification/notification.module';
 import { NotificationService } from './notification/notification.service';
 import { AgentCommissionModule } from './agent-commission/agent-commission.module';
+import { UniversityInfoModule } from './university-info/university-info.module';
 @Module({
   imports: [
     EducationModule,
@@ -50,6 +51,7 @@ import { AgentCommissionModule } from './agent-commission/agent-commission.modul
     ConcentrationModule,
     NotificationModule,
     AgentCommissionModule,
+    UniversityInfoModule,
   ],
   controllers: [AppController],
   providers: [AppService, SharedService],

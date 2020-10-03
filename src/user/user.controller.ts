@@ -20,6 +20,7 @@ import {
   AssignStudentToCounselorDto,
   RegisterStudentDto,
   FetchUsersDto,
+  UpdateCounselorDto,
 } from './dto/user.dto';
 import { UserService } from './user.service';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
@@ -197,7 +198,7 @@ export class UserController {
   // Update Counselor
   @Put('/:id')
   async updateCounselor(
-    @Body() body: AddCounselorDto,
+    @Body() body: UpdateCounselorDto,
     @Param('id') id: string,
   ) {
     try {
@@ -366,7 +367,6 @@ export class UserController {
   @Post('/fetchAll')
   async fetchAll(@Body() body: FetchUsersDto) {
     try {
-      console.log(body);
       const params = await this.sharedService.prepareParams(body);
       // body = Object.assign(paginationObject, body);
       console.log(params);

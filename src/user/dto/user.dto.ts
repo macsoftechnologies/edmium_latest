@@ -40,11 +40,11 @@ export class CreateUser {
 
   @ApiProperty()
   @IsString()
-  deviceToken: string
+  deviceToken: string;
 
   @ApiProperty()
   @IsString()
-  deviceType: string
+  deviceType: string;
 }
 
 export class AddCounselorDto {
@@ -75,11 +75,47 @@ export class AddCounselorDto {
 
   @ApiProperty()
   @IsString()
-  deviceToken: string
+  deviceToken: string;
 
   @ApiProperty()
   @IsString()
-  deviceType
+  deviceType;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  createdBy: string;
+}
+
+export class UpdateCounselorDto {
+  @ApiProperty()
+  @IsString()
+  firstName: string;
+
+  @ApiProperty()
+  @IsString()
+  lastName: string;
+
+  @ApiProperty()
+  @IsEmail()
+  emailAddress: string;
+
+  @ApiProperty()
+  @IsNumber()
+  mobileNumber: number;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  country: string;
+
+  @ApiProperty()
+  @IsString()
+  deviceToken: string;
+
+  @ApiProperty()
+  @IsString()
+  deviceType;
 
   @ApiProperty()
   @IsString()
@@ -98,11 +134,11 @@ export class UserLogin {
 
   @ApiProperty()
   @IsString()
-  deviceToken: string
+  deviceToken: string;
 
   @ApiProperty()
   @IsString()
-  deviceType: string
+  deviceType: string;
 }
 
 export class FavoriteListDto {
