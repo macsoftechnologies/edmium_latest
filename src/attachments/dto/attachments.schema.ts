@@ -13,10 +13,18 @@ export class Attachment extends Document {
   countryId?: string;
 
   @Prop()
+  @IsOptional()
+  universityId?: string;
+
+  @Prop()
   attachment: string;
 
   @Prop()
   category: string;
+
+  @Prop()
+  @IsOptional()
+  subCategory: string;
 
   @Prop({ default: false })
   @IsOptional()

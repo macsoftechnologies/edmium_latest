@@ -24,6 +24,7 @@ export class AttachmentsController {
     try {
       let response = await this.attachmentsService.getAttachments({
         userId: userId,
+        category: 'chat',
       });
       return response;
     } catch (error) {
@@ -76,6 +77,65 @@ export class AttachmentsController {
     try {
       let response = await this.attachmentsService.getAttachments({
         countryId: countryId,
+      });
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Add University Attachments
+  @Post('/university/:subCategory/:universityId')
+  @UseInterceptors(
+    FileFieldsInterceptor([{ name: 'attachments', maxCount: 10 }]),
+  )
+  async addUniversityAttachments(
+    @Param('subCategory') subCategory: string,
+    @Param('universityId') universityId: string,
+    @UploadedFiles() files,
+  ) {
+    try {
+      for (const attachment of files.attachments) {
+        const res = await this.sharedService.uploadFileToAWSBucket(
+          attachment,
+          'university/' + subCategory,
+        );
+
+        await this.attachmentsService.addAttachment({
+          universityId: universityId,
+          attachment: res.Location,
+          category: 'university',
+          subCategory: subCategory,
+        });
+      }
+
+      return {
+        statusCode: HttpStatus.OK,
+        data: null,
+        message: 'Request Successful',
+      };
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Get Country Attachments
+  @Get('/university/:subCategory/:universityId')
+  async getUniversityAttachments(
+    @Param('subCategory') subCategory: string,
+    @Param('universityId') universityId: string,
+  ) {
+    try {
+      let response = await this.attachmentsService.getAttachments({
+        universityId: universityId,
+        category: 'university',
+        subCategory: subCategory,
       });
       return response;
     } catch (error) {
