@@ -20,6 +20,10 @@ export class UniversityInfo extends Document {
 
   @Prop()
   @IsOptional()
+  informationLink: string;
+
+  @Prop()
+  @IsOptional()
   attachment: string;
 
   @Prop()

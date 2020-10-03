@@ -24,6 +24,11 @@ export class CreateUniversityInfoDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
+  informationLink: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
   eventDate: string;
 
   @ApiProperty()

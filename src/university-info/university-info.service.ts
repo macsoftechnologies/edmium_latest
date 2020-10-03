@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Attachment } from 'src/attachments/dto/attachments.schema';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { FetchParamsDto } from 'src/shared/dto/shared.dto';
 import { CreateUniversityInfoDto } from './dto/university-info.dto';
@@ -11,6 +12,8 @@ export class UniversityInfoService {
   constructor(
     @InjectModel('UniversityInfo')
     private universityInfoModel: Model<UniversityInfo>,
+    @InjectModel('Attachment')
+    private attachmentModel: Model<Attachment>,
   ) {}
 
   async createUniversityInfo(params: any): Promise<any> {
@@ -36,6 +39,11 @@ export class UniversityInfoService {
 
       const response = await this.universityInfoModel
         .find({ isDeleted: false, ...params.findObject })
+        .populate({
+          path: 'attachment',
+          model: this.attachmentModel,
+          retainNullValues: true,
+        })
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
         .sort(sortObject);
