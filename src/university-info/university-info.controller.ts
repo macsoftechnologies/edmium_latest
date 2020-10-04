@@ -89,7 +89,7 @@ export class UniversityInfoController {
   ) {
     try {
       const params: any = body;
-      if (files.attachment) {
+      if (files && files.attachment) {
         const attachment = await this.sharedService.uploadFileToAWSBucket(
           files.attachment[0],
           'university-info',
