@@ -40,6 +40,10 @@ export class UserAcademicInfoDto {
   startDate: string;
 
   @ApiProperty()
+  @IsNumber()
+  numberOfBacklogs: number;
+
+  @ApiProperty()
   @IsString()
   endDate: string;
 }

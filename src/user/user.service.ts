@@ -782,6 +782,71 @@ export class UserService {
               preserveNullAndEmptyArrays: true,
             },
           },
+
+          {
+            $unwind: {
+              path: '$suggestedUniversities',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $addFields: {
+              suggestedUniversitiesId: {
+                $convert: {
+                  input: '$suggestedUniversities',
+                  to: 'objectId',
+                  onError: null,
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'universitydetails',
+              localField: 'suggestedUniversitiesId',
+              foreignField: '_id',
+              as: 'suggestedUniversities',
+            },
+          },
+          {
+            $unwind: {
+              path: '$suggestedUniversities',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
+          {
+            $unwind: {
+              path: '$favoriteUniversities',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $addFields: {
+              favoriteUniversitiesId: {
+                $convert: {
+                  input: '$favoriteUniversities.universityId',
+                  to: 'objectId',
+                  onError: null,
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'universitydetails',
+              localField: 'favoriteUniversitiesId',
+              foreignField: '_id',
+              as: 'favoriteUniversities.universityId',
+            },
+          },
+          {
+            $unwind: {
+              path: '$favoriteUniversities.universityId',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
           {
             $group: {
               _id: '$_id',
@@ -793,6 +858,8 @@ export class UserService {
               createdAt: { $first: '$createdAt' },
               createdBy: { $first: '$createdBy' },
               assignedTo: { $first: '$assignedTo' },
+              suggestedUniversities: { $push: '$suggestedUniversities' },
+              favoriteUniversities: { $push: '$favoriteUniversities' },
               universityApplications: { $push: '$universityApplications' },
             },
           },
@@ -802,8 +869,47 @@ export class UserService {
         .limit(params.limit);
 
       for (const details of universityDetails) {
-        if (!details.universityApplications[0]._id)
+        if (
+          details.universityApplications &&
+          details.universityApplications[0] &&
+          !details.universityApplications[0]._id
+        )
           details.universityApplications = [];
+
+        if (details.universityApplications) {
+          details.universityApplications = _.uniqWith(
+            details.universityApplications,
+            _.isEqual,
+          );
+        }
+
+        if (
+          details.suggestedUniversities &&
+          details.suggestedUniversities[0] &&
+          !details.suggestedUniversities[0]._id
+        )
+          details.suggestedUniversities = [];
+
+        if (details.suggestedUniversities) {
+          details.suggestedUniversities = _.uniqWith(
+            details.suggestedUniversities,
+            _.isEqual,
+          );
+        }
+
+        if (
+          details.favoriteUniversities &&
+          details.favoriteUniversities[0] &&
+          !details.favoriteUniversities[0].universityId
+        )
+          details.favoriteUniversities = [];
+
+        if (details.favoriteUniversities) {
+          details.favoriteUniversities = _.uniqWith(
+            details.favoriteUniversities,
+            _.isEqual,
+          );
+        }
       }
 
       let apiResponse: APIResponse = {

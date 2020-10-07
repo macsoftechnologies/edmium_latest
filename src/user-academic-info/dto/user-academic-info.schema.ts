@@ -35,6 +35,10 @@ export class UserAcademicInfo extends Document {
   @Prop()
   endDate: string;
 
+  @Prop({ default: 0 })
+  @IsOptional()
+  numberOfBacklogs: number;
+
   @Prop({ default: false })
   @IsOptional()
   isDeleted?: boolean;
