@@ -1,21 +1,20 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
-import { IsOptional } from 'class-validator';
 import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class Notification extends Document {
+export class Notifications extends Document {
   @Prop({required : true})
-  user: string;
+  usersTo: string[];
 
-  @Prop({ default: null })
+  @Prop()
   notification: NotificationObject
 
-  @Prop({ default: null })
-  to: string;
+  @Prop()
+  registration_ids: string[];
 
 }
 
-export const NotificationSchema = SchemaFactory.createForClass(Notification);
+export const NotificationSchema = SchemaFactory.createForClass(Notifications);
 
 export interface NotificationObject{
     title : string

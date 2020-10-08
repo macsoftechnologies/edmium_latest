@@ -14,6 +14,7 @@ import { UserAuthenticationSchema } from 'src/user-authentication/dto/user-authe
 import { ApplicationStatusSchema } from 'src/application-status/dto/application-status.schema';
 import { ConcentrationSchema } from 'src/concentration/dto/concentration.schema';
 import { NotificationService } from 'src/notification/notification.service';
+import { NotificationSchema } from 'src/notification/dto/notification.schema';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { NotificationService } from 'src/notification/notification.service';
       { name: 'University', schema: UniversitySchema },
       { name: 'UserAuthentication', schema: UserAuthenticationSchema },
       { name: 'ApplicationStatus', schema: ApplicationStatusSchema },
+      {name :'Notifications' , schema: NotificationSchema}
     ]),
     HttpModule.registerAsync({
       useFactory: () => ({

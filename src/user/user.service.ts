@@ -146,16 +146,7 @@ export class UserService {
         deviceType: deviceType,
       });
 
-      const notificationObj = {
-        notification: {
-          title: 'Hey there',
-          body: 'Subscribe to Edmium News letters',
-        },
-        to: deviceToken,
-      };
-
-      await this.notificationService.sendNotifications(notificationObj);
-
+    
       let response = {
         statusCode: HttpStatus.OK,
         data: createUserRes,
@@ -204,10 +195,20 @@ export class UserService {
           user: user._id,
           password: userLogIn.password,
           isDeleted: false,
-        });
+        }).lean();
 
         if (userAuthentication) {
-          console.log('userAuthentication', userAuthentication);
+         
+          const notificationObj = {
+            usersTo : [userAuthentication._id],
+            notification: {
+              title: "Edimum Notifications",
+              body: "Subscribe to Edmium News letters"
+            },
+            registration_ids: [userAuthentication.deviceToken]
+          }
+
+          await this.notificationService.sendNotifications(notificationObj)
 
           const id = userAuthentication._id;
           const deviceToken = userLogIn.deviceToken;
@@ -272,6 +273,9 @@ export class UserService {
   // Add Favorite University
   async addFavoriteUniversity(params: FavoriteListDto): Promise<any> {
     try {
+
+      // Need to send Notification
+
       const user: any = await this.userModel.findById(params.userId);
       var index = user.favoriteUniversities.findIndex(
         fu => fu.universityId == params.universityId,
