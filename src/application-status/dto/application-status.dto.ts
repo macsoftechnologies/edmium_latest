@@ -11,9 +11,15 @@ export class ApplicationStatusDto {
   @IsOptional()
   parentStatus: string;
 
-  @ApiProperty()
+  @ApiProperty({ default: false })
   isParentStatus: boolean;
 
-  @ApiProperty()
+  @ApiProperty({ default: false })
   isDefault: boolean;
+
+  @ApiProperty({ default: false })
+  applicationClosed: boolean;
+
+  @ApiProperty({ default: false })
+  initiateCommission: boolean;
 }

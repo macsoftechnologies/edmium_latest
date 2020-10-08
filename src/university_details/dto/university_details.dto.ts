@@ -54,7 +54,7 @@ export class CollegeDto {
 
   @ApiProperty()
   @IsString()
-  intake: string;
+  intake: string[];
 
   @ApiProperty()
   @IsNumber()

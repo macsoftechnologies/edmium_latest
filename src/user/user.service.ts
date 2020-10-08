@@ -42,8 +42,8 @@ export class UserService {
     private userAuthenticationModel: Model<UserAuthentication>,
     @InjectModel('ApplicationStatus')
     private applicationStatusModel: Model<ApplicationStatus>,
-    private notificationService: NotificationService
-  ) { }
+    private notificationService: NotificationService,
+  ) {}
 
   //  Create User
   async createUser(createUser: any): Promise<any> {
@@ -82,7 +82,6 @@ export class UserService {
       delete createUser.password;
       delete createUser.deviceToken;
       delete createUser.deviceType;
-
 
       if (createUser.role === 'student') {
         if (createUser.createdBy) {
@@ -145,7 +144,7 @@ export class UserService {
         user: createUserRes._id,
         password: password,
         deviceToken: deviceToken,
-        deviceType: deviceType
+        deviceType: deviceType,
       });
 
     
@@ -192,7 +191,7 @@ export class UserService {
         });
 
       if (user) {
-        console.log('user' , user)
+        console.log('user', user);
         const userAuthentication = await this.userAuthenticationModel.findOne({
           user: user._id,
           password: userLogIn.password,
@@ -212,13 +211,14 @@ export class UserService {
 
           await this.notificationService.sendNotifications(notificationObj)
 
-          console.log('userAuthentication' , userAuthentication)
+          const id = userAuthentication._id;
+          const deviceToken = userLogIn.deviceToken;
+          const deviceType = userLogIn.deviceType;
 
-          const id = userAuthentication._id
-          const deviceToken = userLogIn.deviceToken
-          const deviceType = userLogIn.deviceType
-
-          await this.userAuthenticationModel.updateOne({ _id: id }, { $set: { deviceToken: deviceToken, deviceType: deviceType } })
+          await this.userAuthenticationModel.updateOne(
+            { _id: id },
+            { $set: { deviceToken: deviceToken, deviceType: deviceType } },
+          );
 
           return {
             statusCode: HttpStatus.OK,
@@ -403,7 +403,7 @@ export class UserService {
                   $expr: {
                     $and: [
                       { $eq: ['$universityDetails', '$$universityId'] },
-                      { $gte: ['$user', '$$userId'] },
+                      { $eq: ['$user', '$$userId'] },
                     ],
                   },
                 },
@@ -435,7 +435,10 @@ export class UserService {
           },
         },
         {
-          $unwind: '$favoriteUniversities.universityApplications.status',
+          $unwind: {
+            path: '$favoriteUniversities.universityApplications.status',
+            preserveNullAndEmptyArrays: true,
+          },
         },
         {
           $addFields: {
@@ -453,8 +456,12 @@ export class UserService {
           },
         },
         {
-          $unwind: '$favoriteUniversities.universityDetails',
+          $unwind: {
+            path: '$favoriteUniversities.universityDetails',
+            preserveNullAndEmptyArrays: true,
+          },
         },
+
         {
           $addFields: {
             universityId: {
@@ -471,8 +478,12 @@ export class UserService {
           },
         },
         {
-          $unwind: '$favoriteUniversities.universityDetails.university',
+          $unwind: {
+            path: '$favoriteUniversities.universityDetails.university',
+            preserveNullAndEmptyArrays: true,
+          },
         },
+
         {
           $addFields: {
             countryId: {
@@ -489,7 +500,10 @@ export class UserService {
           },
         },
         {
-          $unwind: '$favoriteUniversities.universityDetails.country',
+          $unwind: {
+            path: '$favoriteUniversities.universityDetails.country',
+            preserveNullAndEmptyArrays: true,
+          },
         },
         {
           $group: {
@@ -772,6 +786,71 @@ export class UserService {
               preserveNullAndEmptyArrays: true,
             },
           },
+
+          {
+            $unwind: {
+              path: '$suggestedUniversities',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $addFields: {
+              suggestedUniversitiesId: {
+                $convert: {
+                  input: '$suggestedUniversities',
+                  to: 'objectId',
+                  onError: null,
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'universitydetails',
+              localField: 'suggestedUniversitiesId',
+              foreignField: '_id',
+              as: 'suggestedUniversities',
+            },
+          },
+          {
+            $unwind: {
+              path: '$suggestedUniversities',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
+          {
+            $unwind: {
+              path: '$favoriteUniversities',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $addFields: {
+              favoriteUniversitiesId: {
+                $convert: {
+                  input: '$favoriteUniversities.universityId',
+                  to: 'objectId',
+                  onError: null,
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'universitydetails',
+              localField: 'favoriteUniversitiesId',
+              foreignField: '_id',
+              as: 'favoriteUniversities.universityId',
+            },
+          },
+          {
+            $unwind: {
+              path: '$favoriteUniversities.universityId',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
           {
             $group: {
               _id: '$_id',
@@ -783,6 +862,8 @@ export class UserService {
               createdAt: { $first: '$createdAt' },
               createdBy: { $first: '$createdBy' },
               assignedTo: { $first: '$assignedTo' },
+              suggestedUniversities: { $push: '$suggestedUniversities' },
+              favoriteUniversities: { $push: '$favoriteUniversities' },
               universityApplications: { $push: '$universityApplications' },
             },
           },
@@ -792,8 +873,47 @@ export class UserService {
         .limit(params.limit);
 
       for (const details of universityDetails) {
-        if (!details.universityApplications[0]._id)
+        if (
+          details.universityApplications &&
+          details.universityApplications[0] &&
+          !details.universityApplications[0]._id
+        )
           details.universityApplications = [];
+
+        if (details.universityApplications) {
+          details.universityApplications = _.uniqWith(
+            details.universityApplications,
+            _.isEqual,
+          );
+        }
+
+        if (
+          details.suggestedUniversities &&
+          details.suggestedUniversities[0] &&
+          !details.suggestedUniversities[0]._id
+        )
+          details.suggestedUniversities = [];
+
+        if (details.suggestedUniversities) {
+          details.suggestedUniversities = _.uniqWith(
+            details.suggestedUniversities,
+            _.isEqual,
+          );
+        }
+
+        if (
+          details.favoriteUniversities &&
+          details.favoriteUniversities[0] &&
+          !details.favoriteUniversities[0].universityId
+        )
+          details.favoriteUniversities = [];
+
+        if (details.favoriteUniversities) {
+          details.favoriteUniversities = _.uniqWith(
+            details.favoriteUniversities,
+            _.isEqual,
+          );
+        }
       }
 
       let apiResponse: APIResponse = {
@@ -1045,20 +1165,159 @@ export class UserService {
   // Get Suggested Universities
   async getSuggestedUniversities(id: string): Promise<any> {
     try {
-      const data = await this.userModel
-        .findById(id)
-        .populate({
-          path: 'suggestedUniversities',
-          model: this.universityDetailsModel,
-          retainNullValues: true,
-        })
-        .select('suggestedUniversities');
+      let userData = await this.userModel.aggregate([
+        {
+          $addFields: {
+            userId: {
+              $toString: '$_id',
+            },
+          },
+        },
+        {
+          $match: { userId: id },
+        },
+        { $unwind: '$suggestedUniversities' },
+
+        {
+          $addFields: {
+            universityDetailsId: {
+              $toObjectId: '$suggestedUniversities',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universitydetails',
+            localField: 'universityDetailsId',
+            foreignField: '_id',
+            as: 'suggestedUniversities.universityDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$suggestedUniversities.universityDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+
+        {
+          $addFields: {
+            universityId: {
+              $toObjectId:
+                '$suggestedUniversities.universityDetails.university',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universities',
+            localField: 'universityId',
+            foreignField: '_id',
+            as: 'suggestedUniversities.universityDetails.university',
+          },
+        },
+        {
+          $unwind: {
+            path: '$suggestedUniversities.universityDetails.university',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+
+        {
+          $addFields: {
+            countryId: {
+              $toObjectId: '$suggestedUniversities.universityDetails.country',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'countries',
+            localField: 'countryId',
+            foreignField: '_id',
+            as: 'suggestedUniversities.universityDetails.country',
+          },
+        },
+        {
+          $unwind: {
+            path: '$suggestedUniversities.universityDetails.country',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            universityId: {
+              $toString: '$suggestedUniversities.universityDetails._id',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universityapplications',
+            let: {
+              universityId: '$universityId',
+              userId: '$userId',
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$universityDetails', '$$universityId'] },
+                      { $eq: ['$user', '$$userId'] },
+                    ],
+                  },
+                },
+              },
+            ],
+            as: 'suggestedUniversities.universityApplications',
+          },
+        },
+        {
+          $unwind: {
+            path: '$suggestedUniversities.universityApplications',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            statusId: {
+              $toObjectId:
+                '$suggestedUniversities.universityApplications.status',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'applicationstatuses',
+            localField: 'statusId',
+            foreignField: '_id',
+            as: 'suggestedUniversities.universityApplications.status',
+          },
+        },
+        {
+          $unwind: {
+            path: '$suggestedUniversities.universityApplications.status',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $group: {
+            _id: '$_id',
+            suggestedUniversities: { $push: '$suggestedUniversities' },
+          },
+        },
+      ]);
+
+      console.log(userData);
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data:
-          data && data.suggestedUniversities ? data.suggestedUniversities : [],
-        message: 'Request successful',
+          userData && userData[0] && userData[0].suggestedUniversities
+            ? userData[0].suggestedUniversities
+            : [],
+        message: 'Request Successful',
       };
       return apiResponse;
     } catch (error) {
@@ -1085,6 +1344,6 @@ export class UserService {
         message: 'Request successful',
       };
       return apiResponse;
-    } catch (error) { }
+    } catch (error) {}
   }
 }

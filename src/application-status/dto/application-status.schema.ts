@@ -19,6 +19,14 @@ export class ApplicationStatus extends Document {
 
   @Prop({ default: false })
   @IsOptional()
+  applicationClosed?: boolean;
+
+  @Prop({ default: false })
+  @IsOptional()
+  initiateCommission?: boolean;
+
+  @Prop({ default: false })
+  @IsOptional()
   isDeleted?: boolean;
 }
 
