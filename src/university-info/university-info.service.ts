@@ -109,6 +109,12 @@ export class UniversityInfoService {
         .sort(sortObject);
     }
 
-    return scholarships;
+    let apiResponse: APIResponse = {
+      statusCode: HttpStatus.OK,
+      data: scholarships,
+      message: 'Request Successful',
+    };
+
+    return apiResponse;
   }
 }
