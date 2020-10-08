@@ -1,10 +1,11 @@
 
 export class NotificationDto {
-    notification : NotificationObject
-    to : string
-  }
-  
-  export class NotificationObject {
-       title : string
-       body : string
-  }
+     usersTo: string[]
+     notification: NotificationObject
+     registration_ids: string[]
+}
+
+export class NotificationObject {
+     title: string
+     body: string
+}
