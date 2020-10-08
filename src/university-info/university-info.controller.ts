@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { AttachmentsService } from 'src/attachments/attachments.service';
+import { PaginationDto } from 'src/shared/dto/shared.dto';
 import { SharedService } from 'src/shared/shared.service';
 import {
   CreateUniversityInfoDto,
@@ -64,7 +65,7 @@ export class UniversityInfoController {
 
   /* Get University Info */
   @Post('listing')
-  async getEducationByID(@Body() body: GetUniversityInfoDto) {
+  async getUniversityInfo(@Body() body: GetUniversityInfoDto) {
     try {
       const params = await this.sharedService.prepareParams(body);
       console.log(params);
@@ -125,6 +126,29 @@ export class UniversityInfoController {
       let response = await this.universityInfoService.updateUniversityInfo(id, {
         isDeleted: true,
       });
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  /* Get University Info */
+  @Post('scholarships/:userId')
+  async getScholarships(
+    @Param('userId') userId: string,
+    @Body() body: PaginationDto,
+  ) {
+    try {
+      const params = await this.sharedService.prepareParams(body);
+      console.log(params);
+      let response = await this.universityInfoService.getScholarshipsOfUser(
+        userId,
+        params,
+      );
+      console.log(response);
       return response;
     } catch (error) {
       return {

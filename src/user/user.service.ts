@@ -83,17 +83,33 @@ export class UserService {
       delete createUser.deviceToken;
       delete createUser.deviceType;
 
-      if (createUser.role === 'student') {
-        if (createUser.createdBy) {
-          createUser.assignedTo = createUser.createdBy;
-        } else {
-          const counselors = await this.userModel.find({
-            role: 'counselor',
-            country: createUser.country,
-            isDeleted: false,
-          });
+      if (createUser.createdBy) {
+        createUser.assignedTo = createUser.createdBy;
+      } else if (createUser.role === 'student') {
+        const counselors = await this.userModel.find({
+          role: 'counselor',
+          country: createUser.country,
+          isDeleted: false,
+        });
 
-          if (counselors.length === 1) {
+        if (counselors.length === 1) {
+          createUser.createdBy = counselors[0]._id;
+          createUser.assignedTo = counselors[0]._id;
+
+          await this.userModel.updateOne(
+            { _id: counselors[0]._id },
+            { studentAssigned: true },
+          );
+        } else if (counselors.length > 1) {
+          const index = _.findIndex(
+            counselors,
+            counselor => {
+              return counselor.studentAssigned == true;
+            },
+            0,
+          );
+
+          if (index == -1) {
             createUser.createdBy = counselors[0]._id;
             createUser.assignedTo = counselors[0]._id;
 
@@ -101,42 +117,25 @@ export class UserService {
               { _id: counselors[0]._id },
               { studentAssigned: true },
             );
-          } else if (counselors.length > 1) {
-            const index = _.findIndex(
-              counselors,
-              counselor => {
-                return counselor.studentAssigned == true;
-              },
-              0,
+          } else {
+            const nextIndex = counselors.length - 2 < index ? 0 : index + 1;
+
+            createUser.createdBy = counselors[nextIndex]._id;
+            createUser.assignedTo = counselors[nextIndex]._id;
+
+            await this.userModel.updateOne(
+              { _id: counselors[index]._id },
+              { studentAssigned: false },
             );
 
-            if (index == -1) {
-              createUser.createdBy = counselors[0]._id;
-              createUser.assignedTo = counselors[0]._id;
-
-              await this.userModel.updateOne(
-                { _id: counselors[0]._id },
-                { studentAssigned: true },
-              );
-            } else {
-              const nextIndex = counselors.length - 2 < index ? 0 : index + 1;
-
-              createUser.createdBy = counselors[nextIndex]._id;
-              createUser.assignedTo = counselors[nextIndex]._id;
-
-              await this.userModel.updateOne(
-                { _id: counselors[index]._id },
-                { studentAssigned: false },
-              );
-
-              await this.userModel.updateOne(
-                { _id: counselors[nextIndex]._id },
-                { studentAssigned: true },
-              );
-            }
+            await this.userModel.updateOne(
+              { _id: counselors[nextIndex]._id },
+              { studentAssigned: true },
+            );
           }
         }
       }
+
       const createUserRes = await this.userModel.create(createUser);
       // console.log(createUserRes);
 
@@ -1044,10 +1043,14 @@ export class UserService {
   }
 
   // Get Users
-  async getUsersForEligibilityCheck(params: any): Promise<any> {
+  async fetchUsers(params: FetchParamsDto): Promise<any> {
     try {
+      const sortObject = {};
+      sortObject[params.paginationObject.sortBy] =
+        params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
+
       const data = await this.userModel
-        .find({ isDeleted: false, ...params })
+        .find({ isDeleted: false, ...params.findObject })
         .populate({
           path: 'country',
           model: this.countryModel,
@@ -1063,9 +1066,9 @@ export class UserService {
           model: this.educationModel,
           retainNullValues: true,
         })
-        .sort({ createdAt: -1 })
-        .skip(params.start)
-        .limit(params.limit);
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit)
+        .sort(sortObject);
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,

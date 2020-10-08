@@ -2,8 +2,10 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Attachment } from 'src/attachments/dto/attachments.schema';
+import { Concentration } from 'src/concentration/dto/concentration.schema';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { FetchParamsDto } from 'src/shared/dto/shared.dto';
+import { User } from 'src/user/dto/user.schema';
 import { CreateUniversityInfoDto } from './dto/university-info.dto';
 import { UniversityInfo } from './dto/university-info.schema';
 
@@ -14,6 +16,10 @@ export class UniversityInfoService {
     private universityInfoModel: Model<UniversityInfo>,
     @InjectModel('Attachment')
     private attachmentModel: Model<Attachment>,
+    @InjectModel('Concentration')
+    private concentrationModel: Model<Concentration>,
+    @InjectModel('User')
+    private userModel: Model<User>,
   ) {}
 
   async createUniversityInfo(params: any): Promise<any> {
@@ -42,6 +48,11 @@ export class UniversityInfoService {
         .populate({
           path: 'attachment',
           model: this.attachmentModel,
+          retainNullValues: true,
+        })
+        .populate({
+          path: 'concentration',
+          model: this.concentrationModel,
           retainNullValues: true,
         })
         .skip(params.paginationObject.start)
@@ -75,5 +86,35 @@ export class UniversityInfoService {
     } catch (error) {
       return error;
     }
+  }
+
+  async getScholarshipsOfUser(userId: string, params: FetchParamsDto) {
+    const user = await this.userModel.findById(userId);
+
+    let scholarships = [];
+
+    if (user && user.concentration) {
+      const sortObject = {};
+      sortObject[params.paginationObject.sortBy] =
+        params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
+
+      scholarships = await this.universityInfoModel
+        .find({
+          isDeleted: false,
+          category: 'scholarship',
+          concentration: user.concentration,
+        })
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit)
+        .sort(sortObject);
+    }
+
+    let apiResponse: APIResponse = {
+      statusCode: HttpStatus.OK,
+      data: scholarships,
+      message: 'Request Successful',
+    };
+
+    return apiResponse;
   }
 }
