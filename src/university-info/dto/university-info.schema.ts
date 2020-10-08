@@ -20,6 +20,10 @@ export class UniversityInfo extends Document {
 
   @Prop()
   @IsOptional()
+  concentration: string;
+
+  @Prop()
+  @IsOptional()
   informationLink: string;
 
   @Prop()

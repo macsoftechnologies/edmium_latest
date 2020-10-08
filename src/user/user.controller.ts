@@ -278,9 +278,11 @@ export class UserController {
   @Post('/forEligibilityCheck')
   async getUsersForEligibilityCheck(@Body() body: PaginationDto) {
     try {
-      let response = await this.userService.getUsersForEligibilityCheck({
-        role: 'student',
-      });
+      const params: any = body;
+      params.role = 'student';
+
+      const params1 = await this.sharedService.prepareParams(params);
+      let response = await this.userService.fetchUsers(params1);
       return response;
     } catch (error) {
       return {
@@ -388,6 +390,28 @@ export class UserController {
       const params: any = body;
       params.role = 'agent-counselor';
       let response = await this.userService.createUser(params);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Get Agent Counselors
+  @Post('/getAgentCounselors/:agentId')
+  async getAgentCounselors(
+    @Body() body: PaginationDto,
+    @Param('agentId') agentId: string,
+  ) {
+    try {
+      const params1: any = body;
+      params1.role = 'agent-counselor';
+      params1.assignedTo = agentId;
+      const params = await this.sharedService.prepareParams(params1);
+
+      let response = await this.userService.fetchUsers(params);
       return response;
     } catch (error) {
       return {

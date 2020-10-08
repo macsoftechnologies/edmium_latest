@@ -24,6 +24,11 @@ export class CreateUniversityInfoDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
+  concentration: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
   informationLink: string;
 
   @ApiProperty()
