@@ -7,7 +7,7 @@ import {
 } from './dto/university-applications.dto';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { UniversityApplication } from './dto/university-applications.schema';
 import { PaginationDto } from 'src/shared/dto/shared.dto';
 import { User } from 'src/user/dto/user.schema';
@@ -15,6 +15,9 @@ import { UniversityDetails } from 'src/university_details/dto/university_details
 import { University } from 'src/university/dto/university.schema';
 import { Country } from 'src/country/dto/country.schema';
 import { ApplicationStatus } from 'src/application-status/dto/application-status.schema';
+import { CommissionTransactionsService } from 'src/commission-transactions/commission-transactions.service';
+import { CommissionTransactionDto } from 'src/commission-transactions/dto/commission-transactions.dto';
+import { CommissionTransactions } from 'src/commission-transactions/dto/commission-transactions.schema';
 
 @Injectable()
 export class UniversityApplicationsService {
@@ -29,15 +32,44 @@ export class UniversityApplicationsService {
     @InjectModel('Country') private countryModel: Model<Country>,
     @InjectModel('ApplicationStatus')
     private applicationStatusModel: Model<ApplicationStatus>,
-  ) {}
+    // @InjectModel('CommissionTransactions')
+    // private CommissionTransactionsModel: Model<CommissionTransactions>,
+    // private commissionTransactionsService: CommissionTransactionsService
+  ) { }
 
   //   Add User Academic Info
   async addUniversityApplication(
     params: UniversityApplicationDto,
   ): Promise<any> {
     try {
-      console.log(params);
+      console.log('params', params);
+
+      let user = params.user
+      let universityDetailsId = params.universityDetails
       const data = await this.universityApplicationModel.create(params);
+
+      // const beneficiaryUser = await this.userModel
+      //                        .findOne({ _id: Types.ObjectId(user) }, { assignedTo: 1 }).lean()                       
+      // const universityDetails =  await this.universityDetailsModel
+      //                        .findOne({ _id: Types.ObjectId(universityDetailsId) })
+                            //  .populate({
+                            //   path: 'country',
+                            //   model: this.countryModel,
+                            //   retainNullValues: true,
+                            // })
+                         
+    //  console.log('beneficiaryUser' , beneficiaryUser)
+    //   console.log('universityDetails' , universityDetails)
+    //   const countryId = universityDetails.country
+    //   const estimatedAmount = parseInt( universityDetails.tuitionFee) * 2
+    //   const CTobj: CommissionTransactionDto = {
+    //     user: beneficiaryUser.assignedTo,
+    //     applicationId: "data._id",
+    //     countryId: countryId,
+    //     estimatedAmount: estimatedAmount,
+    //     actualAmount: 0
+    //   }
+
 
       let response = {
         statusCode: HttpStatus.OK,
@@ -297,10 +329,16 @@ export class UniversityApplicationsService {
   //   Update Status
   async updateStatus(id: string, params: UpdateStatusDto): Promise<any> {
     try {
+
+
+
+
       const data = await this.universityApplicationModel.updateOne(
         { _id: id },
         params,
       );
+
+      //  
 
       let response = {
         statusCode: HttpStatus.OK,

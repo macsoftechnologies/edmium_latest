@@ -9,6 +9,8 @@ import { UniversitySchema } from 'src/university/dto/university.schema';
 import { CountrySchema } from 'src/country/dto/country.schema';
 import { ApplicationStatusService } from 'src/application-status/application-status.service';
 import { ApplicationStatusSchema } from 'src/application-status/dto/application-status.schema';
+import { CommissionTransactionsSchema } from 'src/commission-transactions/dto/commission-transactions.schema';
+import { CommissionTransactionsService } from 'src/commission-transactions/commission-transactions.service';
 
 @Module({
   imports: [
@@ -19,9 +21,11 @@ import { ApplicationStatusSchema } from 'src/application-status/dto/application-
       { name: 'University', schema: UniversitySchema },
       { name: 'Country', schema: CountrySchema },
       { name: 'ApplicationStatus', schema: ApplicationStatusSchema },
+      { name: 'CommissionTransactions', schema:  CommissionTransactionsSchema}
     ]),
+    
   ],
   controllers: [UniversityApplicationsController],
-  providers: [UniversityApplicationsService, ApplicationStatusService],
+  providers: [UniversityApplicationsService, ApplicationStatusService, CommissionTransactionsService],
 })
 export class UniversityApplicationsModule {}
