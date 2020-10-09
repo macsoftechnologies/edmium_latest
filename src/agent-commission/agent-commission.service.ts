@@ -25,16 +25,14 @@ export class AgentCommissionService {
     try {
       const University = commission.university;
       const Country = commission.country;
-      const Campus = commission.campus;
       const Education = commission.education;
 
       const duplicate = await this.agentCommissionModel.findOne({
         $and: [
           { university: University },
           { country: Country },
-          { campus: Campus },
           { education: Education },
-          {isDeleted : false}
+          { isDeleted: false },
         ],
       });
       if (duplicate) {
@@ -148,7 +146,7 @@ export class AgentCommissionService {
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
       const response = await this.agentCommissionModel
-        .find({isDeleted : false})
+        .find({ isDeleted: false })
         .populate({
           path: 'country',
           model: this.countryModel,
@@ -185,7 +183,9 @@ export class AgentCommissionService {
 
   async updateCommissionStatus(params: any, CommissionId): Promise<any> {
     try {
-      const found = this.agentCommissionModel.findOne({ _id: CommissionId });
+      const found = await this.agentCommissionModel.findOne({
+        _id: CommissionId,
+      });
       if (found) {
         const updateCommissionResponse = await this.agentCommissionModel.updateOne(
           { _id: CommissionId },
@@ -202,10 +202,21 @@ export class AgentCommissionService {
         return {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
           data: null,
-          errorMessage:"Commission Not Found",
+          errorMessage: 'Commission Not Found',
         };
-       
       }
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async getOne(params: any): Promise<any> {
+    console.log(params);
+    try {
+      return await this.agentCommissionModel.findOne({
+        isDeleted: false,
+        ...params,
+      });
     } catch (error) {
       return error;
     }

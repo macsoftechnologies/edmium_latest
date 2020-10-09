@@ -4,20 +4,20 @@ import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class CommissionTransactions extends Document {
-  @Prop({required : true})
+  @Prop({ required: true })
   user: string;
 
-  @Prop({required : true})
-  applicationId: string
+  @Prop({ required: true })
+  agent: string;
 
-  @Prop({required : true})
-  estimatedAmount: number
+  @Prop({ required: true })
+  application: string;
 
-  @Prop({required : true , default : 0})
-  actualAmount: number
+  @Prop({ required: true })
+  commission: number;
 
-  @Prop({required : true})
-  countryId : string
+  @Prop({ required: true })
+  country: string;
 
   @Prop({ default: false })
   @IsOptional()
@@ -32,4 +32,6 @@ export class CommissionTransactions extends Document {
   isDeleted?: boolean;
 }
 
-export const CommissionTransactionsSchema = SchemaFactory.createForClass(CommissionTransactions);
+export const CommissionTransactionsSchema = SchemaFactory.createForClass(
+  CommissionTransactions,
+);

@@ -4,20 +4,17 @@ import { IsOptional } from 'class-validator';
 
 @Schema({ timestamps: true })
 export class AgentCommission extends Document {
-  @Prop({required : true})
+  @Prop({ required: true })
   university: string;
 
-  @Prop({required : true})
+  @Prop({ required: true })
   country: string;
 
-  @Prop({required : true})
-  campus: string;
+  @Prop({ required: true })
+  education: string;
 
-  @Prop({required : true})
-  education: string
-
-  @Prop({required : true})
-  commission: number
+  @Prop({ required: true })
+  commission: number;
 
   @Prop({ default: false })
   @IsOptional()
@@ -25,5 +22,5 @@ export class AgentCommission extends Document {
 }
 
 export const AgentCommissionSchema = SchemaFactory.createForClass(
-    AgentCommission,
+  AgentCommission,
 );

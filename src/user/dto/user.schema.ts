@@ -1,6 +1,7 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { IsOptional } from 'class-validator';
+import { integer } from 'aws-sdk/clients/lightsail';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -51,6 +52,10 @@ export class User extends Document {
   @Prop()
   @IsOptional()
   suggestedUniversities?: string[];
+
+  @Prop({ default: 0 })
+  @IsOptional()
+  commission?: integer;
 
   @Prop()
   assignedTo: string;

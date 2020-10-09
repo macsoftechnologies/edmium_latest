@@ -19,7 +19,7 @@ export class CountryController {
   @Get()
   async getCountries() {
     try {
-      const courses = await this.countryService.getAllCountries();
+      const courses = await this.countryService.getAllCountries({});
       return courses;
     } catch (error) {
       return {

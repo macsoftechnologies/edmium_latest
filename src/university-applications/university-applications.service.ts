@@ -32,10 +32,7 @@ export class UniversityApplicationsService {
     @InjectModel('Country') private countryModel: Model<Country>,
     @InjectModel('ApplicationStatus')
     private applicationStatusModel: Model<ApplicationStatus>,
-    // @InjectModel('CommissionTransactions')
-    // private CommissionTransactionsModel: Model<CommissionTransactions>,
-    // private commissionTransactionsService: CommissionTransactionsService
-  ) { }
+  ) {}
 
   //   Add User Academic Info
   async addUniversityApplication(
@@ -44,32 +41,9 @@ export class UniversityApplicationsService {
     try {
       console.log('params', params);
 
-      let user = params.user
-      let universityDetailsId = params.universityDetails
+      let user = params.user;
+      let universityDetailsId = params.universityDetails;
       const data = await this.universityApplicationModel.create(params);
-
-      // const beneficiaryUser = await this.userModel
-      //                        .findOne({ _id: Types.ObjectId(user) }, { assignedTo: 1 }).lean()                       
-      // const universityDetails =  await this.universityDetailsModel
-      //                        .findOne({ _id: Types.ObjectId(universityDetailsId) })
-                            //  .populate({
-                            //   path: 'country',
-                            //   model: this.countryModel,
-                            //   retainNullValues: true,
-                            // })
-                         
-    //  console.log('beneficiaryUser' , beneficiaryUser)
-    //   console.log('universityDetails' , universityDetails)
-    //   const countryId = universityDetails.country
-    //   const estimatedAmount = parseInt( universityDetails.tuitionFee) * 2
-    //   const CTobj: CommissionTransactionDto = {
-    //     user: beneficiaryUser.assignedTo,
-    //     applicationId: "data._id",
-    //     countryId: countryId,
-    //     estimatedAmount: estimatedAmount,
-    //     actualAmount: 0
-    //   }
-
 
       let response = {
         statusCode: HttpStatus.OK,
@@ -329,16 +303,12 @@ export class UniversityApplicationsService {
   //   Update Status
   async updateStatus(id: string, params: UpdateStatusDto): Promise<any> {
     try {
-
-
-
-
       const data = await this.universityApplicationModel.updateOne(
         { _id: id },
         params,
       );
 
-      //  
+      //
 
       let response = {
         statusCode: HttpStatus.OK,
@@ -358,5 +328,12 @@ export class UniversityApplicationsService {
 
   async getApplicationById(id: string): Promise<any> {
     return await this.universityApplicationModel.findById(id);
+  }
+
+  async fetch(params: any): Promise<any> {
+    return await this.universityApplicationModel.find({
+      isDeleted: false,
+      ...params,
+    });
   }
 }

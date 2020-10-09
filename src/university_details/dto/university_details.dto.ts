@@ -81,8 +81,8 @@ export class CollegeDto {
   pteMin: number;
 
   @ApiProperty()
-  @IsString()
-  tuitionFee: string;
+  @IsNumber()
+  tuitionFee: number;
 
   @ApiProperty()
   @IsString()
@@ -141,8 +141,8 @@ export class CollegeDto {
   studyLevel: string;
 
   @ApiProperty()
-  @IsString()
-  applicationFee: string;
+  @IsNumber()
+  applicationFee: number;
 }
 
 export class SearchUniversitiesByIntCourUniNameDto {
@@ -189,4 +189,20 @@ export class FilterByCourseDto extends PaginationDto {
   @IsNumber()
   @IsOptional()
   englishTestValue: number;
+
+  @ApiProperty()
+  @IsOptional()
+  fee: feeDto[];
+}
+
+export class feeDto {
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  min: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  max: number;
 }

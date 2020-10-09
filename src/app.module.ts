@@ -26,6 +26,7 @@ import { NotificationService } from './notification/notification.service';
 import { AgentCommissionModule } from './agent-commission/agent-commission.module';
 import { UniversityInfoModule } from './university-info/university-info.module';
 import { CommissionTransactionsModule } from './commission-transactions/commission-transactions.module';
+import { CurrencyModule } from './currency/currency.module';
 @Module({
   imports: [
     EducationModule,
@@ -54,6 +55,7 @@ import { CommissionTransactionsModule } from './commission-transactions/commissi
     AgentCommissionModule,
     UniversityInfoModule,
     CommissionTransactionsModule,
+    CurrencyModule,
   ],
   controllers: [AppController],
   providers: [AppService, SharedService],

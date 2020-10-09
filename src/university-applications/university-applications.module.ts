@@ -11,6 +11,12 @@ import { ApplicationStatusService } from 'src/application-status/application-sta
 import { ApplicationStatusSchema } from 'src/application-status/dto/application-status.schema';
 import { CommissionTransactionsSchema } from 'src/commission-transactions/dto/commission-transactions.schema';
 import { CommissionTransactionsService } from 'src/commission-transactions/commission-transactions.service';
+import { UniversityDetailsService } from 'src/university_details/university_details.service';
+import { AgentCommissionService } from 'src/agent-commission/agent-commission.service';
+import { AgentCommissionSchema } from 'src/agent-commission/dto/agent-commission.schema';
+import { EducationSchema } from 'src/education/dto/education.schema';
+import { CountryService } from 'src/country/country.service';
+import { CurrencySchema } from 'src/currency/dto/currency.schema';
 
 @Module({
   imports: [
@@ -21,11 +27,20 @@ import { CommissionTransactionsService } from 'src/commission-transactions/commi
       { name: 'University', schema: UniversitySchema },
       { name: 'Country', schema: CountrySchema },
       { name: 'ApplicationStatus', schema: ApplicationStatusSchema },
-      { name: 'CommissionTransactions', schema:  CommissionTransactionsSchema}
+      { name: 'CommissionTransactions', schema: CommissionTransactionsSchema },
+      { name: 'AgentCommission', schema: AgentCommissionSchema },
+      { name: 'Education', schema: EducationSchema },
+      { name: 'Currency', schema: CurrencySchema },
     ]),
-    
   ],
   controllers: [UniversityApplicationsController],
-  providers: [UniversityApplicationsService, ApplicationStatusService, CommissionTransactionsService],
+  providers: [
+    UniversityApplicationsService,
+    ApplicationStatusService,
+    CommissionTransactionsService,
+    UniversityDetailsService,
+    AgentCommissionService,
+    CountryService,
+  ],
 })
 export class UniversityApplicationsModule {}

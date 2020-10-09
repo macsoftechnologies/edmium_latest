@@ -83,7 +83,6 @@ export class AddCounselorDto {
 
   @ApiProperty()
   @IsString()
-  @IsOptional()
   createdBy: string;
 }
 

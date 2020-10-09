@@ -1,30 +1,24 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsOptional, IsString } from "class-validator";
-
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CommissionTransactionDto {
+  @ApiProperty()
+  @IsString()
+  user: string;
 
-    @ApiProperty()
-    @IsString()
-    user: string;
+  @ApiProperty()
+  @IsString()
+  agent: string;
 
-    @ApiProperty()
-    @IsString()
-    applicationId: string;
+  @ApiProperty()
+  @IsString()
+  application: string;
 
-    @ApiProperty()
-    @IsString()
-    countryId: string
-    
-    @ApiProperty()
-    @IsNumber()
-    @IsOptional()
-    estimatedAmount: number
+  @ApiProperty()
+  @IsString()
+  country: string;
 
-    @ApiProperty()
-    @IsNumber()
-    @IsOptional()
-    actualAmount: number
-
-
+  @ApiProperty()
+  @IsNumber()
+  commission: number;
 }

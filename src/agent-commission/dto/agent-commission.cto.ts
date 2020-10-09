@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsArray, IsOptional, IsNumber, IsNotEmpty } from 'class-validator';
+import {
+  IsString,
+  IsArray,
+  IsOptional,
+  IsNumber,
+  IsNotEmpty,
+} from 'class-validator';
 
 export class CommissionDto {
   @ApiProperty()
@@ -15,11 +21,6 @@ export class CommissionDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  campus: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   education: string;
 
   @ApiProperty()
@@ -28,9 +29,7 @@ export class CommissionDto {
   commission: number;
 }
 
-
 export class CommissionUpdateDto {
-
   @ApiProperty()
   @IsString()
   @IsNotEmpty()

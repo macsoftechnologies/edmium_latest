@@ -50,7 +50,7 @@ export class UniversityDetails extends Document {
   pteMin: number;
 
   @Prop()
-  tuitionFee: string;
+  tuitionFee: number;
 
   @Prop()
   currency: string;
@@ -95,7 +95,7 @@ export class UniversityDetails extends Document {
   studyLevel: string;
 
   @Prop()
-  applicationFee: string;
+  applicationFee: number;
 
   @Prop({ default: false })
   @IsOptional()

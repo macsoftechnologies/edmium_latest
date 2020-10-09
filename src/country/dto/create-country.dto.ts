@@ -5,4 +5,8 @@ export class CreateCountryDto {
   @ApiProperty()
   @IsString()
   name: string;
+
+  @ApiProperty()
+  @IsString()
+  currency: string;
 }

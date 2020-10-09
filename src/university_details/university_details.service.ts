@@ -156,4 +156,17 @@ export class UniversityDetailsService {
       return error;
     }
   }
+
+  async getOne(params): Promise<any> {
+    try {
+      let universityDetails = await this.universityDetailsModel.findOne({
+        isDeleted: false,
+        ...params,
+      });
+
+      return universityDetails;
+    } catch (error) {
+      return error;
+    }
+  }
 }
