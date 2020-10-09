@@ -76,16 +76,16 @@ export class UniversityDetailsController {
   }
 
   /* Search universities by intake university name and course */
-  @Post()
-  async searchUniversitiesByIntakeUniCourse(
-    @Body()
-    searchUniversitiesByIntCourUniNameDto: SearchUniversitiesByIntCourUniNameDto,
-  ) {
-    try {
-    } catch (error) {
-      return error;
-    }
-  }
+  // @Post()
+  // async searchUniversitiesByIntakeUniCourse(
+  //   @Body()
+  //   searchUniversitiesByIntCourUniNameDto: SearchUniversitiesByIntCourUniNameDto,
+  // ) {
+  //   try {
+  //   } catch (error) {
+  //     return error;
+  //   }
+  // }
 
   // Filter By Course
   @Post('/filterByCourse')

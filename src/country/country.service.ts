@@ -56,7 +56,10 @@ export class CountryService {
   /* Update Country */
   async updateCountry(params: any, id) {
     try {
-      const updateCountryRes = this.countryModel.updateOne({ _id: id }, params);
+      const updateCountryRes = await this.countryModel.updateOne(
+        { _id: id },
+        params,
+      );
       console.log('updateCountryResp', updateCountryRes);
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,

@@ -146,7 +146,6 @@ export class UserService {
         deviceType: deviceType,
       });
 
-    
       let response = {
         statusCode: HttpStatus.OK,
         data: createUserRes,
@@ -191,24 +190,25 @@ export class UserService {
 
       if (user) {
         console.log('user', user);
-        const userAuthentication = await this.userAuthenticationModel.findOne({
-          user: user._id,
-          password: userLogIn.password,
-          isDeleted: false,
-        }).lean();
+        const userAuthentication = await this.userAuthenticationModel
+          .findOne({
+            user: user._id,
+            password: userLogIn.password,
+            isDeleted: false,
+          })
+          .lean();
 
         if (userAuthentication) {
-         
           const notificationObj = {
-            usersTo : [userAuthentication._id],
+            usersTo: [userAuthentication._id],
             notification: {
-              title: "Edimum Notifications",
-              body: "Subscribe to Edmium News letters"
+              title: 'Edimum Notifications',
+              body: 'Subscribe to Edmium News letters',
             },
-            registration_ids: [userAuthentication.deviceToken]
-          }
+            registration_ids: [userAuthentication.deviceToken],
+          };
 
-          await this.notificationService.sendNotifications(notificationObj)
+          await this.notificationService.sendNotifications(notificationObj);
 
           const id = userAuthentication._id;
           const deviceToken = userLogIn.deviceToken;
@@ -250,7 +250,7 @@ export class UserService {
       let universities = await this.universityDetailsModel.find({
         country: searchUniversitiesByIntCourUniNameDto.country,
         concentration: searchUniversitiesByIntCourUniNameDto.concentration,
-        intake: searchUniversitiesByIntCourUniNameDto.intake,
+        intake: { $in: [searchUniversitiesByIntCourUniNameDto.intake] },
       });
 
       // console.log('universities', universities);
@@ -273,7 +273,6 @@ export class UserService {
   // Add Favorite University
   async addFavoriteUniversity(params: FavoriteListDto): Promise<any> {
     try {
-
       // Need to send Notification
 
       const user: any = await this.userModel.findById(params.userId);
