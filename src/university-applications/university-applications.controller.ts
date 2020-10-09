@@ -107,7 +107,11 @@ export class UniversityApplicationsController {
       });
 
       let agent;
-      if (user && user.assignedTo && user.assignedTo.role == 'admin') {
+      if (
+        user &&
+        user.assignedTo &&
+        (user.assignedTo.role == 'admin' || user.assignedTo.role == 'agent')
+      ) {
         agent = user.assignedTo._id;
       } else if (
         user &&
@@ -232,16 +236,36 @@ export class UniversityApplicationsController {
             { isActualAmount: true },
           );
 
-          // const universityDetails = await this.universityDetailsService.getOne({
-          //   _id: application.universityDetails,
-          // });
+          const universityDetails = await this.universityDetailsService.getOne({
+            _id: application.universityDetails,
+          });
 
-          // const country = await await this.countryModel
-          //   .findById(universityDetails.country)
-          //   .populate({
-          //     path: 'currency',
-          //     model: this.currencyModel,
-          //   });
+          const country: any = await await this.countryModel
+            .findById(universityDetails.country)
+            .populate({
+              path: 'currency',
+              model: this.currencyModel,
+            });
+
+          const transactionRecord = await this.commissionTransactionsService.getOne(
+            {
+              application: id,
+            },
+          );
+
+          const agentRecord = await this.userModel.findById(
+            transactionRecord.agent,
+          );
+
+          const commission =
+            agentRecord.commission +
+            country.currency.equivalentValueInINR *
+              transactionRecord.commission;
+
+          await this.userModel.updateOne(
+            { _id: transactionRecord.agent },
+            { $set: { commission: commission } },
+          );
         }
       } else if (status.applicationClosed) {
         await this.commissionTransactionsService.update(

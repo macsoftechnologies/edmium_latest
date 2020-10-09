@@ -76,4 +76,8 @@ export class CommissionTransactionsService {
     };
     return apiResponse;
   }
+
+  async getOne(params: any): Promise<any> {
+    return await this.commissionTransactionsModel.findOne(params);
+  }
 }
