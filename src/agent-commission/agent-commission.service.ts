@@ -152,11 +152,6 @@ export class AgentCommissionService {
           model: this.universityModel,
           retainNullValues: true,
         })
-        .populate({
-          path: 'education',
-          model: this.educationModel,
-          retainNullValues: true,
-        })
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
         .sort(sortObject)
