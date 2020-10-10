@@ -120,11 +120,8 @@ export class UniversityApplicationsController {
         user.assignedTo.assignedTo
       ) {
         agent = user.assignedTo.assignedTo;
-      } else if (
-        user &&
-        user.assignedTo &&
-        user.assignedTo.role == 'counselor'
-      ) {
+      } else {
+        // for counselor and anonymous user
         const admin = await this.userModel.findOne({
           isDeleted: false,
           role: 'admin',

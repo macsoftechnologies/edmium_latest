@@ -3,6 +3,7 @@ import { PaginationDto } from 'src/shared/dto/shared.dto';
 import { SharedService } from 'src/shared/shared.service';
 import { CommissionTransactionsService } from './commission-transactions.service';
 import * as _ from 'lodash';
+import { APIResponse } from 'src/dto/api-response-dto';
 
 @Controller('commission-transactions')
 export class CommissionTransactionsController {
@@ -97,7 +98,13 @@ export class CommissionTransactionsController {
         }
       }
 
-      return countryWiseCommissions;
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: countryWiseCommissions,
+        message: 'Request Successful',
+      };
+
+      return apiResponse;
     } catch (error) {
       return {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
