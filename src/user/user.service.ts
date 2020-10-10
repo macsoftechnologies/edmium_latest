@@ -944,9 +944,25 @@ export class UserService {
   // Update User
   async applicationsStatus(counselorId: string): Promise<any> {
     try {
+      const user = await this.userModel.findById(counselorId);
+
+      let match = {};
+      if (user.role == 'counselor' || user.role == 'agent-counselor') {
+        match = { assignedTo: counselorId };
+      } else if (user.role == 'agent') {
+        const counselors = await this.userModel.find({
+          isDeleted: false,
+          assignedTo: counselorId,
+        });
+        const counselorIds = [counselorId];
+        counselors.map((counselor: any) => {
+          counselorIds.push(counselor._id);
+        });
+        match = { assignedTo: { $in: counselorIds } };
+      }
       const response = await this.userModel.aggregate([
         {
-          $match: { assignedTo: counselorId },
+          $match: match,
         },
         {
           $addFields: {
