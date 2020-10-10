@@ -84,7 +84,7 @@ export class UniversityApplicationsController {
       });
 
       const agentCommission = await this.agentCommissionService.getOne({
-        university: body.universityDetails,
+        universityDetails: body.universityDetails,
         country: universityDetails.country,
         education: universityDetails.studyLevel,
       });
