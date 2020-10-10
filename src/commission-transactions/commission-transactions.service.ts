@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Country } from 'src/country/dto/country.schema';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { FetchParamsDto } from 'src/shared/dto/shared.dto';
 import { UniversityApplication } from 'src/university-applications/dto/university-applications.schema';
@@ -17,6 +18,8 @@ export class CommissionTransactionsService {
     private universityApplicationModel: Model<UniversityApplication>,
     @InjectModel('User')
     private userModel: Model<User>,
+    @InjectModel('Country')
+    private countryModel: Model<Country>,
   ) {}
 
   async insertTransaction(commissionTransaction: CommissionTransactionDto) {
@@ -79,5 +82,18 @@ export class CommissionTransactionsService {
 
   async getOne(params: any): Promise<any> {
     return await this.commissionTransactionsModel.findOne(params);
+  }
+
+  async fetch(params: any): Promise<any> {
+    return await this.commissionTransactionsModel
+      .find({
+        isDeleted: false,
+        ...params,
+      })
+      .populate({
+        path: 'country',
+        model: this.countryModel,
+        retainNullValues: true,
+      });
   }
 }

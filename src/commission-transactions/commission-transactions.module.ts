@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CountrySchema } from 'src/country/dto/country.schema';
 import { SharedService } from 'src/shared/shared.service';
 import { UniversityApplicationSchema } from 'src/university-applications/dto/university-applications.schema';
 import { UserSchema } from 'src/user/dto/user.schema';
@@ -13,6 +14,7 @@ import { CommissionTransactionsSchema } from './dto/commission-transactions.sche
       { name: 'CommissionTransactions', schema: CommissionTransactionsSchema },
       { name: 'UniversityApplication', schema: UniversityApplicationSchema },
       { name: 'User', schema: UserSchema },
+      { name: 'Country', schema: CountrySchema },
     ]),
   ],
   controllers: [CommissionTransactionsController],
