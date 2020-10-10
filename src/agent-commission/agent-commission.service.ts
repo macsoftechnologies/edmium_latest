@@ -109,11 +109,6 @@ export class AgentCommissionService {
           path: 'university',
           model: this.universityModel,
           retainNullValues: true,
-        })
-        .populate({
-          path: 'education',
-          model: this.educationModel,
-          retainNullValues: true,
         });
 
       if (response) {

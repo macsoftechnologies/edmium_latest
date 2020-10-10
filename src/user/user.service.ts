@@ -1338,7 +1338,22 @@ export class UserService {
         .find({ isDeleted: false, ...params.findObject })
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
-        .sort(sortObject);
+        .sort(sortObject)
+        .populate({
+          path: 'education',
+          model: this.educationModel,
+          retainNullValues: true,
+        })
+        .populate({
+          path: 'country',
+          model: this.countryModel,
+          retainNullValues: true,
+        })
+        .populate({
+          path: 'concentration',
+          model: this.concentrationModel,
+          retainNullValues: true,
+        });
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
