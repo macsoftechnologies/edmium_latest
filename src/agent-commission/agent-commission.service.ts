@@ -5,7 +5,7 @@ import { Country } from 'src/country/dto/country.schema';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { Education } from 'src/education/dto/education.schema';
 import { FetchParamsDto } from 'src/shared/dto/shared.dto';
-import { University } from 'src/university/dto/university.schema';
+import { UniversityDetails } from 'src/university_details/dto/university_details.schema';
 import { CommissionDto, CommissionUpdateDto } from './dto/agent-commission.cto';
 import { AgentCommission } from './dto/agent-commission.schema';
 
@@ -15,21 +15,21 @@ export class AgentCommissionService {
     @InjectModel('AgentCommission')
     private agentCommissionModel: Model<AgentCommission>,
     @InjectModel('Country') private countryModel: Model<Country>,
-    @InjectModel('University')
-    private universityModel: Model<University>,
+    @InjectModel('UniversityDetails')
+    private universityDetailsModel: Model<UniversityDetails>,
     @InjectModel('Education')
     private educationModel: Model<Education>,
   ) {}
 
   async addCommission(commission: CommissionDto) {
     try {
-      const University = commission.university;
+      const universityDetails = commission.universityDetails;
       const Country = commission.country;
       const Education = commission.education;
 
       const duplicate = await this.agentCommissionModel.findOne({
         $and: [
-          { university: University },
+          { universityDetails: universityDetails },
           { country: Country },
           { education: Education },
           { isDeleted: false },
@@ -106,8 +106,8 @@ export class AgentCommissionService {
           retainNullValues: true,
         })
         .populate({
-          path: 'university',
-          model: this.universityModel,
+          path: 'universityDetails',
+          model: this.universityDetailsModel,
           retainNullValues: true,
         });
 
@@ -148,8 +148,8 @@ export class AgentCommissionService {
           retainNullValues: true,
         })
         .populate({
-          path: 'university',
-          model: this.universityModel,
+          path: 'universityDetails',
+          model: this.universityDetailsModel,
           retainNullValues: true,
         })
         .skip(params.paginationObject.start)

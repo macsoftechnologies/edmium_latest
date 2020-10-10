@@ -11,7 +11,7 @@ export class CommissionDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  university: string;
+  universityDetails: string;
 
   @ApiProperty()
   @IsString()
