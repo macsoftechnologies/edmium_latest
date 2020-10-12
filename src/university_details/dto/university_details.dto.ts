@@ -163,6 +163,11 @@ export class FilterByCourseDto extends PaginationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
+  university: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
   country: string;
 
   @ApiProperty()

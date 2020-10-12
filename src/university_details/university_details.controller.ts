@@ -57,23 +57,23 @@ export class UniversityDetailsController {
     }
   }
 
-  /* Get University Details */
-  @Post('/listing')
-  async getUniversityDetails(@Body() body: GetCollegeDto) {
-    try {
-      const params = await this.sharedService.prepareParams(body);
-      const universities = await this.universityDetailsService.getUniversityDetails(
-        params,
-      );
-      return universities;
-    } catch (error) {
-      return {
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        data: null,
-        errorMessage: error.message,
-      };
-    }
-  }
+  // /* Get University Details */
+  // @Post('/listing')
+  // async getUniversityDetails(@Body() body: GetCollegeDto) {
+  //   try {
+  //     const params = await this.sharedService.prepareParams(body);
+  //     const universities = await this.universityDetailsService.getUniversityDetails(
+  //       params,
+  //     );
+  //     return universities;
+  //   } catch (error) {
+  //     return {
+  //       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+  //       data: null,
+  //       errorMessage: error.message,
+  //     };
+  //   }
+  // }
 
   /* Search universities by intake university name and course */
   // @Post()
