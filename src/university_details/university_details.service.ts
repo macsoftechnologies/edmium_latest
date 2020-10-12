@@ -94,10 +94,9 @@ export class UniversityDetailsService {
         delete params.findObject.englishTest;
         delete params.findObject.englishTestValue;
       }
-      const feeMatch: any = {};
 
+      const feeMatch: any = {};
       if (params.findObject.fee && params.findObject.fee.length) {
-        // params.findObject.tutionFee
         feeMatch['$or'] = [];
         params.findObject.fee.map((fee: any) => {
           const feeCondition = { $and: [] };
@@ -108,6 +107,20 @@ export class UniversityDetailsService {
           feeMatch.$or.push(feeCondition);
         });
         delete params.findObject.fee;
+      }
+
+      const durationMatch: any = {};
+      if (params.findObject.duration && params.findObject.duration.length) {
+        durationMatch['$or'] = [];
+        params.findObject.duration.map((duration: any) => {
+          const durationCondition = { $and: [] };
+          if (duration.min)
+            durationCondition.$and.push({ duration: { $gte: duration.min } });
+          if (duration.max)
+            durationCondition.$and.push({ duration: { $lte: duration.max } });
+          durationMatch.$or.push(durationCondition);
+        });
+        delete params.findObject.duration;
       }
 
       if (params.findObject.intake && params.findObject.intake.length) {
@@ -121,6 +134,7 @@ export class UniversityDetailsService {
         .aggregate([
           { $match: params.findObject },
           { $match: feeMatch },
+          { $match: durationMatch },
           {
             $addFields: {
               universityId: {

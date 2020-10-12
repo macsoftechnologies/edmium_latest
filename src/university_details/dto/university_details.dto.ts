@@ -42,7 +42,7 @@ export class CollegeDto {
 
   @ApiProperty()
   @IsString()
-  duration: string;
+  duration: number;
 
   @ApiProperty()
   @IsArray()
@@ -192,14 +192,18 @@ export class FilterByCourseDto extends PaginationDto {
 
   @ApiProperty()
   @IsOptional()
-  fee: feeDto[];
+  fee: minMaxDto[];
 
   @ApiProperty()
   @IsOptional()
   intake: string[];
+
+  @ApiProperty()
+  @IsOptional()
+  duration: minMaxDto[];
 }
 
-export class feeDto {
+export class minMaxDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
