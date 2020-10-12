@@ -94,11 +94,79 @@ export class UniversityDetailsService {
         delete params.findObject.englishTest;
         delete params.findObject.englishTestValue;
       }
+      const feeMatch: any = {};
+
+      if (params.findObject.fee && params.findObject.fee.length) {
+        // params.findObject.tutionFee
+        feeMatch['$or'] = [];
+        params.findObject.fee.map((fee: any) => {
+          const feeCondition = { $and: [] };
+          if (fee.min)
+            feeCondition.$and.push({ tuitionFee: { $gte: fee.min } });
+          if (fee.max)
+            feeCondition.$and.push({ tuitionFee: { $lte: fee.max } });
+          feeMatch.$or.push(feeCondition);
+        });
+        delete params.findObject.fee;
+      }
+
+      if (params.findObject.intake && params.findObject.intake.length) {
+        params.findObject.intake = { $in: params.findObject.intake };
+      }
+      // console.log(JSON.stringify(feeMatch));
+      // console.log(params.findObject);
 
       let universityDetails = await this.universityDetailsModel
-        .find({ isDeleted: false, ...params.findObject })
-        .populate({ path: 'university', model: this.universityModel })
-        .populate({ path: 'country', model: this.countryModel })
+        // .find({ isDeleted: false, ...params.findObject })
+        .aggregate([
+          { $match: params.findObject },
+          { $match: feeMatch },
+          {
+            $addFields: {
+              universityId: {
+                $toObjectId: '$university',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'universities',
+              localField: 'universityId',
+              foreignField: '_id',
+              as: 'university',
+            },
+          },
+          {
+            $unwind: {
+              path: '$university',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
+          {
+            $addFields: {
+              countryId: {
+                $toObjectId: '$country',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'countries',
+              localField: 'countryId',
+              foreignField: '_id',
+              as: 'country',
+            },
+          },
+          {
+            $unwind: {
+              path: '$country',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        ])
+        // .populate({ path: 'university', model: this.universityModel })
+        // .populate({ path: 'country', model: this.countryModel })
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
         .sort(sortObject);

@@ -193,6 +193,10 @@ export class FilterByCourseDto extends PaginationDto {
   @ApiProperty()
   @IsOptional()
   fee: feeDto[];
+
+  @ApiProperty()
+  @IsOptional()
+  intake: string[];
 }
 
 export class feeDto {
