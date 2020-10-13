@@ -62,7 +62,7 @@ export class UniversityDetailsController {
   async getUniversityDetails(@Body() body: FilterByCourseDto) {
     try {
       const params = await this.sharedService.prepareParams(body);
-      const universities = await this.universityDetailsService.getUniversityDetails(
+      const universities = await this.universityDetailsService.filterByCourse(
         params,
       );
       return universities;

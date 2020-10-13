@@ -7,6 +7,7 @@ import {
   UseInterceptors,
   UploadedFile,
   UploadedFiles,
+  Param,
 } from '@nestjs/common';
 import { UniversityService } from './university.service';
 import { APIResponse } from 'src/dto/api-response-dto';
@@ -16,6 +17,7 @@ import {
   FileFieldsInterceptor,
 } from '@nestjs/platform-express';
 import { SharedService } from 'src/shared/shared.service';
+import { PaginationDto } from 'src/shared/dto/shared.dto';
 @Controller('university')
 export class UniversityController {
   constructor(
@@ -27,7 +29,25 @@ export class UniversityController {
   @Get()
   async getAllUniversities() {
     try {
-      const response = await this.universityService.getAllUniversities();
+      const params = await this.sharedService.prepareParams({});
+      const response = await this.universityService.getAllUniversities(params);
+      return response;
+    } catch (error) {
+      const apiResponse: APIResponse = {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        message: error.message,
+      };
+      return apiResponse;
+    }
+  }
+
+  /* Get All Universities */
+  @Post('/listing')
+  async getUniversities(@Body() body: PaginationDto) {
+    try {
+      const params = await this.sharedService.prepareParams(body);
+      const response = await this.universityService.getAllUniversities(params);
       return response;
     } catch (error) {
       const apiResponse: APIResponse = {
@@ -74,6 +94,29 @@ export class UniversityController {
           ? backgroundImage.Location
           : null,
       });
+      return response;
+    } catch (error) {
+      const apiResponse: APIResponse = {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        message: error.message,
+      };
+      return apiResponse;
+    }
+  }
+
+  // Get University Applications
+  @Post('/applications/:id')
+  async getUniversityApplications(
+    @Param('id') id: string,
+    @Body() body: PaginationDto,
+  ) {
+    try {
+      const params = await this.sharedService.prepareParams(body);
+      const response = await this.universityService.getUniversityApplications(
+        id,
+        params,
+      );
       return response;
     } catch (error) {
       const apiResponse: APIResponse = {
