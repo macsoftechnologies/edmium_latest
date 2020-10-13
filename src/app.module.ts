@@ -27,6 +27,7 @@ import { AgentCommissionModule } from './agent-commission/agent-commission.modul
 import { UniversityInfoModule } from './university-info/university-info.module';
 import { CommissionTransactionsModule } from './commission-transactions/commission-transactions.module';
 import { CurrencyModule } from './currency/currency.module';
+import { UserTestsModule } from './user-tests/user-tests.module';
 @Module({
   imports: [
     EducationModule,
@@ -56,6 +57,7 @@ import { CurrencyModule } from './currency/currency.module';
     UniversityInfoModule,
     CommissionTransactionsModule,
     CurrencyModule,
+    UserTestsModule,
   ],
   controllers: [AppController],
   providers: [AppService, SharedService],
