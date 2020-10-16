@@ -1,7 +1,17 @@
-import { IsString, IsNumber, IsEmail, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsEmail,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationDto } from 'src/shared/dto/shared.dto';
 
+enum gender {
+  'male' = 'male',
+  'female' = 'female',
+}
 export class CreateUser {
   @ApiProperty()
   @IsString()
@@ -37,6 +47,12 @@ export class CreateUser {
   @IsString()
   @IsOptional()
   education: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  @IsEnum(gender)
+  gender: string;
 
   @ApiProperty()
   @IsString()

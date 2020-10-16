@@ -37,6 +37,10 @@ export class User extends Document {
   @IsOptional()
   favoriteUniversities?: object[];
 
+  @Prop({ enum: ['male', 'female'] })
+  @IsOptional()
+  gender?: string;
+
   @Prop()
   @IsOptional()
   profileImage?: string;
