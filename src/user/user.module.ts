@@ -15,6 +15,7 @@ import { ApplicationStatusSchema } from 'src/application-status/dto/application-
 import { ConcentrationSchema } from 'src/concentration/dto/concentration.schema';
 import { NotificationService } from 'src/notification/notification.service';
 import { NotificationSchema } from 'src/notification/dto/notification.schema';
+import { UpdateProfilePercentService } from 'src/update-profile-percent/update-profile-percent.service';
 
 @Module({
   imports: [
@@ -28,16 +29,21 @@ import { NotificationSchema } from 'src/notification/dto/notification.schema';
       { name: 'University', schema: UniversitySchema },
       { name: 'UserAuthentication', schema: UserAuthenticationSchema },
       { name: 'ApplicationStatus', schema: ApplicationStatusSchema },
-      {name :'Notifications' , schema: NotificationSchema}
+      { name: 'Notifications', schema: NotificationSchema },
     ]),
     HttpModule.registerAsync({
       useFactory: () => ({
         timeout: 50000,
-        maxRedirects: 5
-      })
-    })
+        maxRedirects: 5,
+      }),
+    }),
   ],
   controllers: [UserController],
-  providers: [UserService, SharedService , NotificationService],
+  providers: [
+    UserService,
+    SharedService,
+    NotificationService,
+    UpdateProfilePercentService,
+  ],
 })
 export class UserModule {}

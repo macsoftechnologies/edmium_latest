@@ -7,7 +7,6 @@ import { CourseModule } from './course/course.module';
 import { CountryModule } from './country/country.module';
 import { UniversityModule } from './university/university.module';
 import { UserModule } from './user/user.module';
-import { SharedService } from './shared/shared.service';
 import { UniversityDetailsModule } from './university_details/university_details.module';
 import { IntakeModule } from './intake/intake.module';
 import { UserPersonalInfoModule } from './user-personal-info/user-personal-info.module';
@@ -22,12 +21,12 @@ import { AttachmentsModule } from './attachments/attachments.module';
 import { ToDoModule } from './to-do/to-do.module';
 import { ConcentrationModule } from './concentration/concentration.module';
 import { NotificationModule } from './notification/notification.module';
-import { NotificationService } from './notification/notification.service';
 import { AgentCommissionModule } from './agent-commission/agent-commission.module';
 import { UniversityInfoModule } from './university-info/university-info.module';
 import { CommissionTransactionsModule } from './commission-transactions/commission-transactions.module';
 import { CurrencyModule } from './currency/currency.module';
 import { UserTestsModule } from './user-tests/user-tests.module';
+import { UpdateProfilePercentModule } from './update-profile-percent/update-profile-percent.module';
 @Module({
   imports: [
     EducationModule,
@@ -58,8 +57,9 @@ import { UserTestsModule } from './user-tests/user-tests.module';
     CommissionTransactionsModule,
     CurrencyModule,
     UserTestsModule,
+    UpdateProfilePercentModule,
   ],
   controllers: [AppController],
-  providers: [AppService, SharedService],
+  providers: [AppService],
 })
 export class AppModule {}

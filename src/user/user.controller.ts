@@ -27,12 +27,14 @@ import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dt
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SharedService } from 'src/shared/shared.service';
 import { PaginationDto } from 'src/shared/dto/shared.dto';
+import { UpdateProfilePercentService } from 'src/update-profile-percent/update-profile-percent.service';
 
 @Controller('user')
 export class UserController {
   constructor(
     private userService: UserService,
     private sharedService: SharedService,
+    private updateProfilePercentService: UpdateProfilePercentService,
   ) {}
 
   /* Create User  */
@@ -74,9 +76,15 @@ export class UserController {
         file,
         'user/profile-image',
       );
+
       const response = await this.userService.updateUser(id, {
         profileImage: profileImage.Location,
       });
+
+      await this.updateProfilePercentService.updateProfileCompletionPercentage(
+        id,
+      );
+
       return response;
     } catch (error) {
       return {

@@ -1,10 +1,14 @@
 import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import { UpdateProfilePercentService } from 'src/update-profile-percent/update-profile-percent.service';
 import { UserTestsDto } from './dto/user-tests.dto';
 import { UserTestsService } from './user-tests.service';
 
 @Controller('user-tests')
 export class UserTestsController {
-  constructor(private userTestsService: UserTestsService) {}
+  constructor(
+    private userTestsService: UserTestsService,
+    private updateProfilePercentService: UpdateProfilePercentService,
+  ) {}
 
   // Add User Tests
   @Post()
@@ -12,6 +16,11 @@ export class UserTestsController {
     try {
       console.log(body);
       let response = await this.userTestsService.addUserTests(body);
+
+      await this.updateProfilePercentService.updateProfileCompletionPercentage(
+        body.userId,
+      );
+
       return response;
     } catch (error) {
       return {

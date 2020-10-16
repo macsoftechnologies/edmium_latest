@@ -8,12 +8,16 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
+import { UpdateProfilePercentService } from 'src/update-profile-percent/update-profile-percent.service';
 import { UserWorkInfoDto } from './dto/user-work-info.dto';
 import { UserWorkInfoService } from './user-work-info.service';
 
 @Controller('user-work-info')
 export class UserWorkInfoController {
-  constructor(private userWorkInfoService: UserWorkInfoService) {}
+  constructor(
+    private userWorkInfoService: UserWorkInfoService,
+    private updateProfilePercentService: UpdateProfilePercentService,
+  ) {}
 
   //   Add User Work Info
   @Post()
@@ -21,6 +25,10 @@ export class UserWorkInfoController {
     try {
       console.log(body);
       let response = await this.userWorkInfoService.addUserWorkInfo(body);
+
+      await this.updateProfilePercentService.updateProfileCompletionPercentage(
+        body.userId,
+      );
       return response;
     } catch (error) {
       return {

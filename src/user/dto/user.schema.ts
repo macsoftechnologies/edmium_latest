@@ -64,6 +64,10 @@ export class User extends Document {
   @Prop()
   assignedTo: string;
 
+  @Prop({ default: 10 })
+  @IsOptional()
+  profileCompletionPercentage?: integer;
+
   @Prop()
   createdBy: string;
 }

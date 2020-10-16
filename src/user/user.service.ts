@@ -23,7 +23,6 @@ import { UserAuthentication } from 'src/user-authentication/dto/user-authenticat
 import { ApplicationStatus } from 'src/application-status/dto/application-status.schema';
 import { FetchParamsDto } from 'src/shared/dto/shared.dto';
 import { NotificationService } from 'src/notification/notification.service';
-import { NotificationDto } from 'src/notification/dto/notification.dto';
 
 @Injectable()
 export class UserService {
