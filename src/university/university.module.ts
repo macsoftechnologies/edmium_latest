@@ -8,6 +8,7 @@ import { UniversityDetailsSchema } from 'src/university_details/dto/university_d
 import { UniversityApplicationSchema } from 'src/university-applications/dto/university-applications.schema';
 import { UserSchema } from 'src/user/dto/user.schema';
 import { CountrySchema } from 'src/country/dto/country.schema';
+import { ApplicationStatusSchema } from 'src/application-status/dto/application-status.schema';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -16,6 +17,7 @@ import { CountrySchema } from 'src/country/dto/country.schema';
       { name: 'UniversityApplication', schema: UniversityApplicationSchema },
       { name: 'User', schema: UserSchema },
       { name: 'Country', schema: CountrySchema },
+      { name: 'ApplicationStatus', schema: ApplicationStatusSchema },
     ]),
   ],
   controllers: [UniversityController],

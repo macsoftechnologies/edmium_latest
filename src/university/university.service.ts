@@ -9,20 +9,20 @@ import { UniversityDetails } from 'src/university_details/dto/university_details
 import { UniversityApplication } from 'src/university-applications/dto/university-applications.schema';
 import { User } from 'src/user/dto/user.schema';
 import { Country } from 'src/country/dto/country.schema';
+import { ApplicationStatus } from 'src/application-status/dto/application-status.schema';
 
 @Injectable()
 export class UniversityService {
   constructor(
-    @InjectModel('University')
-    private universityModel: Model<University>,
+    @InjectModel('University') private universityModel: Model<University>,
     @InjectModel('UniversityDetails')
     private universityDetailsModel: Model<UniversityDetails>,
     @InjectModel('UniversityApplication')
     private universityApplicationModel: Model<UniversityApplication>,
-    @InjectModel('User')
-    private userModel: Model<User>,
-    @InjectModel('Country')
-    private countryModel: Model<Country>,
+    @InjectModel('User') private userModel: Model<User>,
+    @InjectModel('Country') private countryModel: Model<Country>,
+    @InjectModel('ApplicationStatus')
+    private applicationStatusModel: Model<ApplicationStatus>,
   ) {}
 
   /* Get all universities */
@@ -97,6 +97,7 @@ export class UniversityService {
             },
           ],
         })
+        .populate({ path: 'status', model: this.applicationStatusModel })
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
         .sort(sortObject);
