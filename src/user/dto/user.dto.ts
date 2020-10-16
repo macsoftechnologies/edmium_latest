@@ -196,6 +196,15 @@ export class FilterStudentsDto extends PaginationDto {
   @IsString()
   @IsOptional()
   searchString: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  gender: string;
+
+  @ApiProperty()
+  @IsOptional()
+  tests: string;
 }
 
 export class SwitchFavoriteUniversityRanksDto {

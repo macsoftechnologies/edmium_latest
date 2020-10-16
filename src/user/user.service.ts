@@ -575,6 +575,8 @@ export class UserService {
       let fromDateFilter = {};
       let toDateFilter = {};
       let countryFilter = {};
+      let userFilter: any = { role: 'student', isDeleted: false };
+      let testFilter = {};
 
       if (params.fromDate && params.toDate) {
         const toDate = new Date(params.toDate);
@@ -597,6 +599,12 @@ export class UserService {
       if (params.intake) {
         match['universityApplications.universityDetails.intake'] = {
           $in: params.intake,
+        };
+      }
+
+      if (params.status) {
+        match['universityApplications.status'] = {
+          $in: params.status,
         };
       }
 
@@ -629,10 +637,21 @@ export class UserService {
         ];
       }
 
+      if (params.gender) userFilter.gender = params.gender;
+
+      if (params.tests) {
+        const tests = Object.keys(params.tests);
+        tests.map((test: string) => {
+          testFilter['userTests.' + test + '.score'] = {
+            $gte: params.tests[test],
+          };
+        });
+      }
+
       let universityDetails = await this.userModel
         .aggregate([
           {
-            $match: { role: 'student', isDeleted: false },
+            $match: userFilter,
           },
           {
             $match: fromDateFilter,
@@ -850,6 +869,23 @@ export class UserService {
           },
 
           {
+            $lookup: {
+              from: 'usertests',
+              localField: 'userId',
+              foreignField: 'userId',
+              as: 'userTests',
+            },
+          },
+          {
+            $unwind: {
+              path: '$userTests',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $match: testFilter,
+          },
+          {
             $group: {
               _id: '$_id',
               firstName: { $first: '$firstName' },
@@ -860,9 +896,10 @@ export class UserService {
               createdAt: { $first: '$createdAt' },
               createdBy: { $first: '$createdBy' },
               assignedTo: { $first: '$assignedTo' },
-              suggestedUniversities: { $push: '$suggestedUniversities' },
-              favoriteUniversities: { $push: '$favoriteUniversities' },
-              universityApplications: { $push: '$universityApplications' },
+              suggestedUniversities: { $addToSet: '$suggestedUniversities' },
+              favoriteUniversities: { $addToSet: '$favoriteUniversities' },
+              universityApplications: { $addToSet: '$universityApplications' },
+              userTests: { $first: '$userTests' },
             },
           },
         ])
@@ -878,13 +915,6 @@ export class UserService {
         )
           details.universityApplications = [];
 
-        if (details.universityApplications) {
-          details.universityApplications = _.uniqWith(
-            details.universityApplications,
-            _.isEqual,
-          );
-        }
-
         if (
           details.suggestedUniversities &&
           details.suggestedUniversities[0] &&
@@ -892,26 +922,12 @@ export class UserService {
         )
           details.suggestedUniversities = [];
 
-        if (details.suggestedUniversities) {
-          details.suggestedUniversities = _.uniqWith(
-            details.suggestedUniversities,
-            _.isEqual,
-          );
-        }
-
         if (
           details.favoriteUniversities &&
           details.favoriteUniversities[0] &&
           !details.favoriteUniversities[0].universityId
         )
           details.favoriteUniversities = [];
-
-        if (details.favoriteUniversities) {
-          details.favoriteUniversities = _.uniqWith(
-            details.favoriteUniversities,
-            _.isEqual,
-          );
-        }
       }
 
       let apiResponse: APIResponse = {
