@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsOptional,
   IsEnum,
+  isNumber,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationDto } from 'src/shared/dto/shared.dto';
@@ -205,6 +206,15 @@ export class FilterStudentsDto extends PaginationDto {
   @ApiProperty()
   @IsOptional()
   tests: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  numberOfBacklogs: number;
+
+  @ApiProperty({ type: 'integer', isArray: true })
+  @IsOptional()
+  yearOfPassing: number[];
 }
 
 export class SwitchFavoriteUniversityRanksDto {

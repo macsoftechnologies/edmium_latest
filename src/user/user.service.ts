@@ -577,6 +577,7 @@ export class UserService {
       let countryFilter = {};
       let userFilter: any = { role: 'student', isDeleted: false };
       let testFilter = {};
+      let userAcademicInfoFilter = {};
 
       if (params.fromDate && params.toDate) {
         const toDate = new Date(params.toDate);
@@ -646,6 +647,18 @@ export class UserService {
             $gte: params.tests[test],
           };
         });
+      }
+
+      if (params.numberOfBacklogs) {
+        userAcademicInfoFilter['userAcademicInfo.numberOfBacklogs'] = {
+          $lte: params.numberOfBacklogs,
+        };
+      }
+
+      if (params.yearOfPassing && params.yearOfPassing.length) {
+        userAcademicInfoFilter['userAcademicInfo.yearOfPassing'] = {
+          $in: params.yearOfPassing,
+        };
       }
 
       let universityDetails = await this.userModel
@@ -885,6 +898,44 @@ export class UserService {
           {
             $match: testFilter,
           },
+
+          {
+            $lookup: {
+              from: 'useracademicinfos',
+              let: {
+                isDeleted: false,
+                isHighestEducation: true,
+                userId: '$userId',
+              },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [
+                        { $eq: ['$isDeleted', '$$isDeleted'] },
+                        {
+                          $eq: ['$isHighestEducation', '$$isHighestEducation'],
+                        },
+                        { $eq: ['$userId', '$$userId'] },
+                      ],
+                    },
+                  },
+                },
+              ],
+              as: 'userAcademicInfo',
+            },
+          },
+          {
+            $unwind: {
+              path: '$userAcademicInfo',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
+          {
+            $match: userAcademicInfoFilter,
+          },
+
           {
             $group: {
               _id: '$_id',
@@ -900,6 +951,7 @@ export class UserService {
               favoriteUniversities: { $addToSet: '$favoriteUniversities' },
               universityApplications: { $addToSet: '$universityApplications' },
               userTests: { $first: '$userTests' },
+              // userAcademicInfo: { $addToSet: '$userAcademicInfo' },
             },
           },
         ])

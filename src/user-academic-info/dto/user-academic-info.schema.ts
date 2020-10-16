@@ -39,6 +39,14 @@ export class UserAcademicInfo extends Document {
   @IsOptional()
   numberOfBacklogs: number;
 
+  @Prop()
+  @IsOptional()
+  yearOfPassing: number;
+
+  @Prop({ default: false })
+  @IsOptional()
+  isHighestEducation?: boolean;
+
   @Prop({ default: false })
   @IsOptional()
   isDeleted?: boolean;
