@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UpdateProfilePercentService } from './update-profile-percent';
+import { UpdateProfilePercentService } from './update-profile-percent.service';
 
 describe('UpdateProfilePercentService', () => {
   let service: UpdateProfilePercentService;
