@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { CreateCountryDto } from './dto/create-country.dto';
 import { Currency } from 'src/currency/dto/currency.schema';
+import { FetchParamsDto } from 'src/shared/dto/shared.dto';
 
 @Injectable()
 export class CountryService {
@@ -16,15 +17,22 @@ export class CountryService {
   ) {}
 
   /* Get all countries */
-  async getAllCountries(params: any): Promise<any> {
+  async getAllCountries(params: FetchParamsDto): Promise<any> {
     try {
+      const sortObject = {};
+      sortObject[params.paginationObject.sortBy] =
+        params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
+
       let countriesList = await this.countryModel
-        .find({ isDeleted: false, ...params })
+        .find({ isDeleted: false, ...params.findObject })
         .populate({
           path: 'currency',
           model: this.currencyModel,
           retainNullValues: true,
-        });
+        })
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit)
+        .sort(sortObject);
       console.log('countries list', countriesList);
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,

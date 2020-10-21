@@ -8,18 +8,25 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { APIResponse } from 'src/dto/api-response-dto';
+import { PaginationDto } from 'src/shared/dto/shared.dto';
+import { SharedService } from 'src/shared/shared.service';
 import { CountryService } from './country.service';
 import { CreateCountryDto } from './dto/create-country.dto';
 
 @Controller('country')
 export class CountryController {
-  constructor(private countryService: CountryService) {}
+  constructor(
+    private countryService: CountryService,
+    private sharedService: SharedService,
+  ) {}
 
   /* Get Countries */
   @Get()
   async getCountries() {
     try {
-      const courses = await this.countryService.getAllCountries({});
+      const params = await this.sharedService.prepareParams({});
+      const courses = await this.countryService.getAllCountries(params);
       return courses;
     } catch (error) {
       return {
@@ -27,6 +34,23 @@ export class CountryController {
         data: null,
         errorMessage: error.message,
       };
+    }
+  }
+
+  /* Get All Universities */
+  @Post('/listing')
+  async getAllCountries(@Body() body: PaginationDto) {
+    try {
+      const params = await this.sharedService.prepareParams(body);
+      const response = await this.countryService.getAllCountries(params);
+      return response;
+    } catch (error) {
+      const apiResponse: APIResponse = {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        message: error.message,
+      };
+      return apiResponse;
     }
   }
 

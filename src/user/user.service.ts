@@ -1218,27 +1218,6 @@ export class UserService {
         .limit(params.paginationObject.limit)
         .sort(sortObject);
 
-      // const data = await this.userModel
-      //   .find({ isDeleted: false, ...params.findObject })
-      //   .populate({
-      //     path: 'country',
-      //     model: this.countryModel,
-      //     retainNullValues: true,
-      //   })
-      //   .populate({
-      //     path: 'concentration',
-      //     model: this.concentrationModel,
-      //     retainNullValues: true,
-      //   })
-      //   .populate({
-      //     path: 'education',
-      //     model: this.educationModel,
-      //     retainNullValues: true,
-      //   })
-      //   .skip(params.paginationObject.start)
-      //   .limit(params.paginationObject.limit)
-      //   .sort(sortObject);
-
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: data,

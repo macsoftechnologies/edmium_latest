@@ -4,6 +4,7 @@ import { CountryController } from './country.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CountrySchema } from './dto/country.schema';
 import { CurrencySchema } from 'src/currency/dto/currency.schema';
+import { SharedService } from 'src/shared/shared.service';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { CurrencySchema } from 'src/currency/dto/currency.schema';
       { name: 'Currency', schema: CurrencySchema },
     ]),
   ],
-  providers: [CountryService],
+  providers: [CountryService, SharedService],
   controllers: [CountryController],
 })
 export class CountryModule {}
