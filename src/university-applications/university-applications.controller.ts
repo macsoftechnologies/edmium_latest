@@ -206,13 +206,12 @@ export class UniversityApplicationsController {
   async updateStatus(@Body() params: UpdateStatusDto, @Param('id') id: string) {
     try {
       const status = await this.applicationStatusModel.findById(params.status);
-      const application = await this.universityApplicationService.getApplicationById(
-        id,
-      );
+      const application = await this.universityApplicationService.getById(id);
+      // console.log(application);
       if (status.initiateCommission) {
         const applications = await this.universityApplicationService.fetch({
           isDefault: false,
-          user: application.user,
+          user: application.user._id,
           status: params.status,
         });
         if (applications && applications.length) {
@@ -225,7 +224,7 @@ export class UniversityApplicationsController {
           await this.commissionTransactionsService.update(
             {
               isDeleted: false,
-              user: application.user,
+              user: application.user._id,
             },
             { isEstimatedAmount: false },
           );
@@ -238,7 +237,7 @@ export class UniversityApplicationsController {
           );
 
           const universityDetails = await this.universityDetailsService.getOne({
-            _id: application.universityDetails,
+            _id: application.universityDetails._id,
           });
 
           const country: any = await await this.countryModel
@@ -286,6 +285,18 @@ export class UniversityApplicationsController {
         id,
         data,
       );
+
+      await this.sharedService.sendMail({
+        studentName:
+          application.user.firstName + ' ' + application.user.lastName,
+        applicationId: application.uniqueId,
+        country: application.universityDetails.country.name,
+        institution: application.universityDetails.university.universityName,
+        program: application.universityDetails.course,
+        intake: application.intake,
+        year: application.yearOfPass,
+        status: application.status.status,
+      });
       return response;
     } catch (error) {
       return {

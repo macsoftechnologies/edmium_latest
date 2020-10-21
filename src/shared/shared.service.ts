@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-// import { InjectModel } from '@nestjs/mongoose';
-// import { Model } from 'mongoose';
-// import { User } from 'src/user/dto/user.schema';
+
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(
+  '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',
+);
 
 const xlsx = require('xlsx');
 const AWS = require('aws-sdk');
@@ -18,19 +20,6 @@ const paginationObject = {
   sortBy: 'createdAt',
   sortOrder: 'DESC',
 };
-
-// const profileCompletionPercentageConfig = {
-//   profileImage: 10,
-//   maritalStatus: 10,
-//   mailingAddress1: 10,
-//   permanentAddress1: 10,
-//   passportNumber: 10,
-//   nationality: 10,
-//   emergencyContactName: 10,
-//   userAcademicInfo: 10,
-//   userWorkInfo: 5,
-//   userTests: 5,
-// };
 
 const s3 = new AWS.S3({
   accessKeyId: config.AWS_ACCESS_KEY,
@@ -147,159 +136,153 @@ export class SharedService {
     return config;
   }
 
-  //Get agents
-  // async updateProfileCompletionPercentage(id: string): Promise<any> {
-  //   try {
-  //     let profileCompletionPercentage = 10;
+  async sendMail(params: any): Promise<any> {
+    console.log('sendMail');
+    const msg = {
+      to: 'harshavardhanpvk@gmail.com',
+      from: 'admissions@edmium.com', // Use the email address or domain you verified above
+      subject: 'Sending with Twilio SendGrid is Fun',
+      text: 'and easy to do anywhere, even with Node.js',
+      html: `<!DOCTYPE html>
+      <html>
+      
+      <head>
+          <title>Email</title>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+          <link href="https://fonts.googleapis.com/css2?family=Mulish&display=swap" rel="stylesheet">
+          <style>
+          body {
+              font-family: 'Mulish', sans-serif;
+          }
+      
+          .email-template {
+              max-width: 800px;
+              margin: auto;
+          }
+      
+          .email-section {
+              margin: 5px 0px;
+              /*padding: 20px 15px;*/
+              border-radius: 5px;
+              box-shadow: 0 1px 6px rgba(32, 33, 36, .28);
+              border-color: rgba(223, 225, 229, 0);
+              background: #cccccc14;
+              border-radius: 10px;
+          }
+      
+          .logo {
+              background: #3700BE;
+              padding: 20px 0px;
+          }
+      
+          .logo img {
+              height: 30px;
+              width: 45px;
+              margin-top: -10px;
+          }
+      
+          .logo span {
+              font-size: 29px;
+              height: auto;
+              margin-top: 19px;
+              font-weight: bold;
+              color: #fff;
+              letter-spacing: 1px;
+          }
+      
+          .email-data {
+              margin: 10px 0px 0px 0px;
+              padding: 15px 7px 10px 7px;
+          }
+      
+          .email-data p {
+              margin-bottom: 8px;
+          }
+      
+          .email-data span {
+              font-weight: bold;
+          }
+      
+          .email-data-para {
+              margin: 18px 0px 15px 0px;
+          }
+      
+          .email-data-para p {
+              text-align: justify;
+          }
+      
+          .thanks {
+              margin: 30px 0px;
+          }
+      
+          .thanks p {
+              font-weight: 400;
+              margin-bottom: 8px;
+          }
+          </style>
+      </head>
+      
+      <body>
+          <div class="email-template">
+              <div class="email-section">
+                  <div class="logo">
+                      <div class="container">
+                          <img src="web-logo.png">
+                          <span>EDMIUM</span>
+                      </div>
+                  </div>
+                  <div class="container">
+                      <div class="email-data">
+                          <p><span>Student's Name: ${params.studentName}</span></p>
+                          <p><span>Application ID: ${params.applicationId}</span></p>
+                          <p><span>Country: ${params.country}</span></p>
+                          <p><span>Institution: ${params.institution}</span></p>
+                          <p><span>Program: ${params.program}</span></p>
+                          <p><span>Intake: ${params.intake}</span></p>
+                          <p><span>Status: ${params.status}</span></p>
+      
+                          <div class="email-data-para">
+                              <p>Great that you wish to apply to ${params.institution} for ${params.intake} ${params.year}  , Please note that we have send your application to our quality team to evaluate the eligibility,  You will be further notified on the progress. </p>
+                          </div> 
+      
+                          <div class="thanks">
+                              <p>Thanks</p>
+                              <p>Applications - Review Team</p>
+                          </div>
+                      </div>    
+      
+                  </div>
+              </div>
+          </div>
+      </body>
+      
+      </html>
+      <!-- <p>Dear <b>ANIL,</b></p>
+      <p>Please Verify your email address to complete your Endorse Account</p>
+      <div style="text-align: center; ">
+          <button style="padding: 15px 24px;background: #55a197;border: 1px solid #55a197;border-radius: 5px;margin: 30px 0px;" type="submit" class="btn-primary">Verify Email Address&nbsp;&nbsp;<span style="align-items: center;"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></span></button>
+      </div>
+      <p>Thank You, </p>
+      <p><b>The Endorse Team</b></p> -->`,
+    };
 
-  //     let userData = await this.userModel.aggregate([
-  //       {
-  //         $addFields: {
-  //           userId: {
-  //             $toString: '$_id',
-  //           },
-  //         },
-  //       },
-  //       {
-  //         $match: { userId: id },
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: 'userpersonalinfos',
-  //           let: {
-  //             isDeleted: false,
-  //             userId: '$userId',
-  //           },
-  //           pipeline: [
-  //             {
-  //               $match: {
-  //                 $expr: {
-  //                   $and: [
-  //                     { $eq: ['$isDeleted', '$$isDeleted'] },
-  //                     { $eq: ['$userId', '$$userId'] },
-  //                   ],
-  //                 },
-  //               },
-  //             },
-  //           ],
-  //           as: 'userPersonalInfo',
-  //         },
-  //       },
-  //       {
-  //         $unwind: {
-  //           path: '$userPersonalInfo',
-  //           preserveNullAndEmptyArrays: true,
-  //         },
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: 'useracademicinfos',
-  //           let: {
-  //             isDeleted: false,
-  //             userId: '$userId',
-  //           },
-  //           pipeline: [
-  //             {
-  //               $match: {
-  //                 $expr: {
-  //                   $and: [
-  //                     { $eq: ['$isDeleted', '$$isDeleted'] },
-  //                     { $eq: ['$userId', '$$userId'] },
-  //                   ],
-  //                 },
-  //               },
-  //             },
-  //           ],
-  //           as: 'userAcademicInfo',
-  //         },
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: 'userworkinfos',
-  //           let: {
-  //             isDeleted: false,
-  //             userId: '$userId',
-  //           },
-  //           pipeline: [
-  //             {
-  //               $match: {
-  //                 $expr: {
-  //                   $and: [
-  //                     { $eq: ['$isDeleted', '$$isDeleted'] },
-  //                     { $eq: ['$userId', '$$userId'] },
-  //                   ],
-  //                 },
-  //               },
-  //             },
-  //           ],
-  //           as: 'userWorkInfo',
-  //         },
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: 'usertests',
-  //           let: {
-  //             isDeleted: false,
-  //             userId: '$userId',
-  //           },
-  //           pipeline: [
-  //             {
-  //               $match: {
-  //                 $expr: {
-  //                   $and: [
-  //                     { $eq: ['$isDeleted', '$$isDeleted'] },
-  //                     { $eq: ['$userId', '$$userId'] },
-  //                   ],
-  //                 },
-  //               },
-  //             },
-  //           ],
-  //           as: 'userTests',
-  //         },
-  //       },
-  //       {
-  //         $unwind: {
-  //           path: '$userTests',
-  //           preserveNullAndEmptyArrays: true,
-  //         },
-  //       },
-  //     ]);
+    sgMail.send(msg).then(
+      response => {
+        console.error(response);
+      },
+      error => {
+        console.error(error);
 
-  //     const user = userData[0];
-  //     if (user.profileImage)
-  //       profileCompletionPercentage +=
-  //         profileCompletionPercentageConfig.profileImage;
-  //     if (user.userPersonalInfo) {
-  //       if (user.userPersonalInfo.maritalStatus)
-  //         profileCompletionPercentage +=
-  //           profileCompletionPercentageConfig.maritalStatus;
-  //       if (user.userPersonalInfo.mailingAddress1)
-  //         profileCompletionPercentage +=
-  //           profileCompletionPercentageConfig.mailingAddress1;
-  //       if (user.userPersonalInfo.permanentAddress1)
-  //         profileCompletionPercentage +=
-  //           profileCompletionPercentageConfig.permanentAddress1;
-  //       if (user.userPersonalInfo.passportNumber)
-  //         profileCompletionPercentage +=
-  //           profileCompletionPercentageConfig.passportNumber;
-  //       if (user.userPersonalInfo.nationality)
-  //         profileCompletionPercentage +=
-  //           profileCompletionPercentageConfig.nationality;
-  //       if (user.userPersonalInfo.emergencyContactName)
-  //         profileCompletionPercentage +=
-  //           profileCompletionPercentageConfig.emergencyContactName;
-  //     }
-  //     if (user.userAcademicInfo && user.userAcademicInfo.length)
-  //       profileCompletionPercentage +=
-  //         profileCompletionPercentageConfig.userAcademicInfo;
-  //     if (user.userWorkInfo && user.userWorkInfo.length)
-  //       profileCompletionPercentage +=
-  //         profileCompletionPercentageConfig.userWorkInfo;
-  //     if (user.userTests)
-  //       profileCompletionPercentage +=
-  //         profileCompletionPercentageConfig.userTests;
-
-  //     console.log(profileCompletionPercentage);
-  //   } catch (error) {}
-  // }
+        if (error.response) {
+          console.error(error.response.body);
+        }
+      },
+    );
+  }
 }

@@ -372,4 +372,25 @@ export class UniversityApplicationsService {
       ...params,
     });
   }
+
+  async getById(id: string): Promise<any> {
+    return await this.universityApplicationModel
+      .findById(id)
+      .populate({ path: 'user', model: this.userModel })
+      .populate({ path: 'status', model: this.applicationStatusModel })
+      .populate({
+        path: 'universityDetails',
+        model: this.universityDetailsModel,
+        populate: [
+          {
+            path: 'university',
+            model: this.universityModel,
+          },
+          {
+            path: 'country',
+            model: this.countryModel,
+          },
+        ],
+      });
+  }
 }
