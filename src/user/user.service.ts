@@ -565,9 +565,13 @@ export class UserService {
   }
 
   // Filter Students
-  async filterStudents(params: FilterStudentsDto): Promise<any> {
+  async filterStudents(params: FetchParamsDto): Promise<any> {
     try {
       console.log(params);
+
+      const sortObject = {};
+      sortObject[params.paginationObject.sortBy] =
+        params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
       let match: any = {};
       let searchFilter = {};
@@ -578,85 +582,89 @@ export class UserService {
       let testFilter = {};
       let userAcademicInfoFilter = {};
 
-      if (params.fromDate && params.toDate) {
-        const toDate = new Date(params.toDate);
+      if (params.findObject.fromDate && params.findObject.toDate) {
+        const toDate = new Date(params.findObject.toDate);
         toDate.setDate(toDate.getDate() + 1);
 
         fromDateFilter['createdAt'] = {
-          $gt: new Date(params.fromDate),
+          $gt: new Date(params.findObject.fromDate),
         };
         toDateFilter['createdAt'] = {
           $lt: toDate,
         };
       }
 
-      if (params.country) {
+      if (params.findObject.country) {
         countryFilter['country'] = {
-          $in: params.country,
+          $in: params.findObject.country,
         };
       }
 
-      if (params.intake) {
+      if (params.findObject.intake) {
         match['universityApplications.universityDetails.intake'] = {
-          $in: params.intake,
+          $in: params.findObject.intake,
         };
       }
 
-      if (params.status) {
+      if (params.findObject.status) {
         match['universityApplications.status'] = {
-          $in: params.status,
+          $in: params.findObject.status,
         };
       }
 
-      if (params.status) {
+      if (params.findObject.status) {
         match['universityApplications.status'] = {
-          $in: params.status,
+          $in: params.findObject.status,
         };
       }
 
-      if (params.searchString) {
+      if (params.findObject.searchString) {
         searchFilter['$or'] = [
           {
             firstName: {
-              $regex: '.*' + params.searchString + '.*',
+              $regex: '.*' + params.findObject.searchString + '.*',
               $options: 'i',
             },
           },
           {
             lastName: {
-              $regex: '.*' + params.searchString + '.*',
+              $regex: '.*' + params.findObject.searchString + '.*',
               $options: 'i',
             },
           },
           {
             emailAddress: {
-              $regex: '.*' + params.searchString + '.*',
+              $regex: '.*' + params.findObject.searchString + '.*',
               $options: 'i',
             },
           },
         ];
       }
 
-      if (params.gender) userFilter.gender = params.gender;
+      if (params.findObject.gender)
+        userFilter.gender = params.findObject.gender;
 
-      if (params.tests) {
-        const tests = Object.keys(params.tests);
+      if (params.findObject.tests) {
+        const tests = Object.keys(params.findObject.tests);
         tests.map((test: string) => {
           testFilter['userTests.' + test + '.score'] = {
-            $gte: params.tests[test],
+            $gte: params.findObject.tests[test],
           };
         });
       }
 
-      if (params.numberOfBacklogs) {
+      if (params.findObject.numberOfBacklogs) {
         userAcademicInfoFilter['userAcademicInfo.numberOfBacklogs'] = {
-          $lte: params.numberOfBacklogs,
+          $lte: params.findObject.numberOfBacklogs,
         };
       }
 
-      if (params.yearOfPassing && params.yearOfPassing.length) {
+      if (
+        params.findObject.yearOfPassing &&
+        params.findObject.yearOfPassing.length
+      ) {
         userAcademicInfoFilter['userAcademicInfo.yearOfPassing'] = {
-          $in: params.yearOfPassing,
+          $in: params.findObject.yearOfPassing,
         };
       }
 
@@ -954,9 +962,9 @@ export class UserService {
             },
           },
         ])
-        .sort({ createdAt: -1 })
-        .skip(params.start)
-        .limit(params.limit);
+        .sort(sortObject)
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit);
 
       for (const details of universityDetails) {
         if (

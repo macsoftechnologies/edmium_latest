@@ -160,8 +160,9 @@ export class UserController {
 
   // Filter students
   @Post('/filter-by-criteria')
-  async filterStudents(@Body() params: FilterStudentsDto) {
+  async filterStudents(@Body() body: FilterStudentsDto) {
     try {
+      const params = await this.sharedService.prepareParams(body);
       let response = await this.userService.filterStudents(params);
       return response;
     } catch (error) {
