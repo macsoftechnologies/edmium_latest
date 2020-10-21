@@ -144,4 +144,22 @@ export class UniversityDetailsController {
       return apiResponse;
     }
   }
+
+  // Get Applications Status
+  @Get('/applicationsStatus/:universityId')
+  async getApplicationsStatus(@Param('universityId') universityId: string) {
+    try {
+      const response = await this.universityDetailsService.getApplicationsStatus(
+        universityId,
+      );
+      return response;
+    } catch (error) {
+      const apiResponse: APIResponse = {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        message: error.message,
+      };
+      return apiResponse;
+    }
+  }
 }

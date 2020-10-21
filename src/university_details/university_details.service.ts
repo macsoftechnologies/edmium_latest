@@ -13,6 +13,7 @@ import { University } from 'src/university/dto/university.schema';
 import { Country } from 'src/country/dto/country.schema';
 import { FetchParamsDto } from 'src/shared/dto/shared.dto';
 import * as _ from 'lodash';
+import { ApplicationStatus } from 'src/application-status/dto/application-status.schema';
 
 @Injectable()
 export class UniversityDetailsService {
@@ -21,6 +22,8 @@ export class UniversityDetailsService {
     private universityDetailsModel: Model<UniversityDetails>,
     @InjectModel('University') private universityModel: Model<University>,
     @InjectModel('Country') private countryModel: Model<Country>,
+    @InjectModel('ApplicationStatus')
+    private applicationStatusModel: Model<ApplicationStatus>,
   ) {}
 
   /* Add Colleges */
@@ -247,6 +250,105 @@ export class UniversityDetailsService {
       });
 
       return universityDetails;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async getApplicationsStatus(universityId: string): Promise<any> {
+    try {
+      const response = await this.universityDetailsModel.aggregate([
+        {
+          $match: { university: universityId, isDeleted: false },
+        },
+        {
+          $addFields: {
+            universityDetailsId: {
+              $toString: '$_id',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universityapplications',
+            localField: 'universityDetailsId',
+            foreignField: 'universityDetails',
+            as: 'applications',
+          },
+        },
+        {
+          $unwind: {
+            path: '$applications',
+          },
+        },
+        {
+          $addFields: {
+            statusId: {
+              $toObjectId: '$applications.status',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'applicationstatuses',
+            localField: 'statusId',
+            foreignField: '_id',
+            as: 'status',
+          },
+        },
+        {
+          $unwind: {
+            path: '$status',
+          },
+        },
+        {
+          $addFields: {
+            parentStatusId: {
+              $toObjectId: '$status.parentStatus',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'applicationstatuses',
+            localField: 'parentStatusId',
+            foreignField: '_id',
+            as: 'parentStatus',
+          },
+        },
+        {
+          $unwind: {
+            path: '$parentStatus',
+          },
+        },
+      ]);
+
+      const statusResponse: any[] = await this.applicationStatusModel
+        .find({ isDeleted: false, isParentStatus: true })
+        .select('status')
+        .lean();
+
+      statusResponse.map((res: any) => {
+        res.count = 0;
+      });
+
+      response.map((res: any) => {
+        const index = _.findIndex(
+          statusResponse,
+          status => {
+            return status.status == res.parentStatus.status;
+          },
+          0,
+        );
+        statusResponse[index].count++;
+      });
+
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: statusResponse,
+        message: 'Request successfully',
+      };
+      return apiResponse;
     } catch (error) {
       return error;
     }

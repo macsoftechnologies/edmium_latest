@@ -6,6 +6,7 @@ import { UniversitySchema } from 'src/university/dto/university.schema';
 import { CountrySchema } from 'src/country/dto/country.schema';
 import { UniversityDetailsController } from './university_details.controller';
 import { UniversityDetailsService } from './university_details.service';
+import { ApplicationStatusSchema } from 'src/application-status/dto/application-status.schema';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { UniversityDetailsService } from './university_details.service';
       { name: 'UniversityDetails', schema: UniversityDetailsSchema },
       { name: 'University', schema: UniversitySchema },
       { name: 'Country', schema: CountrySchema },
+      { name: 'ApplicationStatus', schema: ApplicationStatusSchema },
     ]),
   ],
   controllers: [UniversityDetailsController],
