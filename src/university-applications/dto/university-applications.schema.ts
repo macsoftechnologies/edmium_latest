@@ -19,6 +19,12 @@ export class UniversityApplication extends Document {
   @Prop()
   status?: string;
 
+  @Prop()
+  intake: string;
+
+  @Prop()
+  yearOfPass: number;
+
   @Prop({ default: false })
   @IsOptional()
   isDeleted?: boolean;

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsNumber } from 'class-validator';
 import { PaginationDto } from 'src/shared/dto/shared.dto';
 
 export class UniversityApplicationDto {
@@ -10,6 +10,14 @@ export class UniversityApplicationDto {
   @ApiProperty()
   @IsString()
   universityDetails: string;
+
+  @ApiProperty()
+  @IsString()
+  intake: string;
+
+  @ApiProperty()
+  @IsNumber()
+  yearOfPass: number;
 }
 
 export class ApplicationsOfStudentDto extends PaginationDto {
