@@ -107,6 +107,16 @@ export class UniversityApplicationsService {
           path: 'universityDetails',
           model: this.universityDetailsModel,
         })
+        .populate({
+          path: 'status',
+          model: this.applicationStatusModel,
+          populate: [
+            {
+              path: 'parentStatus',
+              model: this.applicationStatusModel,
+            },
+          ],
+        })
         .skip(params.start)
         .limit(params.limit);
       let apiResponse: APIResponse = {
@@ -270,6 +280,27 @@ export class UniversityApplicationsService {
           {
             $match: searchFilter,
           },
+
+          {
+            $addFields: {
+              userCreatedById: {
+                $convert: {
+                  input: '$user.createdBy',
+                  to: 'objectId',
+                  onError: null,
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'userCreatedById',
+              foreignField: '_id',
+              as: 'user.createdBy',
+            },
+          },
+          { $unwind: '$user.createdBy' },
         ])
         .skip(params.start)
         .limit(params.limit);
