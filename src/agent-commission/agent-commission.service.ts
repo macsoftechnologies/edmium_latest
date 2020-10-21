@@ -141,21 +141,48 @@ export class AgentCommissionService {
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
       const response = await this.agentCommissionModel
-        .find({ isDeleted: false })
-        .populate({
-          path: 'country',
-          model: this.countryModel,
-          retainNullValues: true,
-        })
-        .populate({
-          path: 'universityDetails',
-          model: this.universityDetailsModel,
-          retainNullValues: true,
-        })
-        .skip(params.paginationObject.start)
-        .limit(params.paginationObject.limit)
+        .aggregate([
+          {
+            $match: { isDeleted: false },
+          },
+
+          {
+            $addFields: {
+              countryId: {
+                $toObjectId: '$country',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'countries',
+              localField: 'countryId',
+              foreignField: '_id',
+              as: 'country',
+            },
+          },
+          { $unwind: '$country' },
+
+          {
+            $addFields: {
+              universityDetailsId: {
+                $toObjectId: '$universityDetails',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'universitydetails',
+              localField: 'universityDetailsId',
+              foreignField: '_id',
+              as: 'universityDetails',
+            },
+          },
+          { $unwind: '$universityDetails' },
+        ])
         .sort(sortObject)
-        .lean();
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit);
 
       return {
         statusCode: HttpStatus.OK,
