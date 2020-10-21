@@ -287,6 +287,7 @@ export class UniversityApplicationsController {
       );
 
       await this.sharedService.sendMail({
+        to: application.user.emailAddress,
         studentName:
           application.user.firstName + ' ' + application.user.lastName,
         applicationId: application.uniqueId,

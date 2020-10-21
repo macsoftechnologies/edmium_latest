@@ -139,7 +139,7 @@ export class SharedService {
   async sendMail(params: any): Promise<any> {
     console.log('sendMail');
     const msg = {
-      to: 'harshavardhanpvk@gmail.com',
+      to: params.to,
       from: 'admissions@edmium.com', // Use the email address or domain you verified above
       subject: 'Sending with Twilio SendGrid is Fun',
       text: 'and easy to do anywhere, even with Node.js',
