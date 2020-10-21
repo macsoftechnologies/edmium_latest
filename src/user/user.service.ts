@@ -1132,25 +1132,112 @@ export class UserService {
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
       const data = await this.userModel
-        .find({ isDeleted: false, ...params.findObject })
-        .populate({
-          path: 'country',
-          model: this.countryModel,
-          retainNullValues: true,
-        })
-        .populate({
-          path: 'concentration',
-          model: this.concentrationModel,
-          retainNullValues: true,
-        })
-        .populate({
-          path: 'education',
-          model: this.educationModel,
-          retainNullValues: true,
-        })
+        .aggregate([
+          {
+            $match: { isDeleted: false, ...params.findObject },
+          },
+          {
+            $addFields: {
+              countryId: {
+                $convert: {
+                  input: '$country',
+                  to: 'objectId',
+                  onError: null,
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'countries',
+              localField: 'countryId',
+              foreignField: '_id',
+              as: 'country',
+            },
+          },
+          {
+            $unwind: {
+              path: '$country',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
+          {
+            $addFields: {
+              concentrationId: {
+                $convert: {
+                  input: '$concentration',
+                  to: 'objectId',
+                  onError: null,
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'concentrations',
+              localField: 'concentrationId',
+              foreignField: '_id',
+              as: 'concentration',
+            },
+          },
+          {
+            $unwind: {
+              path: '$concentration',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+
+          {
+            $addFields: {
+              educationId: {
+                $convert: {
+                  input: '$education',
+                  to: 'objectId',
+                  onError: null,
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'educations',
+              localField: 'educationId',
+              foreignField: '_id',
+              as: 'education',
+            },
+          },
+          {
+            $unwind: {
+              path: '$education',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        ])
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
         .sort(sortObject);
+
+      // const data = await this.userModel
+      //   .find({ isDeleted: false, ...params.findObject })
+      //   .populate({
+      //     path: 'country',
+      //     model: this.countryModel,
+      //     retainNullValues: true,
+      //   })
+      //   .populate({
+      //     path: 'concentration',
+      //     model: this.concentrationModel,
+      //     retainNullValues: true,
+      //   })
+      //   .populate({
+      //     path: 'education',
+      //     model: this.educationModel,
+      //     retainNullValues: true,
+      //   })
+      //   .skip(params.paginationObject.start)
+      //   .limit(params.paginationObject.limit)
+      //   .sort(sortObject);
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,

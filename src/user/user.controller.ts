@@ -190,10 +190,14 @@ export class UserController {
   }
 
   // Get Counselor
-  @Get('/counselors')
-  async getCounselors() {
+  @Post('/counselors/listing')
+  async getCounselors(@Body() body: PaginationDto) {
     try {
-      let response = await this.userService.getUsers({ role: 'counselor' });
+      const params: any = body;
+      params.role = 'counselor';
+
+      const params1 = await this.sharedService.prepareParams(params);
+      let response = await this.userService.fetchUsers(params1);
       return response;
     } catch (error) {
       return {
