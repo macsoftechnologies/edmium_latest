@@ -25,6 +25,9 @@ export class UniversityApplication extends Document {
   @Prop()
   yearOfPass: number;
 
+  @Prop()
+  statusHistory?: object[];
+
   @Prop({ default: false })
   @IsOptional()
   isDeleted?: boolean;

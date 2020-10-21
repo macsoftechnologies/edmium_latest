@@ -272,9 +272,15 @@ export class UniversityApplicationsController {
           { isEstimatedAmount: false },
         );
       }
+      const data: any = params;
+      data.$push = {
+        statusHistory: { status: params.status, comment: params.comment },
+      };
+      delete data.comment;
+
       let response = await this.universityApplicationService.updateStatus(
         id,
-        params,
+        data,
       );
       return response;
     } catch (error) {

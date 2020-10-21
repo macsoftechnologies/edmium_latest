@@ -59,4 +59,8 @@ export class UpdateStatusDto {
   @ApiProperty()
   @IsString()
   status: string;
+
+  @ApiProperty()
+  @IsString()
+  comment: string;
 }
