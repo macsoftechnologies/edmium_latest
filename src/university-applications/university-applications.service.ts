@@ -9,7 +9,7 @@ import { APIResponse } from 'src/dto/api-response-dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { UniversityApplication } from './dto/university-applications.schema';
-import { PaginationDto } from 'src/shared/dto/shared.dto';
+import { FetchParamsDto, PaginationDto } from 'src/shared/dto/shared.dto';
 import { User } from 'src/user/dto/user.schema';
 import { UniversityDetails } from 'src/university_details/dto/university_details.schema';
 import { University } from 'src/university/dto/university.schema';
@@ -131,9 +131,13 @@ export class UniversityApplicationsService {
   }
 
   // filterApplications
-  async filterApplications(params: ApplicationsFilterDto): Promise<any> {
+  async filterApplications(params: FetchParamsDto): Promise<any> {
     try {
       console.log(params);
+
+      const sortObject = {};
+      sortObject[params.paginationObject.sortBy] =
+        params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
       let intakeFilter: any = {};
       let searchFilter = {};
@@ -142,53 +146,53 @@ export class UniversityApplicationsService {
       let statusFilter = {};
       let UniversityFilter = {};
 
-      if (params.fromDate && params.toDate) {
-        const toDate = new Date(params.toDate);
+      if (params.findObject.fromDate && params.findObject.toDate) {
+        const toDate = new Date(params.findObject.toDate);
         toDate.setDate(toDate.getDate() + 1);
 
         fromDateFilter['createdAt'] = {
-          $gt: new Date(params.fromDate),
+          $gt: new Date(params.findObject.fromDate),
         };
         toDateFilter['createdAt'] = {
           $lt: toDate,
         };
       }
 
-      if (params.status) {
+      if (params.findObject.status) {
         statusFilter['status'] = {
-          $in: params.status,
+          $in: params.findObject.status,
         };
       }
 
-      if (params.university) {
+      if (params.findObject.university) {
         UniversityFilter['universityDetails.university'] = {
-          $in: params.university,
+          $in: params.findObject.university,
         };
       }
 
-      if (params.intake) {
+      if (params.findObject.intake) {
         intakeFilter['universityDetails.intake'] = {
-          $in: params.intake,
+          $in: params.findObject.intake,
         };
       }
 
-      if (params.searchString) {
+      if (params.findObject.searchString) {
         searchFilter['$or'] = [
           {
             'university.universityName': {
-              $regex: '.*' + params.searchString + '.*',
+              $regex: '.*' + params.findObject.searchString + '.*',
               $options: 'i',
             },
           },
           {
             'user.firstName': {
-              $regex: '.*' + params.searchString + '.*',
+              $regex: '.*' + params.findObject.searchString + '.*',
               $options: 'i',
             },
           },
           {
             'user.lastName': {
-              $regex: '.*' + params.searchString + '.*',
+              $regex: '.*' + params.findObject.searchString + '.*',
               $options: 'i',
             },
           },
@@ -302,8 +306,9 @@ export class UniversityApplicationsService {
           },
           { $unwind: '$user.createdBy' },
         ])
-        .skip(params.start)
-        .limit(params.limit);
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit)
+        .sort(sortObject);
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,

@@ -17,6 +17,7 @@ import { AgentCommissionSchema } from 'src/agent-commission/dto/agent-commission
 import { EducationSchema } from 'src/education/dto/education.schema';
 import { CountryService } from 'src/country/country.service';
 import { CurrencySchema } from 'src/currency/dto/currency.schema';
+import { SharedService } from 'src/shared/shared.service';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { CurrencySchema } from 'src/currency/dto/currency.schema';
     UniversityDetailsService,
     AgentCommissionService,
     CountryService,
+    SharedService,
   ],
 })
 export class UniversityApplicationsModule {}

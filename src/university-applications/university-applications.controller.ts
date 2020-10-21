@@ -20,6 +20,7 @@ import { User } from 'src/user/dto/user.schema';
 import { ApplicationStatus } from 'src/application-status/dto/application-status.schema';
 import { Country } from 'src/country/dto/country.schema';
 import { Currency } from 'src/currency/dto/currency.schema';
+import { SharedService } from 'src/shared/shared.service';
 
 var mongoose = require('mongoose');
 
@@ -38,6 +39,7 @@ export class UniversityApplicationsController {
     private countryModel: Model<Country>,
     @InjectModel('Currency')
     private currencyModel: Model<Currency>,
+    private sharedService: SharedService,
   ) {}
 
   //   Apply for University
@@ -183,8 +185,10 @@ export class UniversityApplicationsController {
 
   // Get User Academic Info
   @Post('/filter-by-criteria')
-  async filterApplications(@Body() params: ApplicationsFilterDto) {
+  async filterApplications(@Body() body: ApplicationsFilterDto) {
     try {
+      const params = await this.sharedService.prepareParams(body);
+
       let response = await this.universityApplicationService.filterApplications(
         params,
       );
