@@ -249,6 +249,7 @@ export class SharedService {
       
                           <div class="email-data-para">
                               <p>Great that you wish to apply to ${params.institution} for ${params.intake} ${params.year}  , Please note that we have send your application to our quality team to evaluate the eligibility,  You will be further notified on the progress. </p>
+                              <p>${params.comment} </p>
                           </div> 
       
                           <div class="thanks">

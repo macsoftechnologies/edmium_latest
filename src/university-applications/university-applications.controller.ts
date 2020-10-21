@@ -275,7 +275,7 @@ export class UniversityApplicationsController {
           { isEstimatedAmount: false },
         );
       }
-      const data: any = params;
+      const data: any = Object.assign({}, params);
       data.$push = {
         statusHistory: { status: params.status, comment: params.comment },
       };
@@ -297,6 +297,7 @@ export class UniversityApplicationsController {
         intake: application.intake,
         year: application.yearOfPass,
         status: application.status.status,
+        comment: params.comment,
       });
       return response;
     } catch (error) {
