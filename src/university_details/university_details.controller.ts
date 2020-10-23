@@ -15,6 +15,7 @@ import {
   GetCollegeDto,
   SearchUniversitiesByIntCourUniNameDto,
   FilterByCourseDto,
+  ApplicationsStatusDto,
 } from './dto/university_details.dto';
 import { SharedService } from 'src/shared/shared.service';
 import { UniversityDetailsService } from './university_details.service';
@@ -146,11 +147,15 @@ export class UniversityDetailsController {
   }
 
   // Get Applications Status
-  @Get('/applicationsStatus/:universityId')
-  async getApplicationsStatus(@Param('universityId') universityId: string) {
+  @Post('/applicationsStatus/:universityId')
+  async getApplicationsStatus(
+    @Param('universityId') universityId: string,
+    @Body() body: ApplicationsStatusDto,
+  ) {
     try {
       const response = await this.universityDetailsService.getApplicationsStatus(
         universityId,
+        body,
       );
       return response;
     } catch (error) {

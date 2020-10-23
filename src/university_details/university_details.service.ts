@@ -255,8 +255,22 @@ export class UniversityDetailsService {
     }
   }
 
-  async getApplicationsStatus(universityId: string): Promise<any> {
+  async getApplicationsStatus(universityId: string, params: any): Promise<any> {
     try {
+      const fromDateFilter = {};
+      const toDateFilter = {};
+      if (params.fromDate && params.toDate) {
+        const toDate = new Date(params.toDate);
+        toDate.setDate(toDate.getDate() + 1);
+
+        fromDateFilter['applications.createdAt'] = {
+          $gt: new Date(params.fromDate),
+        };
+        toDateFilter['applications.createdAt'] = {
+          $lt: toDate,
+        };
+      }
+
       const response = await this.universityDetailsModel.aggregate([
         {
           $match: { university: universityId, isDeleted: false },
@@ -280,6 +294,12 @@ export class UniversityDetailsService {
           $unwind: {
             path: '$applications',
           },
+        },
+        {
+          $match: fromDateFilter,
+        },
+        {
+          $match: toDateFilter,
         },
         {
           $addFields: {

@@ -219,3 +219,15 @@ export class minMaxDto {
   @IsOptional()
   max: number;
 }
+
+export class ApplicationsStatusDto {
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  fromDate: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  toDate: string;
+}
