@@ -159,11 +159,14 @@ export class UserController {
   }
 
   // Filter students
-  @Post('/filter-by-criteria')
-  async filterStudents(@Body() body: FilterStudentsDto) {
+  @Post('/filter-by-criteria/:userId')
+  async filterStudents(
+    @Body() body: FilterStudentsDto,
+    @Param('userId') userId: string,
+  ) {
     try {
       const params = await this.sharedService.prepareParams(body);
-      let response = await this.userService.filterStudents(params);
+      let response = await this.userService.filterStudents(userId, params);
       return response;
     } catch (error) {
       return {
@@ -180,6 +183,40 @@ export class UserController {
       console.log(body);
       const params: any = body;
       params.role = 'counselor';
+      let response = await this.userService.createUser(params);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Add Team Lead
+  @Post('/addTeamLead')
+  async addTeamLead(@Body() body: AddCounselorDto) {
+    try {
+      console.log(body);
+      const params: any = body;
+      params.role = 'team-lead';
+      let response = await this.userService.createUser(params);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Add Counselor Team Lead
+  @Post('/addAgentTeamLead')
+  async addAgentTeamLead(@Body() body: AddCounselorDto) {
+    try {
+      console.log(body);
+      const params: any = body;
+      params.role = 'agent-team-lead';
       let response = await this.userService.createUser(params);
       return response;
     } catch (error) {

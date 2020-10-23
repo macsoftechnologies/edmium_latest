@@ -131,9 +131,132 @@ export class UniversityApplicationsService {
   }
 
   // filterApplications
-  async filterApplications(params: FetchParamsDto): Promise<any> {
+  async filterApplications(
+    userId: string,
+    params: FetchParamsDto,
+  ): Promise<any> {
     try {
       console.log(params);
+
+      const user = await this.userModel.findById(userId);
+
+      let studentIds: string[] = [];
+
+      if (user.role == 'team-lead') {
+        const counselors = await this.userModel.find(
+          {
+            isDeleted: false,
+            assignedTo: user.assignedTo,
+            country: user.country,
+            role: { $in: ['counselor'] },
+          },
+          { _id: 1 },
+        );
+
+        const counselorIds: string[] = counselors.map((counselor: any) => {
+          return counselor._id;
+        });
+
+        counselorIds.push(userId);
+
+        const students = await this.userModel.find(
+          {
+            isDeleted: false,
+            assignedTo: { $in: counselorIds },
+            role: 'student',
+          },
+          { _id: 1 },
+        );
+
+        studentIds = students.map((student: any) => {
+          return student._id;
+        });
+      } else if (user.role == 'counselor') {
+        const students = await this.userModel.find(
+          {
+            isDeleted: false,
+            assignedTo: { $in: [userId] },
+            role: 'student',
+          },
+          { _id: 1 },
+        );
+
+        studentIds = students.map((student: any) => {
+          return student._id;
+        });
+      } else if (user.role == 'agent') {
+        const counselors = await this.userModel.find(
+          {
+            isDeleted: false,
+            assignedTo: userId,
+            role: { $in: ['agent-team-lead', 'agent-counselor'] },
+          },
+          { _id: 1 },
+        );
+
+        const counselorIds: string[] = counselors.map((counselor: any) => {
+          return counselor._id;
+        });
+
+        counselorIds.push(userId);
+
+        const students = await this.userModel.find(
+          {
+            isDeleted: false,
+            assignedTo: { $in: counselorIds },
+            role: 'student',
+          },
+          { _id: 1 },
+        );
+
+        studentIds = students.map((student: any) => {
+          return student._id;
+        });
+      } else if (user.role == 'agent-team-lead') {
+        const counselors = await this.userModel.find(
+          {
+            isDeleted: false,
+            assignedTo: user.assignedTo,
+            country: user.country,
+            role: { $in: ['agent-counselor'] },
+          },
+          { _id: 1 },
+        );
+
+        const counselorIds: string[] = counselors.map((counselor: any) => {
+          return counselor._id;
+        });
+
+        counselorIds.push(userId);
+
+        const students = await this.userModel.find(
+          {
+            isDeleted: false,
+            assignedTo: { $in: counselorIds },
+            role: 'student',
+          },
+          { _id: 1 },
+        );
+
+        studentIds = students.map((student: any) => {
+          return student._id;
+        });
+      } else if (user.role == 'agent-counselor') {
+        const students = await this.userModel.find(
+          {
+            isDeleted: false,
+            assignedTo: { $in: [userId] },
+            role: 'student',
+          },
+          { _id: 1 },
+        );
+
+        studentIds = students.map((student: any) => {
+          return student._id;
+        });
+      }
+
+      console.log(studentIds);
 
       const sortObject = {};
       sortObject[params.paginationObject.sortBy] =
@@ -145,6 +268,13 @@ export class UniversityApplicationsService {
       let toDateFilter = {};
       let statusFilter = {};
       let UniversityFilter = {};
+      let userFilter = {};
+
+      if (user.role != 'admin') {
+        userFilter['user._id'] = {
+          $in: studentIds,
+        };
+      }
 
       if (params.findObject.fromDate && params.findObject.toDate) {
         const toDate = new Date(params.findObject.toDate);
@@ -278,6 +408,9 @@ export class UniversityApplicationsService {
             },
           },
           { $unwind: '$user' },
+          {
+            $match: userFilter,
+          },
           {
             $match: intakeFilter,
           },

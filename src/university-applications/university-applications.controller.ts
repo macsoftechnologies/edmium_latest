@@ -184,12 +184,16 @@ export class UniversityApplicationsController {
   }
 
   // Get User Academic Info
-  @Post('/filter-by-criteria')
-  async filterApplications(@Body() body: ApplicationsFilterDto) {
+  @Post('/filter-by-criteria/:userId')
+  async filterApplications(
+    @Body() body: ApplicationsFilterDto,
+    @Param('userId') userId: string,
+  ) {
     try {
       const params = await this.sharedService.prepareParams(body);
 
       let response = await this.universityApplicationService.filterApplications(
+        userId,
         params,
       );
       return response;
