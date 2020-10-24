@@ -171,6 +171,11 @@ export class FilterStudentsDto extends PaginationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
+  userId: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
   fromDate: string;
 
   @ApiProperty()
