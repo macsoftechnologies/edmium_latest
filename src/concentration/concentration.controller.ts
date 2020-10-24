@@ -8,18 +8,26 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { PaginationDto } from 'src/shared/dto/shared.dto';
+import { SharedService } from 'src/shared/shared.service';
 import { ConcentrationService } from './concentration.service';
 import { CreateConcentrationDto } from './dto/concentration.dto';
 
 @Controller('concentration')
 export class ConcentrationController {
-  constructor(private concentrationService: ConcentrationService) {}
+  constructor(
+    private concentrationService: ConcentrationService,
+    private sharedService: SharedService,
+  ) {}
 
   /* Get Concentrations */
-  @Get()
-  async getConcentrations() {
+  @Post('/listing')
+  async getConcentrations(@Body() body: PaginationDto) {
     try {
-      const courses = await this.concentrationService.getAllConcentrations();
+      const params = await this.sharedService.prepareParams(body);
+      const courses = await this.concentrationService.getAllConcentrations(
+        params,
+      );
       return courses;
     } catch (error) {
       return {

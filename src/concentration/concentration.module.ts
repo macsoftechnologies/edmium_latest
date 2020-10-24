@@ -3,6 +3,7 @@ import { ConcentrationService } from './concentration.service';
 import { ConcentrationController } from './concentration.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConcentrationSchema } from './dto/concentration.schema';
+import { SharedService } from 'src/shared/shared.service';
 
 @Module({
   imports: [
@@ -10,7 +11,7 @@ import { ConcentrationSchema } from './dto/concentration.schema';
       { name: 'Concentration', schema: ConcentrationSchema },
     ]),
   ],
-  providers: [ConcentrationService],
+  providers: [ConcentrationService, SharedService],
   controllers: [ConcentrationController],
 })
 export class ConcentrationModule {}

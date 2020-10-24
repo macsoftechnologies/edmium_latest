@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { CreateConcentrationDto } from './dto/concentration.dto';
+import { FetchParamsDto } from 'src/shared/dto/shared.dto';
 
 @Injectable()
 export class ConcentrationService {
@@ -13,14 +14,22 @@ export class ConcentrationService {
   ) {}
 
   /* Get all countries */
-  async getAllConcentrations(): Promise<any> {
+  async getAllConcentrations(params: FetchParamsDto): Promise<any> {
     try {
-      let countriesList = await this.concentrationModel.find({
-        isDeleted: false,
-      });
+      const sortObject = {};
+      sortObject[params.paginationObject.sortBy] =
+        params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
+
+      let concentrations = await this.concentrationModel
+        .find({
+          isDeleted: false,
+        })
+        .sort(sortObject)
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit);
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: countriesList,
+        data: concentrations,
         message: 'Request Successful',
       };
       return apiResponse;

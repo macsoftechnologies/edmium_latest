@@ -1173,7 +1173,12 @@ export class UserService {
       const user = await this.userModel.findById(counselorId);
 
       let match = {};
-      if (user.role == 'counselor' || user.role == 'agent-counselor') {
+      if (
+        user.role == 'counselor' ||
+        user.role == 'agent-counselor' ||
+        user.role == 'team-lead' ||
+        user.role == 'agent-team-lead'
+      ) {
         match = { assignedTo: counselorId };
       } else if (user.role == 'agent') {
         const counselors = await this.userModel.find({
@@ -1251,6 +1256,8 @@ export class UserService {
           },
         },
       ]);
+
+      console.log(response);
 
       const statusResponse: any[] = await this.applicationStatusModel
         .find({ isDeleted: false, isParentStatus: true })
