@@ -227,12 +227,12 @@ export class UserController {
     }
   }
 
-  // Get Counselor
+  // Get Counselor`
   @Post('/counselors/listing')
   async getCounselors(@Body() body: PaginationDto) {
     try {
       const params: any = body;
-      params.role = 'counselor';
+      params.role = { $in: ['counselor', 'team-lead'] };
 
       const params1 = await this.sharedService.prepareParams(params);
       let response = await this.userService.fetchUsers(params1);
@@ -457,7 +457,7 @@ export class UserController {
   ) {
     try {
       const params1: any = body;
-      params1.role = 'agent-counselor';
+      params1.role = { $in: ['agent-counselor', 'agent-team-lead'] };
       params1.assignedTo = agentId;
       const params = await this.sharedService.prepareParams(params1);
 

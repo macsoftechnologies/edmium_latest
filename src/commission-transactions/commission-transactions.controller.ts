@@ -65,7 +65,6 @@ export class CommissionTransactionsController {
           }
         }
       }
-
       const countryWiseCommissions = [];
       for (const commission of actualCommissions) {
         const index = _.findIndex(countryWiseCommissions, {
@@ -76,6 +75,7 @@ export class CommissionTransactionsController {
         } else {
           countryWiseCommissions.push({
             country: commission.country.name,
+            countryCode: commission.country.code,
             estimatedAmount: 0,
             actualAmount: commission.commission,
           });
@@ -91,7 +91,8 @@ export class CommissionTransactionsController {
             commission.commission;
         } else {
           countryWiseCommissions.push({
-            country: commission.country,
+            country: commission.country.name,
+            countryCode: commission.country.code,
             estimatedAmount: commission.commission,
             actualAmount: 0,
           });

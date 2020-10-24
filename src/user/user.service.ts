@@ -415,6 +415,31 @@ export class UserService {
             preserveNullAndEmptyArrays: true,
           },
         },
+
+        {
+          $addFields: {
+            universityDetailsId: {
+              $toObjectId:
+                '$favoriteUniversities.universityApplications.universityDetails',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universitydetails',
+            localField: 'universityDetailsId',
+            foreignField: '_id',
+            as: 'favoriteUniversities.universityApplications.universityDetails',
+          },
+        },
+        {
+          $unwind: {
+            path:
+              '$favoriteUniversities.universityApplications.universityDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+
         {
           $addFields: {
             statusId: {

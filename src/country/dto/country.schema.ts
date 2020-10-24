@@ -5,6 +5,9 @@ import { Document } from 'mongoose';
 @Schema({ timestamps: true })
 export class Country extends Document {
   @Prop()
+  code: string;
+
+  @Prop()
   name: string;
 
   @Prop()
