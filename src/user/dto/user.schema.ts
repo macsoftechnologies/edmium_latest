@@ -18,7 +18,7 @@ export class User extends Document {
   emailAddress: string;
 
   @Prop()
-  mobileNumber: number;
+  mobileNumber: integer;
 
   @Prop()
   @IsOptional()

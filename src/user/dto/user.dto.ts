@@ -36,7 +36,6 @@ export class CreateUser {
   password: string;
 
   @ApiProperty()
-  @IsString()
   @IsOptional()
   @IsArray()
   countries: string[];
@@ -88,7 +87,6 @@ export class AddCounselorDto {
   password: string;
 
   @ApiProperty()
-  @IsString()
   @IsOptional()
   @IsArray()
   countries: string[];
@@ -124,7 +122,6 @@ export class UpdateCounselorDto {
   mobileNumber: number;
 
   @ApiProperty()
-  @IsString()
   @IsOptional()
   @IsArray()
   countries: string[];
@@ -272,7 +269,6 @@ export class RegisterStudentDto {
   password: string;
 
   @ApiProperty()
-  @IsString()
   @IsOptional()
   @IsArray()
   countries: string[];
