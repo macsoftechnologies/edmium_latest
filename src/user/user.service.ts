@@ -186,7 +186,7 @@ export class UserService {
           model: this.concentrationModel,
           retainNullValues: true,
         });
-
+      console.log(user);
       if (user) {
         console.log('user', user);
         const userAuthentication = await this.userAuthenticationModel
@@ -196,6 +196,8 @@ export class UserService {
             isDeleted: false,
           })
           .lean();
+
+        console.log(userAuthentication);
 
         if (userAuthentication) {
           const notificationObj = {
@@ -246,11 +248,17 @@ export class UserService {
   ) {
     try {
       console.log('req', searchUniversitiesByIntCourUniNameDto);
-      let universities = await this.universityDetailsModel.find({
-        country: searchUniversitiesByIntCourUniNameDto.country,
-        concentration: searchUniversitiesByIntCourUniNameDto.concentration,
-        intake: { $in: [searchUniversitiesByIntCourUniNameDto.intake] },
-      });
+      let universities = await this.universityDetailsModel
+        .find({
+          country: searchUniversitiesByIntCourUniNameDto.country,
+          concentration: searchUniversitiesByIntCourUniNameDto.concentration,
+          intake: { $in: [searchUniversitiesByIntCourUniNameDto.intake] },
+        })
+        .populate({
+          path: 'university',
+          model: this.universityModel,
+          retainNullValues: true,
+        });
 
       // console.log('universities', universities);
       let apiReponse: APIResponse = {
