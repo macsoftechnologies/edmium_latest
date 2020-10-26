@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsEnum,
   isNumber,
+  IsArray,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationDto } from 'src/shared/dto/shared.dto';
@@ -37,7 +38,8 @@ export class CreateUser {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  country: string;
+  @IsArray()
+  countries: string[];
 
   @ApiProperty()
   @IsString()
@@ -88,7 +90,8 @@ export class AddCounselorDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  country: string;
+  @IsArray()
+  countries: string[];
 
   @ApiProperty()
   @IsString()
@@ -123,7 +126,8 @@ export class UpdateCounselorDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  country: string;
+  @IsArray()
+  countries: string[];
 
   @ApiProperty()
   @IsString()
@@ -186,7 +190,7 @@ export class FilterStudentsDto extends PaginationDto {
   @ApiProperty()
   @IsOptional()
   @IsOptional()
-  country: string[];
+  country: string;
 
   @ApiProperty()
   @IsOptional()
@@ -270,7 +274,8 @@ export class RegisterStudentDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  country: string;
+  @IsArray()
+  countries: string[];
 
   @ApiProperty()
   @IsString()

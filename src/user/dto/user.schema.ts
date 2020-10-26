@@ -25,7 +25,7 @@ export class User extends Document {
   password?: string;
 
   @Prop()
-  country: string;
+  countries: string[];
 
   @Prop()
   concentration: string;

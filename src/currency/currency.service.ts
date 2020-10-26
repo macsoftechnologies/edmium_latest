@@ -37,7 +37,7 @@ export class CurrencyService {
     }
   }
 
-  /* Create country */
+  /* Create currency */
   async createCurrency(createCurrencyDto: CreateCurrencyDto): Promise<any> {
     try {
       const createCurrencyRes = await this.currencyModel.create(
@@ -55,7 +55,7 @@ export class CurrencyService {
     }
   }
 
-  /* Update Country */
+  /* Update currency */
   async updateCurrency(params: any, id): Promise<any> {
     try {
       const found = this.currencyModel.findOne({ _id: id });

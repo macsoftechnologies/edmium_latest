@@ -87,7 +87,7 @@ export class UserService {
       } else if (createUser.role === 'student') {
         const counselors = await this.userModel.find({
           role: 'counselor',
-          country: createUser.country,
+          countries: { $in: createUser.countries[0] },
           isDeleted: false,
         });
 
@@ -177,7 +177,7 @@ export class UserService {
           retainNullValues: true,
         })
         .populate({
-          path: 'country',
+          path: 'countries',
           model: this.countryModel,
           retainNullValues: true,
         })
@@ -565,7 +565,7 @@ export class UserService {
               country: 1,
             },
           )
-          .populate({ path: 'country', model: this.countryModel }),
+          .populate({ path: 'countries', model: this.countryModel }),
         message: 'Request successfully',
       };
       return apiResponse;
@@ -605,7 +605,7 @@ export class UserService {
             {
               isDeleted: false,
               assignedTo: user.assignedTo,
-              country: user.country,
+              countries: { $in: user.countries },
               role: { $in: ['counselor'] },
             },
             { _id: 1 },
@@ -675,7 +675,7 @@ export class UserService {
             {
               isDeleted: false,
               assignedTo: user.assignedTo,
-              country: user.country,
+              countries: { $in: user.countries },
               role: { $in: ['agent-counselor'] },
             },
             { _id: 1 },
@@ -749,7 +749,7 @@ export class UserService {
       }
 
       if (params.findObject.country) {
-        countryFilter['country'] = {
+        countryFilter['countries'] = {
           $in: params.findObject.country,
         };
       }
@@ -840,9 +840,15 @@ export class UserService {
             $match: countryFilter,
           },
           {
+            $unwind: {
+              path: '$countries',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
             $addFields: {
               countryId: {
-                $toObjectId: '$country',
+                $toObjectId: '$countries',
               },
             },
           },
@@ -1104,7 +1110,8 @@ export class UserService {
               lastName: { $first: '$lastName' },
               emailAddress: { $first: '$emailAddress' },
               mobileNumber: { $first: '$mobileNumber' },
-              country: { $first: '$country' },
+              // country: { $first: '$country' },
+              countries: { $addToSet: '$country' },
               createdAt: { $first: '$createdAt' },
               createdBy: { $first: '$createdBy' },
               assignedTo: { $first: '$assignedTo' },
@@ -1306,10 +1313,16 @@ export class UserService {
             $match: { isDeleted: false, ...params.findObject },
           },
           {
+            $unwind: {
+              path: '$countries',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
             $addFields: {
               countryId: {
                 $convert: {
-                  input: '$country',
+                  input: '$countries',
                   to: 'objectId',
                   onError: null,
                 },
@@ -1382,6 +1395,26 @@ export class UserService {
               preserveNullAndEmptyArrays: true,
             },
           },
+          {
+            $group: {
+              _id: '$_id',
+              firstName: { $first: '$firstName' },
+              lastName: { $first: '$lastName' },
+              emailAddress: { $first: '$emailAddress' },
+              mobileNumber: { $first: '$mobileNumber' },
+              countries: { $addToSet: '$country' },
+              concentration: { $first: '$concentration' },
+              education: { $first: '$education' },
+              createdAt: { $first: '$createdAt' },
+              // createdBy: { $first: '$createdBy' },
+              // assignedTo: { $first: '$assignedTo' },
+              // suggestedUniversities: { $addToSet: '$suggestedUniversities' },
+              // favoriteUniversities: { $addToSet: '$favoriteUniversities' },
+              // universityApplications: { $addToSet: '$universityApplications' },
+              // userTests: { $first: '$userTests' },
+              // userAcademicInfo: { $addToSet: '$userAcademicInfo' },
+            },
+          },
         ])
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
@@ -1411,7 +1444,7 @@ export class UserService {
         isDeleted: false,
       };
 
-      if (user.country) params.country = user.country;
+      if (user.countries) params.country = { $in: user.countries };
       if (user.concentration) params.concentration = user.concentration.name;
 
       console.log(params);
@@ -1663,7 +1696,7 @@ export class UserService {
           retainNullValues: true,
         })
         .populate({
-          path: 'country',
+          path: 'countries',
           model: this.countryModel,
           retainNullValues: true,
         })

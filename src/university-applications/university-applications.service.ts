@@ -147,7 +147,7 @@ export class UniversityApplicationsService {
           {
             isDeleted: false,
             assignedTo: user.assignedTo,
-            country: user.country,
+            countries: { $in: user.countries },
             role: { $in: ['counselor'] },
           },
           { _id: 1 },
@@ -217,7 +217,7 @@ export class UniversityApplicationsService {
           {
             isDeleted: false,
             assignedTo: user.assignedTo,
-            country: user.country,
+            countries: { $in: user.countries },
             role: { $in: ['agent-counselor'] },
           },
           { _id: 1 },

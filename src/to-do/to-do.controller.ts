@@ -7,7 +7,6 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { CreateCountryDto } from 'src/country/dto/create-country.dto';
 import { ToDoDto, UpdateToDoStatusDto } from './dto/to-do.dto';
 import { ToDoService } from './to-do.service';
 

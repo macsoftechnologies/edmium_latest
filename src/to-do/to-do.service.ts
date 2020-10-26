@@ -1,7 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateCountryDto } from 'src/country/dto/create-country.dto';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { ToDoDto } from './dto/to-do.dto';
 import { ToDo } from './dto/to-do.schema';

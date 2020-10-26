@@ -37,7 +37,7 @@ export class CourseService {
     }
   }
 
-  /* Create country */
+  /* Create course */
   async createCourse(createCourseDto: CreateCourseDto): Promise<any> {
     try {
       const createCourseRes = await this.courseModel.create(createCourseDto);
@@ -53,7 +53,7 @@ export class CourseService {
     }
   }
 
-  /* Update Country */
+  /* Update course */
   async updateCourse(params: any, id): Promise<any> {
     try {
       const found = this.courseModel.findOne({ _id: id });
