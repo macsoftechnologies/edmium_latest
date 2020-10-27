@@ -1414,6 +1414,7 @@ export class UserService {
               concentration: { $first: '$concentration' },
               education: { $first: '$education' },
               createdAt: { $first: '$createdAt' },
+              role: { $first: '$role' },
               // createdBy: { $first: '$createdBy' },
               // assignedTo: { $first: '$assignedTo' },
               // suggestedUniversities: { $addToSet: '$suggestedUniversities' },
