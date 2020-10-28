@@ -203,7 +203,8 @@ export class UserService {
           const notificationObj = {
             usersTo: [userAuthentication._id],
             notification: {
-              title: 'Edimum Notifications',
+              action: 'subscription',
+              title: 'Edmium Notifications',
               body: 'Subscribe to Edmium News letters',
             },
             registration_ids: [userAuthentication.deviceToken],
