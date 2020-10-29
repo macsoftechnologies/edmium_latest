@@ -86,9 +86,10 @@ export class UniversityApplicationsController {
       });
 
       const agentCommission = await this.agentCommissionService.getOne({
-        universityDetails: body.universityDetails,
+        university: universityDetails.university,
         country: universityDetails.country,
         education: universityDetails.studyLevel,
+        isDeleted: false,
       });
 
       let commission = 0;
@@ -213,16 +214,16 @@ export class UniversityApplicationsController {
       const application = await this.universityApplicationService.getById(id);
       // console.log(application);
       if (status.initiateCommission) {
-        const applications = await this.universityApplicationService.fetch({
-          isDefault: false,
+        const applications = await this.commissionTransactionsService.fetch({
           user: application.user._id,
-          status: params.status,
+          isActualAmount: true,
         });
+        // console.log(applications);
         if (applications && applications.length) {
           return {
             statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
             errorMessage:
-              'VISA Processed for another Application of this Student.',
+              'Application processed for another Application of this Student.',
           };
         } else {
           await this.commissionTransactionsService.update(
@@ -290,19 +291,20 @@ export class UniversityApplicationsController {
         data,
       );
 
-      await this.sharedService.sendMail({
-        to: application.user.emailAddress,
-        studentName:
-          application.user.firstName + ' ' + application.user.lastName,
-        applicationId: application.uniqueId,
-        country: application.universityDetails.country.name,
-        institution: application.universityDetails.university.universityName,
-        program: application.universityDetails.course,
-        intake: application.intake,
-        year: application.yearOfPass,
-        status: application.status.status,
-        comment: params.comment,
-      });
+      // await this.sharedService.sendMail({
+      //   to: application.user.emailAddress,
+      //   studentName:
+      //     application.user.firstName + ' ' + application.user.lastName,
+      //   applicationId: application.uniqueId,
+      //   country: application.universityDetails.country.name,
+      //   institution: application.universityDetails.university.universityName,
+      //   program: application.universityDetails.course,
+      //   intake: application.intake,
+      //   year: application.yearOfPass,
+      //   status: application.status.status,
+      //   comment: params.comment,
+      // });
+
       return response;
     } catch (error) {
       return {

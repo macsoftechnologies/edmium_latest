@@ -23,13 +23,13 @@ export class AgentCommissionService {
 
   async addCommission(commission: CommissionDto) {
     try {
-      const universityDetails = commission.universityDetails;
+      const university = commission.university;
       const Country = commission.country;
       const Education = commission.education;
 
       const duplicate = await this.agentCommissionModel.findOne({
         $and: [
-          { universityDetails: universityDetails },
+          { university: university },
           { country: Country },
           { education: Education },
           { isDeleted: false },

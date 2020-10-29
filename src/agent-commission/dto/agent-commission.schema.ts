@@ -5,7 +5,7 @@ import { IsOptional } from 'class-validator';
 @Schema({ timestamps: true })
 export class AgentCommission extends Document {
   @Prop({ required: true })
-  universityDetails: string;
+  university: string;
 
   @Prop({ required: true })
   country: string;
