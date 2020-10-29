@@ -6,6 +6,7 @@ import { APIResponse } from 'src/dto/api-response-dto';
 import { CreateEducation } from './dto/create-education.dto';
 import { promises } from 'dns';
 import { create } from 'domain';
+import { FetchParamsDto } from 'src/shared/dto/shared.dto';
 
 @Injectable()
 export class EducationService {
@@ -15,13 +16,35 @@ export class EducationService {
   ) {}
 
   /* Get All Education Details from Database */
-  async getAllEducations(): Promise<any> {
+  async getAllEducations(params: FetchParamsDto): Promise<any> {
     try {
-      const educationlist = await this.educationModel.find();
+      const sortObject = {};
+      sortObject[params.paginationObject.sortBy] =
+        params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
+
+      const educationsCount = await this.educationModel
+        .find({
+          isDeleted: false,
+          ...params.findObject,
+        })
+        .count();
+
+      const educations = await this.educationModel
+        .find({
+          isDeleted: false,
+          ...params.findObject,
+        })
+        .sort(sortObject)
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit);
+
       let response: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: educationlist,
-        message: 'Request Successfull!!!!',
+        data: {
+          educations,
+          total_count: educationsCount,
+        },
+        message: 'Request Successful',
       };
       return response;
     } catch (error) {
@@ -71,6 +94,29 @@ export class EducationService {
         message: error,
       };
       return error_response;
+    }
+  }
+
+  /* Update Education */
+  async updateEducation(id: string, educationDto: any) {
+    try {
+      let updateEducationRes = await this.educationModel.updateOne(
+        { _id: id },
+        educationDto,
+      );
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: updateEducationRes,
+        message: 'Request Successful',
+      };
+      return apiResponse;
+    } catch (error) {
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        message: error.message,
+      };
+      return apiResponse;
     }
   }
 }

@@ -1,16 +1,31 @@
-import { Controller, Get, Post, Body, Put, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Put,
+  Param,
+  Delete,
+  HttpStatus,
+} from '@nestjs/common';
 import { IntakeService } from './intake.service';
 import { IntakeDto } from './dto/intake.dto';
+import { PaginationDto } from 'src/shared/dto/shared.dto';
+import { SharedService } from 'src/shared/shared.service';
 
 @Controller('intake')
 export class IntakeController {
-  constructor(private readonly intakeService: IntakeService) {}
+  constructor(
+    private readonly intakeService: IntakeService,
+    private sharedService: SharedService,
+  ) {}
 
   /* Get All intakes */
-  @Get()
-  async getAllIntakes() {
+  @Post('/listing')
+  async getAllIntakes(@Body() body: PaginationDto) {
     try {
-      const response = this.intakeService.getAllIntakes();
+      const params = await this.sharedService.prepareParams(body);
+      const response = this.intakeService.getAllIntakes(params);
       return response;
     } catch (error) {
       return error;
@@ -35,7 +50,28 @@ export class IntakeController {
       let response = this.intakeService.updateIntake(id, intakeDto);
       return response;
     } catch (error) {
-      return error;
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  /* Delete Intake */
+  @Delete('/:id')
+  async deleteCourse(@Param('id') id: string) {
+    try {
+      const deleteIntake = this.intakeService.updateIntake(id, {
+        isDeleted: true,
+      });
+      return deleteIntake;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        errorMessage: error.message,
+      };
     }
   }
 }

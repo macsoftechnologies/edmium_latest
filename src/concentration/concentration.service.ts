@@ -23,6 +23,7 @@ export class ConcentrationService {
       let concentrations = await this.concentrationModel
         .find({
           isDeleted: false,
+          ...params.findObject,
         })
         .sort(sortObject)
         .skip(params.paginationObject.start)
@@ -56,12 +57,13 @@ export class ConcentrationService {
   }
 
   /* Update Concentration */
-  async updateConcentration(params: any, id) {
+  async updateConcentration(params: any, id: string) {
     try {
-      const updateConcentrationRes = this.concentrationModel.updateOne(
+      const updateConcentrationRes = await this.concentrationModel.updateOne(
         { _id: id },
-        params,
+        { $set: params },
       );
+      console.log(updateConcentrationRes);
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: updateConcentrationRes,

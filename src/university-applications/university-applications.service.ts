@@ -262,6 +262,8 @@ export class UniversityApplicationsService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
+      console.log(sortObject);
+
       let intakeFilter: any = {};
       let searchFilter = {};
       let fromDateFilter = {};
@@ -329,8 +331,8 @@ export class UniversityApplicationsService {
         ];
       }
 
-      let universityDetails = await this.universityApplicationModel
-        .aggregate([
+      const universityDetailsCount = await this.universityApplicationModel.aggregate(
+        [
           {
             $match: fromDateFilter,
           },
@@ -438,6 +440,124 @@ export class UniversityApplicationsService {
             },
           },
           { $unwind: '$user.createdBy' },
+          {
+            $count: 'count',
+          },
+        ],
+      );
+
+      let universityDetails = await this.universityApplicationModel
+        .aggregate([
+          {
+            $match: fromDateFilter,
+          },
+          {
+            $match: toDateFilter,
+          },
+          {
+            $match: statusFilter,
+          },
+          {
+            $addFields: {
+              statusId: {
+                $toObjectId: '$status',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'applicationstatuses',
+              localField: 'statusId',
+              foreignField: '_id',
+              as: 'status',
+            },
+          },
+          { $unwind: '$status' },
+
+          {
+            $addFields: {
+              universityDetailsId: {
+                $toObjectId: '$universityDetails',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'universitydetails',
+              localField: 'universityDetailsId',
+              foreignField: '_id',
+              as: 'universityDetails',
+            },
+          },
+          { $unwind: '$universityDetails' },
+
+          {
+            $match: UniversityFilter,
+          },
+          {
+            $addFields: {
+              universityId: {
+                $toObjectId: '$universityDetails.university',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'universities',
+              localField: 'universityId',
+              foreignField: '_id',
+              as: 'university',
+            },
+          },
+          { $unwind: '$university' },
+
+          {
+            $addFields: {
+              userId: {
+                $toObjectId: '$user',
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'userId',
+              foreignField: '_id',
+              as: 'user',
+            },
+          },
+          { $unwind: '$user' },
+
+          {
+            $match: userFilter,
+          },
+          {
+            $match: intakeFilter,
+          },
+          {
+            $match: searchFilter,
+          },
+
+          {
+            $addFields: {
+              userCreatedById: {
+                $convert: {
+                  input: '$user.createdBy',
+                  to: 'objectId',
+                  onError: null,
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'userCreatedById',
+              foreignField: '_id',
+              as: 'user.createdBy',
+            },
+          },
+          { $unwind: '$user.createdBy' },
         ])
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
@@ -445,7 +565,10 @@ export class UniversityApplicationsService {
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: universityDetails,
+        data: {
+          universityDetails,
+          total_count: universityDetailsCount[0].count,
+        },
         message: 'Request Successful',
       };
       return apiResponse;

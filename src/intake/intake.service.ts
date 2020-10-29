@@ -5,18 +5,35 @@ import { IntakeDto } from './dto/intake.dto';
 import { Model } from 'mongoose';
 import { Intake } from './dto/intake.schema';
 import { timeStamp } from 'console';
+import { FetchParamsDto } from 'src/shared/dto/shared.dto';
 
 @Injectable()
 export class IntakeService {
   constructor(@InjectModel('Intake') private intakeModel: Model<Intake>) {}
 
   /* Get All services */
-  async getAllIntakes(): Promise<any> {
+  async getAllIntakes(params: FetchParamsDto): Promise<any> {
     try {
-      let intakes = await this.intakeModel.find();
+      const sortObject = {};
+      sortObject[params.paginationObject.sortBy] =
+        params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
+
+      const intakeCount = await this.intakeModel
+        .find({ isDeleted: false, ...params.findObject })
+        .count();
+
+      let intakes = await this.intakeModel
+        .find({ isDeleted: false, ...params.findObject })
+        .sort(sortObject)
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit);
+
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: intakes,
+        data: {
+          intakes,
+          total_count: intakeCount,
+        },
         message: 'Request Successful!!!',
       };
       return apiResponse;
@@ -49,9 +66,9 @@ export class IntakeService {
     }
   }
   /* Update Intake */
-  async updateIntake(id: string, intakeDto: IntakeDto) {
+  async updateIntake(id: string, intakeDto: any) {
     try {
-      let updateIntakeRes = await this.intakeModel.findByIdAndUpdate(
+      let updateIntakeRes = await this.intakeModel.updateOne(
         { _id: id },
         intakeDto,
       );

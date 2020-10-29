@@ -32,15 +32,20 @@ export class UniversityService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
+      let universitiesCount = await this.universityModel
+        .find({ isDeleted: false, ...params.findObject })
+        .count();
+
       let universities = await this.universityModel
         .find({ isDeleted: false, ...params.findObject })
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
         .sort(sortObject);
+
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: universities,
-        message: 'Request Successful!!!',
+        data: { universities, total_count: universitiesCount },
+        message: 'Request Successful',
       };
       return apiResponse;
     } catch (error) {
