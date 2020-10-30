@@ -295,7 +295,7 @@ export class UserController {
 
   /* Create User  */
   @Post('/registerStudent')
-  async registerStudent(@Body() body: RegisterStudentDto) {
+  async registerStudent(@Body() body: CreateUser) {
     try {
       console.log(body);
       let response = await this.userService.createUser(body);

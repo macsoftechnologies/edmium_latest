@@ -58,11 +58,18 @@ export class CreateUser {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   deviceToken: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   deviceType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  createdBy: string;
 }
 
 export class AddCounselorDto {
