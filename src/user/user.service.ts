@@ -245,16 +245,21 @@ export class UserService {
 
   /* Get university list based on  intake course and university */
   async getUniversitiesByIntakeCourseUniversity(
-    searchUniversitiesByIntCourUniNameDto: SearchUniversitiesByIntCourUniNameDto,
+    params: SearchUniversitiesByIntCourUniNameDto,
   ) {
     try {
-      console.log('req', searchUniversitiesByIntCourUniNameDto);
+      console.log('req', params);
+      const findObject: any = {
+        country: params.country,
+        concentration: params.concentration,
+        intake: { $in: [params.intake] },
+        isDeleted: false,
+      };
+      if (params.studyLevel) {
+        findObject.studyLevel = params.studyLevel;
+      }
       let universities = await this.universityDetailsModel
-        .find({
-          country: searchUniversitiesByIntCourUniNameDto.country,
-          concentration: searchUniversitiesByIntCourUniNameDto.concentration,
-          intake: { $in: [searchUniversitiesByIntCourUniNameDto.intake] },
-        })
+        .find(findObject)
         .populate({
           path: 'university',
           model: this.universityModel,

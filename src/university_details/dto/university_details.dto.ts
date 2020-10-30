@@ -157,6 +157,11 @@ export class SearchUniversitiesByIntCourUniNameDto {
   @ApiProperty()
   @IsString()
   intake: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  studyLevel: string;
 }
 
 export class FilterByCourseDto extends PaginationDto {
