@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, HttpService, Module } from '@nestjs/common';
 import { UniversityApplicationsController } from './university-applications.controller';
 import { UniversityApplicationsService } from './university-applications.service';
 import { UniversityApplicationSchema } from './dto/university-applications.schema';
@@ -18,6 +18,9 @@ import { EducationSchema } from 'src/education/dto/education.schema';
 import { CountryService } from 'src/country/country.service';
 import { CurrencySchema } from 'src/currency/dto/currency.schema';
 import { SharedService } from 'src/shared/shared.service';
+import { NotificationService } from 'src/notification/notification.service';
+import { NotificationSchema } from 'src/notification/dto/notification.schema';
+import { UserAuthenticationSchema } from 'src/user-authentication/dto/user-authentication.schema';
 
 @Module({
   imports: [
@@ -32,7 +35,15 @@ import { SharedService } from 'src/shared/shared.service';
       { name: 'AgentCommission', schema: AgentCommissionSchema },
       { name: 'Education', schema: EducationSchema },
       { name: 'Currency', schema: CurrencySchema },
+      { name: 'Notifications', schema: NotificationSchema },
+      { name: 'UserAuthentication', schema: UserAuthenticationSchema },
     ]),
+    HttpModule.registerAsync({
+      useFactory: () => ({
+        timeout: 50000,
+        maxRedirects: 5,
+      }),
+    }),
   ],
   controllers: [UniversityApplicationsController],
   providers: [
@@ -43,6 +54,7 @@ import { SharedService } from 'src/shared/shared.service';
     AgentCommissionService,
     CountryService,
     SharedService,
+    NotificationService,
   ],
 })
 export class UniversityApplicationsModule {}

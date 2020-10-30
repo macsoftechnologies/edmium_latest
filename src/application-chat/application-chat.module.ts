@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { ApplicationChatController } from './application-chat.controller';
 import { ApplicationChatService } from './application-chat.service';
 import { ApplicationChatSchema } from './dto/application-chat.schema';
@@ -13,6 +13,9 @@ import { UniversitySchema } from 'src/university/dto/university.schema';
 import { CountrySchema } from 'src/country/dto/country.schema';
 import { AttachmentsService } from 'src/attachments/attachments.service';
 import { ApplicationStatusSchema } from 'src/application-status/dto/application-status.schema';
+import { NotificationService } from 'src/notification/notification.service';
+import { UserAuthenticationSchema } from 'src/user-authentication/dto/user-authentication.schema';
+import { NotificationSchema } from 'src/notification/dto/notification.schema';
 
 @Module({
   imports: [
@@ -25,7 +28,15 @@ import { ApplicationStatusSchema } from 'src/application-status/dto/application-
       { name: 'University', schema: UniversitySchema },
       { name: 'Country', schema: CountrySchema },
       { name: 'ApplicationStatus', schema: ApplicationStatusSchema },
+      { name: 'UserAuthentication', schema: UserAuthenticationSchema },
+      { name: 'Notifications', schema: NotificationSchema },
     ]),
+    HttpModule.registerAsync({
+      useFactory: () => ({
+        timeout: 50000,
+        maxRedirects: 5,
+      }),
+    }),
   ],
   controllers: [ApplicationChatController],
   providers: [
@@ -33,6 +44,7 @@ import { ApplicationStatusSchema } from 'src/application-status/dto/application-
     SharedService,
     UniversityApplicationsService,
     AttachmentsService,
+    NotificationService,
   ],
 })
 export class ApplicationChatModule {}

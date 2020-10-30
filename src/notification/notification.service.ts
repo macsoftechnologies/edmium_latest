@@ -10,6 +10,7 @@ import { Model } from 'mongoose';
 import { Notifications } from './dto/notification.schema';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { FetchParamsDto } from 'src/shared/dto/shared.dto';
+import { UserAuthentication } from 'src/user-authentication/dto/user-authentication.schema';
 
 const headers = {
   'Content-Type': 'application/json',
@@ -29,20 +30,34 @@ export class NotificationService {
     private http: HttpService,
     @InjectModel('Notifications')
     private notificationModel: Model<Notifications>,
+    @InjectModel('UserAuthentication')
+    private userAuthenticationModel: Model<UserAuthentication>,
   ) {}
 
   async sendNotifications(notificationDto: NotificationDto): Promise<any> {
-    const saveNotification = await this.notificationModel.create(
-      notificationDto,
-    );
+    console.log(notificationDto);
+    await this.notificationModel.create(notificationDto);
+
+    const userAuthentications = await this.userAuthenticationModel
+      .find({
+        user: { $in: notificationDto.usersTo },
+        isDeleted: false,
+      })
+      .lean();
+
+    const registration_ids: string[] = userAuthentications.map((user, key) => {
+      return user.deviceToken;
+    });
+
+    notificationDto.registration_ids = registration_ids;
+
+    console.log(notificationDto);
 
     const url = 'https://fcm.googleapis.com/fcm/send';
     const body = notificationDto;
     delete body.usersTo;
 
-    const notificationResponse = await this.http
-      .post(url, body, axiosHeaders)
-      .toPromise();
+    await this.http.post(url, body, axiosHeaders).toPromise();
   }
 
   async getNotifications(params: FetchParamsDto, user: string) {
@@ -77,6 +92,9 @@ export class NotificationService {
 
   async create(params: NotificationDto): Promise<any> {
     const response = await this.notificationModel.create(params);
+    const notification = { actionId: response._id, ...params.notification };
+
+    await this.notificationModel.updateOne({ _id: response._id }, notification);
 
     let apiResponse: APIResponse = {
       statusCode: HttpStatus.OK,

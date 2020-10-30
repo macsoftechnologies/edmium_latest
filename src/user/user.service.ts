@@ -207,7 +207,6 @@ export class UserService {
               title: 'Edmium Notifications',
               body: 'Subscribe to Edmium News letters',
             },
-            registration_ids: [userAuthentication.deviceToken],
           };
 
           await this.notificationService.sendNotifications(notificationObj);

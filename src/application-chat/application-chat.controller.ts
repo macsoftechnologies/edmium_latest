@@ -14,6 +14,10 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { SharedService } from 'src/shared/shared.service';
 import { AttachmentsService } from 'src/attachments/attachments.service';
 import { UniversityApplicationsService } from 'src/university-applications/university-applications.service';
+import { NotificationService } from 'src/notification/notification.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User } from 'src/user/dto/user.schema';
 
 @Controller('application-chat')
 export class ApplicationChatController {
@@ -22,6 +26,8 @@ export class ApplicationChatController {
     private attachmentsService: AttachmentsService,
     private universityApplicationsService: UniversityApplicationsService,
     private sharedService: SharedService,
+    private notificationService: NotificationService,
+    @InjectModel('User') private userModel: Model<User>,
   ) {}
 
   //  Add Application Comment
@@ -36,10 +42,11 @@ export class ApplicationChatController {
     try {
       const attachments = [];
 
+      const application = await this.universityApplicationsService.getById(
+        body.application,
+      );
+      // console.log(application);
       if (files && files.attachments) {
-        const application = await this.universityApplicationsService.getApplicationById(
-          body.application,
-        );
         for (const attachment of files.attachments) {
           const res = await this.sharedService.uploadFileToAWSBucket(
             attachment,
@@ -47,7 +54,7 @@ export class ApplicationChatController {
           );
 
           const attachmentObject = await this.attachmentsService.addAttachment({
-            userId: application.user,
+            userId: application.user._id,
             attachment: res.Location,
             category: 'chat',
           });
@@ -60,6 +67,30 @@ export class ApplicationChatController {
       const response = this.applicationChatService.addApplicationComment(
         params,
       );
+
+      let usersTo = [application.user._id];
+      let user;
+
+      if (body.user == application.user._id.toString()) {
+        usersTo = [application.user.assignedTo];
+        user = application.user;
+      } else {
+        user = await this.userModel.findOne({
+          _id: application.user.assignedTo,
+        });
+      }
+      const notificationObj = {
+        usersTo: usersTo,
+        notification: {
+          action: 'application-chat',
+          title: 'Received a new comment',
+          body: `${user.firstName} ${user.lastName} added a comment on a application of ${application.universityDetails.university.universityName}`,
+          actionId: body.application,
+        },
+      };
+
+      await this.notificationService.sendNotifications(notificationObj);
+
       return response;
     } catch (error) {
       return {

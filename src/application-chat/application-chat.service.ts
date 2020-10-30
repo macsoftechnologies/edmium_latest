@@ -12,7 +12,6 @@ export class ApplicationChatService {
   constructor(
     @InjectModel('ApplicationChat')
     private applicationChatModel: Model<ApplicationChat>,
-    @InjectModel('User') private userModel: Model<User>,
     @InjectModel('Attachment')
     private attachmentModel: Model<Attachment>,
   ) {}

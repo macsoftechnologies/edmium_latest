@@ -11,7 +11,6 @@ import { PaginationDto } from 'src/shared/dto/shared.dto';
 import moment = require('moment');
 import { ApplicationStatusService } from 'src/application-status/application-status.service';
 import { CommissionTransactionsService } from 'src/commission-transactions/commission-transactions.service';
-import { userInfo } from 'os';
 import { UniversityDetailsService } from 'src/university_details/university_details.service';
 import { AgentCommissionService } from 'src/agent-commission/agent-commission.service';
 import { InjectModel } from '@nestjs/mongoose';
@@ -21,6 +20,8 @@ import { ApplicationStatus } from 'src/application-status/dto/application-status
 import { Country } from 'src/country/dto/country.schema';
 import { Currency } from 'src/currency/dto/currency.schema';
 import { SharedService } from 'src/shared/shared.service';
+import { NotificationService } from 'src/notification/notification.service';
+import { University } from 'src/university/dto/university.schema';
 
 var mongoose = require('mongoose');
 
@@ -40,6 +41,9 @@ export class UniversityApplicationsController {
     @InjectModel('Currency')
     private currencyModel: Model<Currency>,
     private sharedService: SharedService,
+    private notificationService: NotificationService,
+    @InjectModel('University')
+    private universityModel: Model<University>,
   ) {}
 
   //   Apply for University
@@ -66,13 +70,22 @@ export class UniversityApplicationsController {
         '-' +
         nextYear.toString().substring(2, 4);
 
-      // params.universityDetails = mongoose.Types.ObjectId(
-      //   params.universityDetails,
-      // );
-      // params.user = mongoose.Types.ObjectId(params.user);
-
       const status = await this.applicationStatusService.find({
         isDefault: true,
+      });
+
+      const user: any = await this.userModel.findById(body.user).populate({
+        path: 'assignedTo',
+        model: this.userModel,
+        retainNullValues: true,
+      });
+
+      const universityDetails = await this.universityDetailsService.getOne({
+        _id: body.universityDetails,
+      });
+
+      const university = await this.universityModel.findOne({
+        _id: universityDetails.university,
       });
 
       if (status.data && status.data[0] && status.data[0]._id)
@@ -81,9 +94,17 @@ export class UniversityApplicationsController {
         params,
       );
 
-      const universityDetails = await this.universityDetailsService.getOne({
-        _id: body.universityDetails,
-      });
+      const notificationObj = {
+        usersTo: [user.assignedTo._id],
+        notification: {
+          action: 'university-application',
+          title: 'Applied for University',
+          body: `${user.firstName} ${user.lastName} applied for ${universityDetails.course} in ${university.universityName}`,
+          actionId: response._id,
+        },
+      };
+
+      await this.notificationService.sendNotifications(notificationObj);
 
       const agentCommission = await this.agentCommissionService.getOne({
         university: universityDetails.university,
@@ -102,12 +123,6 @@ export class UniversityApplicationsController {
         commission =
           (agentCommission.commission * universityDetails.tuitionFee) / 100;
       }
-
-      const user: any = await this.userModel.findById(body.user).populate({
-        path: 'assignedTo',
-        model: this.userModel,
-        retainNullValues: true,
-      });
 
       let agent;
       if (
@@ -291,19 +306,31 @@ export class UniversityApplicationsController {
         data,
       );
 
-      // await this.sharedService.sendMail({
-      //   to: application.user.emailAddress,
-      //   studentName:
-      //     application.user.firstName + ' ' + application.user.lastName,
-      //   applicationId: application.uniqueId,
-      //   country: application.universityDetails.country.name,
-      //   institution: application.universityDetails.university.universityName,
-      //   program: application.universityDetails.course,
-      //   intake: application.intake,
-      //   year: application.yearOfPass,
-      //   status: application.status.status,
-      //   comment: params.comment,
-      // });
+      const notificationObj = {
+        usersTo: [application.user._id],
+        notification: {
+          action: 'application-status-update',
+          title: 'Application Status Updated',
+          body: `Application status for ${application.universityDetails.course} in ${application.universityDetails.university.universityName} is updated to ${status.status}`,
+          actionId: id,
+        },
+      };
+
+      await this.notificationService.sendNotifications(notificationObj);
+
+      await this.sharedService.sendMail({
+        to: application.user.emailAddress,
+        studentName:
+          application.user.firstName + ' ' + application.user.lastName,
+        applicationId: application.uniqueId,
+        country: application.universityDetails.country.name,
+        institution: application.universityDetails.university.universityName,
+        program: application.universityDetails.course,
+        intake: application.intake,
+        year: application.yearOfPass,
+        status: application.status.status,
+        comment: params.comment,
+      });
 
       return response;
     } catch (error) {

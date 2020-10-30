@@ -29,4 +29,7 @@ export interface NotificationObject {
   action: string;
   title: string;
   body: string;
+  actionId?: string;
 }
+
+// action: ['subscription', 'to-do', 'university-application', 'application-status-update', application-chat]
