@@ -6,14 +6,14 @@ import { AgentCommissionSchema } from './dto/agent-commission.schema';
 import { CountrySchema } from 'src/country/dto/country.schema';
 import { EducationSchema } from 'src/education/dto/education.schema';
 import { SharedService } from 'src/shared/shared.service';
-import { UniversityDetailsSchema } from 'src/university_details/dto/university_details.schema';
+import { UniversitySchema } from 'src/university/dto/university.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: 'AgentCommission', schema: AgentCommissionSchema },
       { name: 'Country', schema: CountrySchema },
-      { name: 'UniversityDetails', schema: UniversityDetailsSchema },
+      { name: 'University', schema: UniversitySchema },
       { name: 'Education', schema: EducationSchema },
     ]),
   ],

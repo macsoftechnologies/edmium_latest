@@ -48,7 +48,14 @@ export class CommissionTransactionsService {
       params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
     console.log(params);
-    const response = await this.commissionTransactionsModel
+    const transactionsCount = await this.commissionTransactionsModel
+      .find({
+        isDeleted: false,
+        ...params.findObject,
+      })
+      .count();
+
+    const transactions = await this.commissionTransactionsModel
       .find({
         isDeleted: false,
         ...params.findObject,
@@ -74,7 +81,7 @@ export class CommissionTransactionsService {
 
     let apiResponse: APIResponse = {
       statusCode: HttpStatus.OK,
-      data: response,
+      data: { transactions, total_count: transactionsCount },
       message: 'Request Successful',
     };
     return apiResponse;

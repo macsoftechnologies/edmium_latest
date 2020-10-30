@@ -567,7 +567,10 @@ export class UniversityApplicationsService {
         statusCode: HttpStatus.OK,
         data: {
           universityDetails,
-          total_count: universityDetailsCount[0].count,
+          total_count:
+            universityDetailsCount[0] && universityDetailsCount[0].count
+              ? universityDetailsCount[0].count
+              : 0,
         },
         message: 'Request Successful',
       };

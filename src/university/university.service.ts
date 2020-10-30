@@ -86,6 +86,13 @@ export class UniversityService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
+      const applicationsCount = await this.universityApplicationModel
+        .find({
+          isDeleted: false,
+          universityDetails: { $in: detailsIds },
+        })
+        .count();
+
       const applications = await this.universityApplicationModel
         .find({
           isDeleted: false,
@@ -109,7 +116,7 @@ export class UniversityService {
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: applications,
+        data: { applications, total_count: applicationsCount },
         message: 'Request Successful!!!',
       };
       return apiResponse;

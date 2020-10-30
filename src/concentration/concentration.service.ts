@@ -20,6 +20,13 @@ export class ConcentrationService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
+      let concentrationsCount = await this.concentrationModel
+        .find({
+          isDeleted: false,
+          ...params.findObject,
+        })
+        .count();
+
       let concentrations = await this.concentrationModel
         .find({
           isDeleted: false,
@@ -28,9 +35,10 @@ export class ConcentrationService {
         .sort(sortObject)
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit);
+
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: concentrations,
+        data: { concentrations, total_count: concentrationsCount },
         message: 'Request Successful',
       };
       return apiResponse;

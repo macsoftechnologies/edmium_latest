@@ -51,7 +51,11 @@ export class NotificationService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
-      const response = await this.notificationModel
+      const notificationsCount = await this.notificationModel
+        .find({ usersTo: { $in: [user] }, isDeleted: false })
+        .count();
+
+      const notifications = await this.notificationModel
         .find({ usersTo: { $in: [user] }, isDeleted: false })
         .sort(sortObject)
         .skip(params.paginationObject.start)
@@ -60,7 +64,7 @@ export class NotificationService {
       return {
         statusCode: HttpStatus.OK,
         message: 'Request SuccessFully',
-        data: response,
+        data: { notifications, total_count: notificationsCount },
       };
     } catch (error) {
       return {

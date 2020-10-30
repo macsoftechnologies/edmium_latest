@@ -20,7 +20,11 @@ export class CourseService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
-      let courseList = await this.courseModel
+      let coursesCount = await this.courseModel
+        .find({ isDeleted: false, ...params.findObject })
+        .count();
+
+      let courses = await this.courseModel
         .find({ isDeleted: false, ...params.findObject })
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
@@ -28,7 +32,7 @@ export class CourseService {
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: courseList,
+        data: { courses, total_count: coursesCount },
         message: 'Request Successful',
       };
       return apiResponse;

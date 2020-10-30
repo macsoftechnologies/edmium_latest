@@ -23,7 +23,11 @@ export class CountryService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
-      let countriesList = await this.countryModel
+      let countriesCount = await this.countryModel
+        .find({ isDeleted: false, ...params.findObject })
+        .count();
+
+      let countries = await this.countryModel
         .find({ isDeleted: false, ...params.findObject })
         .populate({
           path: 'currency',
@@ -33,10 +37,10 @@ export class CountryService {
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
         .sort(sortObject);
-      console.log('countries list', countriesList);
+
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: countriesList,
+        data: { countries, total_count: countriesCount },
         message: 'Request Successful',
       };
       return apiResponse;

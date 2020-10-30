@@ -43,7 +43,11 @@ export class UniversityInfoService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
-      const response = await this.universityInfoModel
+      const universityInfoCount = await this.universityInfoModel
+        .find({ isDeleted: false, ...params.findObject })
+        .count();
+
+      const universityInfo = await this.universityInfoModel
         .find({ isDeleted: false, ...params.findObject })
         .populate({
           path: 'attachment',
@@ -61,7 +65,7 @@ export class UniversityInfoService {
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: response,
+        data: { universityInfo, total_count: universityInfoCount },
         message: 'Request successful',
       };
       return apiResponse;
@@ -92,11 +96,20 @@ export class UniversityInfoService {
     const user = await this.userModel.findById(userId);
 
     let scholarships = [];
+    let scholarshipsCount = 0;
 
     if (user && user.concentration) {
       const sortObject = {};
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
+
+      scholarshipsCount = await this.universityInfoModel
+        .find({
+          isDeleted: false,
+          category: 'scholarship',
+          concentration: user.concentration,
+        })
+        .count();
 
       scholarships = await this.universityInfoModel
         .find({
@@ -111,7 +124,7 @@ export class UniversityInfoService {
 
     let apiResponse: APIResponse = {
       statusCode: HttpStatus.OK,
-      data: scholarships,
+      data: { scholarships, total_count: scholarshipsCount },
       message: 'Request Successful',
     };
 

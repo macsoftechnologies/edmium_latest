@@ -831,7 +831,296 @@ export class UserService {
         };
       }
 
-      let universityDetails = await this.userModel
+      let studentsCount = await this.userModel.aggregate([
+        {
+          $match: userFilter,
+        },
+        {
+          $match: fromDateFilter,
+        },
+        {
+          $match: toDateFilter,
+        },
+        {
+          $match: searchFilter,
+        },
+        {
+          $match: countryFilter,
+        },
+        {
+          $unwind: {
+            path: '$countries',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            countryId: {
+              $toObjectId: '$countries',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'countries',
+            localField: 'countryId',
+            foreignField: '_id',
+            as: 'country',
+          },
+        },
+        {
+          $unwind: {
+            path: '$country',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            userId: {
+              $toString: '$_id',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universityapplications',
+            localField: 'userId',
+            foreignField: 'user',
+            as: 'universityApplications',
+          },
+        },
+        {
+          $unwind: {
+            path: '$universityApplications',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            universityDetailsId: {
+              $toObjectId: '$universityApplications.universityDetails',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universitydetails',
+            localField: 'universityDetailsId',
+            foreignField: '_id',
+            as: 'universityApplications.universityDetails',
+          },
+        },
+        {
+          $unwind: {
+            path: '$universityApplications.universityDetails',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $match: match,
+        },
+        {
+          $addFields: {
+            statusId: {
+              $toObjectId: '$universityApplications.status',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'applicationstatuses',
+            localField: 'statusId',
+            foreignField: '_id',
+            as: 'universityApplications.status',
+          },
+        },
+        {
+          $unwind: {
+            path: '$universityApplications.status',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            createdById: {
+              $convert: {
+                input: '$createdBy',
+                to: 'objectId',
+                onError: null,
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'createdById',
+            foreignField: '_id',
+            as: 'createdBy',
+          },
+        },
+        {
+          $unwind: {
+            path: '$createdBy',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+
+        {
+          $addFields: {
+            assignedToId: {
+              $convert: {
+                input: '$assignedTo',
+                to: 'objectId',
+                onError: null,
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'assignedToId',
+            foreignField: '_id',
+            as: 'assignedTo',
+          },
+        },
+        {
+          $unwind: {
+            path: '$assignedTo',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+
+        {
+          $unwind: {
+            path: '$suggestedUniversities',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            suggestedUniversitiesId: {
+              $convert: {
+                input: '$suggestedUniversities',
+                to: 'objectId',
+                onError: null,
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universitydetails',
+            localField: 'suggestedUniversitiesId',
+            foreignField: '_id',
+            as: 'suggestedUniversities',
+          },
+        },
+        {
+          $unwind: {
+            path: '$suggestedUniversities',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+
+        {
+          $unwind: {
+            path: '$favoriteUniversities',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            favoriteUniversitiesId: {
+              $convert: {
+                input: '$favoriteUniversities.universityId',
+                to: 'objectId',
+                onError: null,
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universitydetails',
+            localField: 'favoriteUniversitiesId',
+            foreignField: '_id',
+            as: 'favoriteUniversities.universityId',
+          },
+        },
+        {
+          $unwind: {
+            path: '$favoriteUniversities.universityId',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+
+        {
+          $lookup: {
+            from: 'usertests',
+            localField: 'userId',
+            foreignField: 'userId',
+            as: 'userTests',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userTests',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $match: testFilter,
+        },
+
+        {
+          $lookup: {
+            from: 'useracademicinfos',
+            let: {
+              isDeleted: false,
+              isHighestEducation: true,
+              userId: '$userId',
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$isDeleted', '$$isDeleted'] },
+                      {
+                        $eq: ['$isHighestEducation', '$$isHighestEducation'],
+                      },
+                      { $eq: ['$userId', '$$userId'] },
+                    ],
+                  },
+                },
+              },
+            ],
+            as: 'userAcademicInfo',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userAcademicInfo',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+
+        {
+          $match: userAcademicInfoFilter,
+        },
+        {
+          $group: {
+            _id: '$_id',
+          },
+        },
+        {
+          $count: 'count',
+        },
+      ]);
+
+      let students = await this.userModel
         .aggregate([
           {
             $match: userFilter,
@@ -1124,6 +1413,9 @@ export class UserService {
               createdAt: { $first: '$createdAt' },
               createdBy: { $first: '$createdBy' },
               assignedTo: { $first: '$assignedTo' },
+              profileCompletionPercentage: {
+                $first: '$profileCompletionPercentage',
+              },
               suggestedUniversities: { $addToSet: '$suggestedUniversities' },
               favoriteUniversities: { $addToSet: '$favoriteUniversities' },
               universityApplications: { $addToSet: '$universityApplications' },
@@ -1136,7 +1428,7 @@ export class UserService {
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit);
 
-      for (const details of universityDetails) {
+      for (const details of students) {
         if (
           details.universityApplications &&
           details.universityApplications[0] &&
@@ -1161,7 +1453,13 @@ export class UserService {
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: universityDetails,
+        data: {
+          students,
+          total_count:
+            studentsCount[0] && studentsCount[0].count
+              ? studentsCount[0].count
+              : 0,
+        },
         message: 'Request Successful',
       };
       return apiResponse;
@@ -1316,7 +1614,104 @@ export class UserService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
-      const data = await this.userModel
+      const usersCount = await this.userModel.aggregate([
+        {
+          $match: { isDeleted: false, ...params.findObject },
+        },
+        {
+          $unwind: {
+            path: '$countries',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            countryId: {
+              $convert: {
+                input: '$countries',
+                to: 'objectId',
+                onError: null,
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'countries',
+            localField: 'countryId',
+            foreignField: '_id',
+            as: 'country',
+          },
+        },
+        {
+          $unwind: {
+            path: '$country',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+
+        {
+          $addFields: {
+            concentrationId: {
+              $convert: {
+                input: '$concentration',
+                to: 'objectId',
+                onError: null,
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'concentrations',
+            localField: 'concentrationId',
+            foreignField: '_id',
+            as: 'concentration',
+          },
+        },
+        {
+          $unwind: {
+            path: '$concentration',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+
+        {
+          $addFields: {
+            educationId: {
+              $convert: {
+                input: '$education',
+                to: 'objectId',
+                onError: null,
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'educations',
+            localField: 'educationId',
+            foreignField: '_id',
+            as: 'education',
+          },
+        },
+        {
+          $unwind: {
+            path: '$education',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $group: {
+            _id: '$_id',
+          },
+        },
+        {
+          $count: 'count',
+        },
+      ]);
+
+      const users = await this.userModel
         .aggregate([
           {
             $match: { isDeleted: false, ...params.findObject },
@@ -1416,13 +1811,6 @@ export class UserService {
               education: { $first: '$education' },
               createdAt: { $first: '$createdAt' },
               role: { $first: '$role' },
-              // createdBy: { $first: '$createdBy' },
-              // assignedTo: { $first: '$assignedTo' },
-              // suggestedUniversities: { $addToSet: '$suggestedUniversities' },
-              // favoriteUniversities: { $addToSet: '$favoriteUniversities' },
-              // universityApplications: { $addToSet: '$universityApplications' },
-              // userTests: { $first: '$userTests' },
-              // userAcademicInfo: { $addToSet: '$userAcademicInfo' },
             },
           },
         ])
@@ -1432,7 +1820,11 @@ export class UserService {
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: data,
+        data: {
+          users,
+          total_count:
+            usersCount[0] && usersCount[0].count ? usersCount[0].count : 0,
+        },
         message: 'Request successfully',
       };
       return apiResponse;
@@ -1695,7 +2087,11 @@ export class UserService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
-      const data = await this.userModel
+      const usersCount = await this.userModel
+        .find({ isDeleted: false, ...params.findObject })
+        .count();
+
+      const users = await this.userModel
         .find({ isDeleted: false, ...params.findObject })
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
@@ -1718,7 +2114,7 @@ export class UserService {
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: data,
+        data: { users, total_count: usersCount },
         message: 'Request successful',
       };
       return apiResponse;

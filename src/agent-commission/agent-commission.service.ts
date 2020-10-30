@@ -5,7 +5,7 @@ import { Country } from 'src/country/dto/country.schema';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { Education } from 'src/education/dto/education.schema';
 import { FetchParamsDto } from 'src/shared/dto/shared.dto';
-import { UniversityDetails } from 'src/university_details/dto/university_details.schema';
+import { University } from 'src/university/dto/university.schema';
 import { CommissionDto, CommissionUpdateDto } from './dto/agent-commission.cto';
 import { AgentCommission } from './dto/agent-commission.schema';
 
@@ -15,8 +15,8 @@ export class AgentCommissionService {
     @InjectModel('AgentCommission')
     private agentCommissionModel: Model<AgentCommission>,
     @InjectModel('Country') private countryModel: Model<Country>,
-    @InjectModel('UniversityDetails')
-    private universityDetailsModel: Model<UniversityDetails>,
+    @InjectModel('University')
+    private universityModel: Model<University>,
     @InjectModel('Education')
     private educationModel: Model<Education>,
   ) {}
@@ -106,8 +106,8 @@ export class AgentCommissionService {
           retainNullValues: true,
         })
         .populate({
-          path: 'universityDetails',
-          model: this.universityDetailsModel,
+          path: 'university',
+          model: this.universityModel,
           retainNullValues: true,
         });
 
@@ -140,7 +140,50 @@ export class AgentCommissionService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
-      const response = await this.agentCommissionModel
+      const commissionsCount = await this.agentCommissionModel.aggregate([
+        {
+          $match: { isDeleted: false },
+        },
+
+        {
+          $addFields: {
+            countryId: {
+              $toObjectId: '$country',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'countries',
+            localField: 'countryId',
+            foreignField: '_id',
+            as: 'country',
+          },
+        },
+        { $unwind: '$country' },
+
+        {
+          $addFields: {
+            universityId: {
+              $toObjectId: '$university',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universities',
+            localField: 'universityId',
+            foreignField: '_id',
+            as: 'university',
+          },
+        },
+        { $unwind: '$university' },
+        {
+          $count: 'count',
+        },
+      ]);
+
+      const commissions = await this.agentCommissionModel
         .aggregate([
           {
             $match: { isDeleted: false },
@@ -165,20 +208,20 @@ export class AgentCommissionService {
 
           {
             $addFields: {
-              universityDetailsId: {
-                $toObjectId: '$universityDetails',
+              universityId: {
+                $toObjectId: '$university',
               },
             },
           },
           {
             $lookup: {
-              from: 'universitydetails',
-              localField: 'universityDetailsId',
+              from: 'universities',
+              localField: 'universityId',
               foreignField: '_id',
-              as: 'universityDetails',
+              as: 'university',
             },
           },
-          { $unwind: '$universityDetails' },
+          { $unwind: '$university' },
         ])
         .sort(sortObject)
         .skip(params.paginationObject.start)
@@ -186,7 +229,13 @@ export class AgentCommissionService {
 
       return {
         statusCode: HttpStatus.OK,
-        data: response,
+        data: {
+          commissions,
+          total_count:
+            commissionsCount[0] && commissionsCount[0].count
+              ? commissionsCount[0].count
+              : 0,
+        },
         message: 'Commissions List',
       };
     } catch (error) {

@@ -20,7 +20,11 @@ export class CurrencyService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
-      let currencyList = await this.currencyModel
+      let currenciesCount = await this.currencyModel
+        .find({ isDeleted: false, ...params.findObject })
+        .count();
+
+      let currencies = await this.currencyModel
         .find({ isDeleted: false, ...params.findObject })
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
@@ -28,7 +32,7 @@ export class CurrencyService {
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: currencyList,
+        data: { currencies, total_count: currenciesCount },
         message: 'Request Successful',
       };
       return apiResponse;

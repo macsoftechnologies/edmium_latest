@@ -56,6 +56,10 @@ export class UniversityDetailsService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
+      let universityDetailsCount = await this.universityDetailsModel
+        .find({ isDeleted: false, ...params.findObject })
+        .count();
+
       let universityDetails = await this.universityDetailsModel
         .find({ isDeleted: false, ...params.findObject })
         .populate({ path: 'university', model: this.universityModel })
@@ -63,9 +67,10 @@ export class UniversityDetailsService {
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
         .sort(sortObject);
+
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: universityDetails,
+        data: { universityDetails, total_count: universityDetailsCount },
         message: 'Request Successful',
       };
       return apiResponse;
@@ -129,11 +134,60 @@ export class UniversityDetailsService {
       if (params.findObject.intake && params.findObject.intake.length) {
         params.findObject.intake = { $in: params.findObject.intake };
       }
-      // console.log(JSON.stringify(feeMatch));
-      // console.log(params.findObject);
+
+      let universityDetailsCount = await this.universityDetailsModel.aggregate([
+        { $match: params.findObject },
+        { $match: feeMatch },
+        { $match: durationMatch },
+        {
+          $addFields: {
+            universityId: {
+              $toObjectId: '$university',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universities',
+            localField: 'universityId',
+            foreignField: '_id',
+            as: 'university',
+          },
+        },
+        {
+          $unwind: {
+            path: '$university',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+
+        {
+          $addFields: {
+            countryId: {
+              $toObjectId: '$country',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'countries',
+            localField: 'countryId',
+            foreignField: '_id',
+            as: 'country',
+          },
+        },
+        {
+          $unwind: {
+            path: '$country',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $count: 'count',
+        },
+      ]);
 
       let universityDetails = await this.universityDetailsModel
-        // .find({ isDeleted: false, ...params.findObject })
         .aggregate([
           { $match: params.findObject },
           { $match: feeMatch },
@@ -182,15 +236,19 @@ export class UniversityDetailsService {
             },
           },
         ])
-        // .populate({ path: 'university', model: this.universityModel })
-        // .populate({ path: 'country', model: this.countryModel })
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit)
         .sort(sortObject);
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: universityDetails,
+        data: {
+          universityDetails,
+          total_count:
+            universityDetailsCount[0] && universityDetailsCount[0].count
+              ? universityDetailsCount[0].count
+              : 0,
+        },
         message: 'Request Successful',
       };
       return apiResponse;
