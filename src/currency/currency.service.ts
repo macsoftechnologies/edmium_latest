@@ -26,9 +26,9 @@ export class CurrencyService {
 
       let currencies = await this.currencyModel
         .find({ isDeleted: false, ...params.findObject })
+        .sort(sortObject)
         .skip(params.paginationObject.start)
-        .limit(params.paginationObject.limit)
-        .sort(sortObject);
+        .limit(params.paginationObject.limit);
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,

@@ -38,9 +38,9 @@ export class UniversityService {
 
       let universities = await this.universityModel
         .find({ isDeleted: false, ...params.findObject })
+        .sort(sortObject)
         .skip(params.paginationObject.start)
-        .limit(params.paginationObject.limit)
-        .sort(sortObject);
+        .limit(params.paginationObject.limit);
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
@@ -110,9 +110,9 @@ export class UniversityService {
           ],
         })
         .populate({ path: 'status', model: this.applicationStatusModel })
+        .sort(sortObject)
         .skip(params.paginationObject.start)
-        .limit(params.paginationObject.limit)
-        .sort(sortObject);
+        .limit(params.paginationObject.limit);
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,

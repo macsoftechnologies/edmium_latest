@@ -59,9 +59,9 @@ export class UniversityInfoService {
           model: this.concentrationModel,
           retainNullValues: true,
         })
+        .sort(sortObject)
         .skip(params.paginationObject.start)
-        .limit(params.paginationObject.limit)
-        .sort(sortObject);
+        .limit(params.paginationObject.limit);
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
@@ -117,9 +117,9 @@ export class UniversityInfoService {
           category: 'scholarship',
           concentration: user.concentration,
         })
+        .sort(sortObject)
         .skip(params.paginationObject.start)
-        .limit(params.paginationObject.limit)
-        .sort(sortObject);
+        .limit(params.paginationObject.limit);
     }
 
     let apiResponse: APIResponse = {
