@@ -88,6 +88,7 @@ export class UserPersonalInfoService {
         data.emailAddress = userData.emailAddress;
         data.mobileNumber = userData.mobileNumber;
         data.profileImage = userData.profileImage;
+        data.profileCompletionPercentage = userData.profileCompletionPercentage;
       }
 
       return {
