@@ -236,9 +236,9 @@ export class UniversityDetailsService {
             },
           },
         ])
+        .sort(sortObject)
         .skip(params.paginationObject.start)
-        .limit(params.paginationObject.limit)
-        .sort(sortObject);
+        .limit(params.paginationObject.limit);
 
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
