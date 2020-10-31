@@ -45,7 +45,7 @@ export class NotificationService {
       })
       .lean();
 
-    const registration_ids: string[] = userAuthentications.map((user, key) => {
+    const registration_ids: string[] = userAuthentications.map(user => {
       return user.deviceToken;
     });
 
@@ -53,11 +53,13 @@ export class NotificationService {
 
     console.log(notificationDto);
 
-    const url = 'https://fcm.googleapis.com/fcm/send';
-    const body = notificationDto;
-    delete body.usersTo;
+    if (registration_ids && registration_ids.length > 0) {
+      const url = 'https://fcm.googleapis.com/fcm/send';
+      const body = notificationDto;
+      delete body.usersTo;
 
-    await this.http.post(url, body, axiosHeaders).toPromise();
+      await this.http.post(url, body, axiosHeaders).toPromise();
+    }
   }
 
   async getNotifications(params: FetchParamsDto, user: string) {

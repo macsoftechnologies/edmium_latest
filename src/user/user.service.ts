@@ -200,6 +200,15 @@ export class UserService {
         console.log(userAuthentication);
 
         if (userAuthentication) {
+          const id = userAuthentication._id;
+          const deviceToken = userLogIn.deviceToken;
+          const deviceType = userLogIn.deviceType;
+
+          await this.userAuthenticationModel.updateOne(
+            { _id: id },
+            { $set: { deviceToken: deviceToken, deviceType: deviceType } },
+          );
+
           const notificationObj = {
             usersTo: [user._id],
             notification: {
@@ -210,15 +219,6 @@ export class UserService {
           };
 
           await this.notificationService.sendNotifications(notificationObj);
-
-          const id = userAuthentication._id;
-          const deviceToken = userLogIn.deviceToken;
-          const deviceType = userLogIn.deviceType;
-
-          await this.userAuthenticationModel.updateOne(
-            { _id: id },
-            { $set: { deviceToken: deviceToken, deviceType: deviceType } },
-          );
 
           return {
             statusCode: HttpStatus.OK,
