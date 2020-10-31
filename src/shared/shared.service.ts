@@ -59,7 +59,6 @@ export class SharedService {
       ) {
         columns.push(keys[i].substring(0, keys[i].length - 1).trim());
       } else {
-        break;
       }
     }
 
@@ -141,136 +140,9 @@ export class SharedService {
     const msg = {
       to: params.to,
       from: 'admissions@edmium.com', // Use the email address or domain you verified above
-      subject: 'Sending with Twilio SendGrid is Fun',
-      text: 'and easy to do anywhere, even with Node.js',
-      html: `<!DOCTYPE html>
-      <html>
-      
-      <head>
-          <title>Email</title>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-          <link href="https://fonts.googleapis.com/css2?family=Mulish&display=swap" rel="stylesheet">
-          <style>
-          body {
-              font-family: 'Mulish', sans-serif;
-          }
-      
-          .email-template {
-              max-width: 800px;
-              margin: auto;
-          }
-      
-          .email-section {
-              margin: 5px 0px;
-              /*padding: 20px 15px;*/
-              border-radius: 5px;
-              box-shadow: 0 1px 6px rgba(32, 33, 36, .28);
-              border-color: rgba(223, 225, 229, 0);
-              background: #cccccc14;
-              border-radius: 10px;
-          }
-      
-          .logo {
-              background: #3700BE;
-              padding: 20px 0px;
-          }
-      
-          .logo img {
-              height: 30px;
-              width: 45px;
-              margin-top: -10px;
-          }
-      
-          .logo span {
-              font-size: 29px;
-              height: auto;
-              margin-top: 19px;
-              font-weight: bold;
-              color: #fff;
-              letter-spacing: 1px;
-          }
-      
-          .email-data {
-              margin: 10px 0px 0px 0px;
-              padding: 15px 7px 10px 7px;
-          }
-      
-          .email-data p {
-              margin-bottom: 8px;
-          }
-      
-          .email-data span {
-              font-weight: bold;
-          }
-      
-          .email-data-para {
-              margin: 18px 0px 15px 0px;
-          }
-      
-          .email-data-para p {
-              text-align: justify;
-          }
-      
-          .thanks {
-              margin: 30px 0px;
-          }
-      
-          .thanks p {
-              font-weight: 400;
-              margin-bottom: 8px;
-          }
-          </style>
-      </head>
-      
-      <body>
-          <div class="email-template">
-              <div class="email-section">
-                  <div class="logo">
-                      <div class="container">
-                          <img src="web-logo.png">
-                          <span>EDMIUM</span>
-                      </div>
-                  </div>
-                  <div class="container">
-                      <div class="email-data">
-                          <p><span>Student's Name: ${params.studentName}</span></p>
-                          <p><span>Application ID: ${params.applicationId}</span></p>
-                          <p><span>Country: ${params.country}</span></p>
-                          <p><span>Institution: ${params.institution}</span></p>
-                          <p><span>Program: ${params.program}</span></p>
-                          <p><span>Intake: ${params.intake}</span></p>
-                          <p><span>Status: ${params.status}</span></p>
-                          <p><span>Comment: ${params.comment}</span></p>
-      
-                          <div class="email-data-para">
-                              <p>Great that you wish to apply to ${params.institution} for ${params.intake} ${params.year}  , Please note that we have send your application to our quality team to evaluate the eligibility,  You will be further notified on the progress. </p>
-                          </div> 
-      
-                          <div class="thanks">
-                              <p>Thanks</p>
-                              <p>Applications - Review Team</p>
-                          </div>
-                      </div>    
-      
-                  </div>
-              </div>
-          </div>
-      </body>
-      
-      </html>
-      <!-- <p>Dear <b>ANIL,</b></p>
-      <p>Please Verify your email address to complete your Endorse Account</p>
-      <div style="text-align: center; ">
-          <button style="padding: 15px 24px;background: #55a197;border: 1px solid #55a197;border-radius: 5px;margin: 30px 0px;" type="submit" class="btn-primary">Verify Email Address&nbsp;&nbsp;<span style="align-items: center;"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></span></button>
-      </div>
-      <p>Thank You, </p>
-      <p><b>The Endorse Team</b></p> -->`,
+      subject: 'Application status updated',
+      // text: 'and easy to do anywhere, even with Node.js',
+      html: await this.getEmailTemplate(params),
     };
 
     sgMail.send(msg).then(
@@ -285,5 +157,332 @@ export class SharedService {
         }
       },
     );
+  }
+
+  async getEmailTemplate(params: any): Promise<any> {
+    return `<!DOCTYPE html>
+    <html>
+    
+    <head>
+        <title>Email</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Mulish&display=swap" rel="stylesheet">
+        <style>
+        body {
+            font-family: 'Mulish', sans-serif;
+        }
+    
+        .email-template {
+            max-width: 800px;
+            margin: auto;
+        }
+    
+        .email-section {
+            margin: 5px 0px;
+            /*padding: 20px 15px;*/
+            border-radius: 5px;
+            box-shadow: 0 1px 6px rgba(32, 33, 36, .28);
+            border-color: rgba(223, 225, 229, 0);
+            background: #cccccc14;
+            border-radius: 10px;
+        }
+    
+        .logo {
+            background: #3700BE;
+            padding: 20px 0px;
+        }
+    
+        .logo img {
+            height: 30px;
+            width: 45px;
+            margin-top: -10px;
+        }
+    
+        .logo span {
+            font-size: 29px;
+            height: auto;
+            margin-top: 19px;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+    
+        .email-data {
+            margin: 10px 0px 0px 0px;
+            padding: 15px 7px 10px 7px;
+        }
+    
+        .email-data p {
+            margin-bottom: 8px;
+        }
+    
+        .email-data span {
+            font-weight: bold;
+        }
+    
+        .email-data-para {
+            margin: 18px 0px 15px 0px;
+        }
+    
+        .email-data-para p {
+            text-align: justify;
+        }
+    
+        .thanks {
+            margin: 30px 0px;
+        }
+    
+        .thanks p {
+            font-weight: 400;
+            margin-bottom: 8px;
+        }
+        </style>
+    </head>
+    
+    <body>
+        <div class="email-template">
+            <div class="email-section">
+                <div class="logo">
+                    <div class="container">
+                        <img src="web-logo.png">
+                        <span>EDMIUM</span>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="email-data">
+                        <p><span>Student's Name: ${
+                          params.studentName
+                        }</span></p>
+                        <p><span>Application ID: ${
+                          params.applicationId
+                        }</span></p>
+                        <p><span>Country: ${params.country}</span></p>
+                        <p><span>Institution: ${params.institution}</span></p>
+                        <p><span>Program: ${params.program}</span></p>
+                        <p><span>Intake: ${params.intake}</span></p>
+                        <p><span>Status: ${params.status}</span></p>
+                        
+    
+                        <div class="email-data-para">
+                            ${
+                              params.role == 'student'
+                                ? await this.getStudentStatusContent(params)
+                                : await this.getAgentStatusContent(params)
+                            }
+                        </div> 
+
+                        <p><span>Remarks: ${params.comment}</span></p>
+    
+                        <div class="thanks">
+                            <p>Thanks</p>
+                            <p>Applications - Review Team</p>
+                        </div>
+                    </div>    
+    
+                </div>
+            </div>
+        </div>
+    </body>
+    
+    </html>
+    <!-- <p>Dear <b>ANIL,</b></p>
+    <p>Please Verify your email address to complete your Endorse Account</p>
+    <div style="text-align: center; ">
+        <button style="padding: 15px 24px;background: #55a197;border: 1px solid #55a197;border-radius: 5px;margin: 30px 0px;" type="submit" class="btn-primary">Verify Email Address&nbsp;&nbsp;<span style="align-items: center;"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></span></button>
+    </div>
+    <p>Thank You, </p>
+    <p><b>The Endorse Team</b></p> -->`;
+  }
+
+  async getStudentStatusContent(params: any): Promise<any> {
+    switch (params.status) {
+      case 'Documents Yet to be Verified':
+        return ``;
+
+      case 'Application in Progress':
+        return `Hello ${params.studentName}, <br><br>
+
+        This is to inform you that your application to ${params.institution} for ${params.intake} & ${params.year} is under progress. For your future communication please use ${params.applicationId}.`;
+
+      case 'Application Hold by Ed-Team':
+        return `Hello ${params.studentName}, <br><br> 
+
+        Our application executive is assessing your application for ${params.institution}. Status of your ${params.applicationId} has been changed to Application on hold by Ed-Team. <br><br>
+        
+        To further process the application we request you to arrange the pending requirements at the earliest, as per remarks mentioned below.`;
+
+      case 'Case Closed':
+        return `Hello ${params.studentName}, <br><br> 
+
+      Your Application ${params.program} to ${params.institution} for ${params.intake} & ${params.year} has been closed. Details of the closure mentioned in Remarks.`;
+
+      case 'Case Closed-Student Not Qualified':
+        return `Hello ${params.studentName}, <br><br> 
+  
+        Your Application ${params.program} to ${params.institution} for ${params.intake} & ${params.year} has been closed. Details of the closure mentioned in Remarks.`;
+
+      case 'Case Closed-Program Qualified':
+        return `Hello ${params.studentName}, <br><br> 
+  
+        Your Application ${params.program} to ${params.institution} for ${params.intake} & ${params.year} has been closed. Details of the closure mentioned in Remarks.`;
+
+      case 'Documents verified Forward to Applications':
+        return ``;
+
+      case 'Rejected by University':
+        return `Hello ${params.studentName}, <br><br> 
+
+        Your application to ${params.program} to ${params.institution} for ${params.intake} & ${params.year} has been rejected by University. Remarks mentioned below.`;
+
+      case 'Application on Hold by University':
+        return `Hello ${params.studentName}, <br><br> 
+
+        University Officials are assessing your application for ${params.institution}. Status of your ${params.applicationId} has been changed to Application on hold by University. <br><br>
+        
+        To further process the application we request you to arrange the pending requirements at the earliest, as per remarks mentioned below.`;
+
+      case 'Conditional Offer Received':
+        return `Congratulations! ${params.studentName}, Here is your Conditional Offer for ${params.program} to ${params.institution} for ${params.intake} & ${params.year}.`;
+
+      case 'Unconditional Offer Received':
+        return `Congratulations! ${params.studentName}, Here is your Conditional Offer for ${params.program} to ${params.institution} for ${params.intake} & ${params.year}.`;
+
+      case 'Student Deferred':
+        return `Hello ${params.studentName}, <br><br>  
+
+        As per the raised request, your application for ${params.program} to ${params.institution} for ${params.intake} & ${params.year} has been deferred. Details mentioned below.`;
+
+      case 'Funds Under Assessment':
+        return `Hello ${params.studentName}, <br><br>  
+
+        Our team is assessing the submitted financials. To proceed further we request you to arrange the pending requirements at the earliest, as per remarks mentioned below.`;
+
+      case 'Funds Approved':
+        return `Hello ${params.studentName}, <br><br>  
+
+        Great! the produced financials are approved your application is being proceed to further steps.`;
+
+      case 'COE Received':
+        return `Hello ${params.studentName}, <br><br>  
+
+        Congratulations! You have received enrollment confirmation from the university.`;
+
+      case 'Payment Received':
+        return `Hello ${params.studentName}, <br><br> 
+
+        We have received payment confirmation from the university. Your application is being proceed to further steps`;
+
+      case 'CAS Received':
+        return `Hello ${params.studentName}, <br><br>  
+
+        Congratulations! You have received enrollment confirmation from the university.`;
+
+      case 'Refund Request Initiated':
+        return `Hello ${params.studentName}, <br><br>  
+
+        As per the raised request, We have initiated the refund process.`;
+
+      case 'VISA in Process':
+        return `Hello ${params.studentName}, <br><br> 
+
+        This is to inform you that we in process of logging your VISA. To proceed further we request you to arrange the pending requirements at the earliest, as per remarks mentioned below.`;
+
+      case 'VISA Received':
+        return `Hello ${params.studentName}, <br><br>
+
+        Great News!! Congratulations on your VISA approval <br><br>
+        
+        Safe Travels!`;
+
+      case 'VISA Rejected':
+        return `Hello ${params.studentName}, <br><br>
+
+        Sorry to inform that your VISA has been rejected. Remarks mentioned Below.`;
+
+      default:
+        return ``;
+    }
+  }
+
+  async getAgentStatusContent(params: any): Promise<any> {
+    switch (params.status) {
+      case 'Documents Yet to be Verified':
+        return ``;
+
+      case 'Application in Progress':
+        return `This is to inform you that your application  for ${params.program} to ${params.institution} for ${params.intake} & ${params.year} is under progress. For your future communication please use ${params.applicationId}.`;
+
+      case 'Application Hold by Ed-Team':
+        return `Our application executive is assessing your application for ${params.program} to ${params.institution} for ${params.intake} & ${params.year}. Status of your ${params.applicationId} has been changed to Application on hold by Ed-Team. <br><br>
+
+        To further process the application we request you to arrange the pending requirements at the earliest, as per remarks mentioned below.`;
+
+      case 'Case Closed':
+        return `Your Application for ${params.program} to ${params.institution} for ${params.intake} & ${params.year} has been closed. Details of the closure mentioned in Remarks.`;
+
+      case 'Case Closed-Student Not Qualified':
+        return `Your Application for ${params.program} to ${params.institution} for ${params.intake} & ${params.year} has been closed. Details of the closure mentioned in Remarks.`;
+
+      case 'Case Closed-Program Qualified':
+        return `Your Application for ${params.program} to ${params.institution} for ${params.intake} & ${params.year} has been closed. Details of the closure mentioned in Remarks.`;
+
+      case 'Documents verified Forward to Applications':
+        return ``;
+
+      case 'Rejected by University':
+        return `Your application for ${params.program} to ${params.institution} for ${params.intake} & ${params.year} has been rejected by University. Remarks mentioned below.`;
+
+      case 'Application on Hold by University':
+        return `University Officials are assessing your application for ${params.institution}. Status of your ${params.applicationId} has been changed to Application on hold by Institute <br><br>
+        
+        To further process the application we request you to arrange the pending requirements at the earliest, as per remarks mentioned below.`;
+
+      case 'Conditional Offer Received':
+        return `Congratulations! ${params.studentName}, Here is your Conditional Offer for ${params.program} to ${params.institution} for ${params.intake} & ${params.year}.`;
+
+      case 'Unconditional Offer Received':
+        return `Congratulations! ${params.studentName}, Here is your Conditional Offer for ${params.program} to ${params.institution} for ${params.intake} & ${params.year}.`;
+
+      case 'Student Deferred':
+        return `As per the raised request, your application for ${params.program} to ${params.institution} for ${params.intake} & ${params.year} has been deferred. Details mentioned below.`;
+
+      case 'Funds Under Assessment':
+        return `Our team is assessing the submitted financials. To proceed further we request you to arrange the pending requirements at the earliest, as per remarks mentioned below.`;
+
+      case 'Funds Approved':
+        return `Great! the produced financials are approved your application is being proceed to further steps.`;
+
+      case 'COE Received':
+        return `Congratulations! You have received enrollment confirmation from the university.`;
+
+      case 'Payment Received':
+        return `We have received payment confirmation from the university. Your application is being proceed to further steps.`;
+
+      case 'CAS Received':
+        return `Congratulations! You have received enrollment confirmation from the university.`;
+
+      case 'Refund Request Initiated':
+        return `As per the raised request, we have initiated the refund process.`;
+
+      case 'VISA in Process':
+        return `This is to inform you that we in process of logging your VISA. To proceed further we request you to arrange the pending requirements at the earliest, as per remarks mentioned below.`;
+
+      case 'VISA Received':
+        return `Great News! Congratulations on your VISA approval <br><br>
+
+        Safe Travels!`;
+
+      case 'VISA Rejected':
+        return `Sorry to inform that your VISA has been rejected. Remarks mentioned Below.`;
+
+      default:
+        return ``;
+    }
   }
 }

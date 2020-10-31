@@ -318,8 +318,20 @@ export class UniversityApplicationsController {
 
       await this.notificationService.sendNotifications(notificationObj);
 
+      let toEmail = application.user.emailAddress;
+      let role = application.user.role;
+
+      if (
+        application.createdBy &&
+        application.createdBy._id &&
+        application.createdBy._id != application.user._id
+      ) {
+        toEmail = application.createdBy.emailAddress;
+        role = application.createdBy.role;
+      }
+
       await this.sharedService.sendMail({
-        to: application.user.emailAddress,
+        to: toEmail,
         studentName:
           application.user.firstName + ' ' + application.user.lastName,
         applicationId: application.uniqueId,
@@ -328,8 +340,9 @@ export class UniversityApplicationsController {
         program: application.universityDetails.course,
         intake: application.intake,
         year: application.yearOfPass,
-        status: application.status.status,
+        status: status.status,
         comment: params.comment,
+        role: role,
       });
 
       return response;

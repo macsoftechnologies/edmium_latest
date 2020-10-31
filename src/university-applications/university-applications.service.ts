@@ -648,6 +648,11 @@ export class UniversityApplicationsService {
             model: this.countryModel,
           },
         ],
+      })
+      .populate({
+        path: 'createdBy',
+        model: this.userModel,
+        retainNullValues: true,
       });
   }
 }
