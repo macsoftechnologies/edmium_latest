@@ -36,6 +36,9 @@ export class NotificationService {
 
   async sendNotifications(notificationDto: NotificationDto): Promise<any> {
     console.log(notificationDto);
+    notificationDto.usersTo = notificationDto.usersTo.map(user => {
+      return user.toString();
+    });
     await this.notificationModel.create(notificationDto);
 
     const userAuthentications = await this.userAuthenticationModel
