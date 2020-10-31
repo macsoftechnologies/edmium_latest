@@ -201,7 +201,7 @@ export class UserService {
 
         if (userAuthentication) {
           const notificationObj = {
-            usersTo: [userAuthentication._id],
+            usersTo: [user._id],
             notification: {
               action: 'subscription',
               title: 'Edmium Notifications',
