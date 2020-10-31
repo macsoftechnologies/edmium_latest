@@ -18,6 +18,10 @@ export class UniversityApplicationDto {
   @ApiProperty()
   @IsNumber()
   yearOfPass: number;
+
+  @ApiProperty()
+  @IsString()
+  createdBy: string;
 }
 
 export class ApplicationsOfStudentDto extends PaginationDto {

@@ -28,6 +28,9 @@ export class UniversityApplication extends Document {
   @Prop()
   statusHistory?: object[];
 
+  @Prop()
+  createdBy: string;
+
   @Prop({ default: false })
   @IsOptional()
   isDeleted?: boolean;

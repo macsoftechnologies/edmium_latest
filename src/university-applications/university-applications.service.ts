@@ -41,8 +41,6 @@ export class UniversityApplicationsService {
     try {
       console.log('params', params);
 
-      let user = params.user;
-      let universityDetailsId = params.universityDetails;
       const data = await this.universityApplicationModel.create(params);
 
       let response = {
