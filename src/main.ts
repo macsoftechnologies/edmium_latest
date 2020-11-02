@@ -7,9 +7,11 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: 'http://demo.edmium.com.s3-website.us-east-2.amazonaws.com',
+    origin: [
+      'http://localhost:4200',
+      'http://demo.edmium.com.s3-website.us-east-2.amazonaws.com',
+    ],
   });
-  // http://localhost:4200,
   const options = new DocumentBuilder()
     .setTitle('Edmium API')
     .setDescription('Edmium APPI description')
