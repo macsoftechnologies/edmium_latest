@@ -40,9 +40,9 @@ export class UniversityDetailsController {
       colleges.map(college => {
         college.university = body.university;
         college.country = body.country;
-        college.campus = college.campus.split(',');
+        college.campus = college.campus ? college.campus.split(',') : [];
         college.campus = college.campus.map((campus: string) => campus.trim());
-        college.intake = college.intake.split(',');
+        college.intake = college.intake ? college.intake.split(',') : [];
         college.intake = college.intake.map((intake: string) => intake.trim());
       });
       let response = await this.universityDetailsService.postUniversityDetails(
