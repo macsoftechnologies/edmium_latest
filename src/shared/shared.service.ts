@@ -59,11 +59,11 @@ export class SharedService {
       ) {
         columns.push(keys[i].substring(0, keys[i].length - 1).trim());
       } else {
+        break;
       }
     }
 
     let currentIndex = headerIndex + 1;
-
     var record = {};
     for (var j = 0; i < keys.length; i++, j++) {
       if (columns.length == j) {
