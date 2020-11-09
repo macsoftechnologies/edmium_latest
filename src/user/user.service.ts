@@ -251,9 +251,11 @@ export class UserService {
       const findObject: any = {
         country: params.country,
         concentration: params.concentration,
-        intake: { $in: [params.intake] },
         isDeleted: false,
       };
+      if (params.intake) {
+        findObject.intake = { $in: [params.intake] };
+      }
       if (params.studyLevel) {
         findObject.studyLevel = params.studyLevel;
       }

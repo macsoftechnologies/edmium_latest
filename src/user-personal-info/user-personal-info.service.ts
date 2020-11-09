@@ -76,20 +76,14 @@ export class UserPersonalInfoService {
   async getUserPersonalInfoByUserId(userId): Promise<any> {
     try {
       let data: any = await this.userPersonalInfoModel
-        .findOne({ userId: userId })
+        .findOne({
+          userId: userId,
+        })
         .lean();
 
       data = data ? data : {};
-      const userData = await this.userModel.findById(userId);
 
-      if (userData) {
-        data.firstName = userData.firstName;
-        data.lastName = userData.lastName;
-        data.emailAddress = userData.emailAddress;
-        data.mobileNumber = userData.mobileNumber;
-        data.profileImage = userData.profileImage;
-        data.profileCompletionPercentage = userData.profileCompletionPercentage;
-      }
+      data.userData = await this.userModel.findById(userId);
 
       return {
         statusCode: HttpStatus.OK,

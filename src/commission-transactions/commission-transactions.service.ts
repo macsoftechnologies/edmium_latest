@@ -56,25 +56,133 @@ export class CommissionTransactionsService {
       .count();
 
     const transactions = await this.commissionTransactionsModel
-      .find({
-        isDeleted: false,
-        ...params.findObject,
-      })
-      .populate({
-        path: 'user',
-        model: this.userModel,
-        retainNullValues: true,
-      })
-      .populate({
-        path: 'agent',
-        model: this.userModel,
-        retainNullValues: true,
-      })
-      .populate({
-        path: 'application',
-        model: this.universityApplicationModel,
-        retainNullValues: true,
-      })
+      .aggregate([
+        {
+          $match: {
+            isDeleted: false,
+            ...params.findObject,
+          },
+        },
+
+        {
+          $addFields: {
+            userId: {
+              $toObjectId: '$user',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'user',
+          },
+        },
+        { $unwind: '$user' },
+
+        {
+          $addFields: {
+            agentId: {
+              $toObjectId: '$agent',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'agentId',
+            foreignField: '_id',
+            as: 'agent',
+          },
+        },
+        { $unwind: '$agent' },
+
+        {
+          $addFields: {
+            applicationsId: {
+              $toObjectId: '$application',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universityapplications',
+            localField: 'applicationsId',
+            foreignField: '_id',
+            as: 'application',
+          },
+        },
+        { $unwind: '$application' },
+
+        {
+          $addFields: {
+            universityDetailsId: {
+              $toObjectId: '$application.universityDetails',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universitydetails',
+            localField: 'universityDetailsId',
+            foreignField: '_id',
+            as: 'application.universityDetails',
+          },
+        },
+        { $unwind: '$application.universityDetails' },
+
+        {
+          $addFields: {
+            universityId: {
+              $toObjectId: '$application.universityDetails.university',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'universities',
+            localField: 'universityId',
+            foreignField: '_id',
+            as: 'application.university',
+          },
+        },
+        { $unwind: '$application.university' },
+
+        {
+          $addFields: {
+            countryId: {
+              $toObjectId: '$country',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'countries',
+            localField: 'countryId',
+            foreignField: '_id',
+            as: 'country',
+          },
+        },
+        { $unwind: '$country' },
+
+        {
+          $addFields: {
+            currencyId: {
+              $toObjectId: '$country.currency',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'currencies',
+            localField: 'currencyId',
+            foreignField: '_id',
+            as: 'country.currency',
+          },
+        },
+        { $unwind: '$country.currency' },
+      ])
       .sort(sortObject)
       .skip(params.paginationObject.start)
       .limit(params.paginationObject.limit);
