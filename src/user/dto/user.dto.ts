@@ -14,6 +14,14 @@ enum gender {
   'male' = 'male',
   'female' = 'female',
 }
+
+enum commissionStatus {
+  'paid' = 'paid',
+  'yet-to-pay' = 'yet-to-pay',
+  'paid-partial' = 'paid-partial',
+  'not-qualified' = 'not-qualified',
+}
+
 export class CreateUser {
   @ApiProperty()
   @IsString()
@@ -145,6 +153,17 @@ export class UpdateCounselorDto {
   @IsString()
   @IsOptional()
   createdBy: string;
+}
+
+export class UpdateCommissionStatus {
+  @ApiProperty()
+  @IsString()
+  @IsEnum(commissionStatus)
+  commissionStatus: string;
+
+  @ApiProperty()
+  @IsNumber()
+  commission: number;
 }
 
 export class UserLogin {

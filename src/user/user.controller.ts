@@ -21,6 +21,7 @@ import {
   RegisterStudentDto,
   FetchUsersDto,
   UpdateCounselorDto,
+  UpdateCommissionStatus,
 } from './dto/user.dto';
 import { UserService } from './user.service';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
@@ -233,6 +234,24 @@ export class UserController {
 
       const params1 = await this.sharedService.prepareParams(params);
       let response = await this.userService.fetchUsers(params1);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Update Counselor
+  @Put('/commission-status/:id')
+  async updateCommissionStatus(
+    @Body() body: UpdateCommissionStatus,
+    @Param('id') id: string,
+  ) {
+    try {
+      console.log(body);
+      let response = await this.userService.updateCommissionStatus(id, body);
       return response;
     } catch (error) {
       return {

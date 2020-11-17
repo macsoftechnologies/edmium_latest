@@ -8,6 +8,7 @@ import {
   FavoriteListDto,
   FilterStudentsDto,
   SwitchFavoriteUniversityRanksDto,
+  UpdateCommissionStatus,
 } from './dto/user.dto';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { Education } from 'src/education/dto/education.schema';
@@ -593,6 +594,41 @@ export class UserService {
   async updateUser(userId: string, params: any): Promise<any> {
     try {
       await this.userModel.updateOne({ _id: userId }, params);
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: await this.userModel.findById(userId),
+        message: 'Updated successfully',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // Update Commission Status
+  async updateCommissionStatus(
+    userId: string,
+    params: UpdateCommissionStatus,
+  ): Promise<any> {
+    try {
+      const user: any = await this.userModel.findById(userId);
+
+      if (params.commission > user.commission) {
+        return {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          data: null,
+          message: 'Paying commission should not exceed Actual Commission',
+        };
+      }
+
+      const object = {
+        commission: user.commission - params.commission,
+        paidCommission: user.paidCommission
+          ? user.paidCommission + params.commission
+          : params.commission,
+        commissionStatus: params.commissionStatus,
+      };
+      await this.userModel.updateOne({ _id: userId }, object);
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: await this.userModel.findById(userId),

@@ -61,6 +61,16 @@ export class User extends Document {
   @IsOptional()
   commission?: integer;
 
+  @Prop({
+    enum: ['paid', 'yet-to-pay', 'paid-partial', 'not-qualified'],
+  })
+  @IsOptional()
+  commissionStatus?: string;
+
+  @Prop({ default: 0 })
+  @IsOptional()
+  paidCommission?: integer;
+
   @Prop()
   assignedTo: string;
 
