@@ -52,12 +52,22 @@ export class UniversityApplicationsController {
     try {
       console.log(body);
 
-      if ((await this.universityApplicationService.checkDuplicate(body)) > 0) {
+      if (
+        (await this.universityApplicationService.find({ user: body.user })) >= 7
+      ) {
+        return {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          errorMessage: 'You can apply for max of 7 Universities',
+        };
+      }
+
+      if ((await this.universityApplicationService.find(body)) > 0) {
         return {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
           errorMessage: 'You have already applied to this University',
         };
       }
+
       const params: any = body;
       const maxUniqueId = await this.universityApplicationService.getMaxUniqueId();
       if (maxUniqueId.length > 0) {

@@ -579,7 +579,7 @@ export class UniversityApplicationsService {
     }
   }
 
-  async checkDuplicate(params: any): Promise<any> {
+  async find(params: any): Promise<any> {
     return await this.universityApplicationModel
       .find({ isDeleted: false, ...params })
       .countDocuments();
