@@ -27,6 +27,8 @@ import { CommissionTransactionsModule } from './commission-transactions/commissi
 import { CurrencyModule } from './currency/currency.module';
 import { UserTestsModule } from './user-tests/user-tests.module';
 import { UpdateProfilePercentModule } from './update-profile-percent/update-profile-percent.module';
+import { ReminderModule } from './reminder/reminder.module';
+import { CronModule } from './cron/cron.module';
 @Module({
   imports: [
     EducationModule,
@@ -58,6 +60,8 @@ import { UpdateProfilePercentModule } from './update-profile-percent/update-prof
     CurrencyModule,
     UserTestsModule,
     UpdateProfilePercentModule,
+    ReminderModule,
+    CronModule,
   ],
   controllers: [AppController],
   providers: [AppService],

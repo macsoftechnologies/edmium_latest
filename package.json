@@ -33,6 +33,7 @@
     "lodash": "^4.17.20",
     "moment": "^2.27.0",
     "mongoose": "^5.10.0",
+    "nestjs-cron": "^1.2.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
