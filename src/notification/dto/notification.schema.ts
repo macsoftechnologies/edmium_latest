@@ -32,4 +32,4 @@ export interface NotificationObject {
   actionId?: string;
 }
 
-// action: ['subscription', 'to-do', 'university-application', 'application-status-update', application-chat]
+// action: ['subscription', 'to-do', 'university-application', 'application-status-update', 'application-chat', 'reminder']

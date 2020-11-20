@@ -320,3 +320,13 @@ export class FetchUsersDto extends PaginationDto {
   @IsOptional()
   role: string;
 }
+
+export class changePasswordDto {
+  @ApiProperty()
+  @IsString()
+  oldPassword: string;
+
+  @ApiProperty()
+  @IsString()
+  newPassword: string;
+}

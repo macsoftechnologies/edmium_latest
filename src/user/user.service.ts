@@ -9,6 +9,7 @@ import {
   FilterStudentsDto,
   SwitchFavoriteUniversityRanksDto,
   UpdateCommissionStatus,
+  changePasswordDto,
 } from './dto/user.dto';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { Education } from 'src/education/dto/education.schema';
@@ -209,17 +210,6 @@ export class UserService {
             { _id: id },
             { $set: { deviceToken: deviceToken, deviceType: deviceType } },
           );
-
-          const notificationObj = {
-            usersTo: [user._id],
-            notification: {
-              action: 'subscription',
-              title: 'Edmium Notifications',
-              body: 'Subscribe to Edmium News letters',
-            },
-          };
-
-          await this.notificationService.sendNotifications(notificationObj);
 
           return {
             statusCode: HttpStatus.OK,
@@ -2160,6 +2150,33 @@ export class UserService {
         message: 'Request successful',
       };
       return apiResponse;
+    } catch (error) {}
+  }
+
+  async changePassword(id: string, params: changePasswordDto): Promise<any> {
+    try {
+      const user = await this.userAuthenticationModel.findOne({
+        user: id,
+        password: params.oldPassword,
+      });
+
+      if (user) {
+        await this.userAuthenticationModel.updateOne(
+          { _id: user._id },
+          { password: params.newPassword },
+        );
+        return {
+          statusCode: HttpStatus.OK,
+          data: null,
+          message: 'Password updated',
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.UNAUTHORIZED,
+          data: null,
+          message: 'Invalid Password',
+        };
+      }
     } catch (error) {}
   }
 }

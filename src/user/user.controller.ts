@@ -22,6 +22,7 @@ import {
   FetchUsersDto,
   UpdateCounselorDto,
   UpdateCommissionStatus,
+  changePasswordDto,
 } from './dto/user.dto';
 import { UserService } from './user.service';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
@@ -478,6 +479,23 @@ export class UserController {
       const params = await this.sharedService.prepareParams(params1);
 
       let response = await this.userService.fetchUsers(params);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Change Password
+  @Put('/changePassword/:id')
+  async changePassword(
+    @Body() body: changePasswordDto,
+    @Param('id') id: string,
+  ) {
+    try {
+      let response = await this.userService.changePassword(id, body);
       return response;
     } catch (error) {
       return {
