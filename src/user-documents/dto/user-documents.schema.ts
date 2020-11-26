@@ -9,95 +9,100 @@ export class UserDocuments extends Document {
 
   @Prop()
   @IsOptional()
-  markSheet_10th?: string;
+  markSheet_10th?: FileObject;
 
   @Prop()
   @IsOptional()
-  markSheet_11th?: string;
+  markSheet_11th?: FileObject;
 
   @Prop()
   @IsOptional()
-  markSheet_12th?: string;
+  markSheet_12th?: FileObject;
 
   @Prop()
   @IsOptional()
-  academicTranscripts?: string;
+  academicTranscripts?: FileObject;
 
   @Prop()
   @IsOptional()
-  applicationForm?: string;
+  applicationForm?: FileObject;
 
   @Prop()
   @IsOptional()
-  feePaymentConfirmationPage?: string;
+  feePaymentConfirmationPage?: FileObject;
 
   @Prop()
   @IsOptional()
-  declaration?: string;
+  declaration?: FileObject;
 
   @Prop()
   @IsOptional()
-  copyOfPassport?: string;
+  copyOfPassport?: FileObject;
 
   @Prop()
   @IsOptional()
-  statementOfPurpose?: string;
+  statementOfPurpose?: FileObject;
 
   @Prop()
   @IsOptional()
-  cv?: string;
+  cv?: FileObject;
 
   @Prop()
   @IsOptional()
-  letterOfRecommendation?: string;
+  letterOfRecommendation?: FileObject;
 
   @Prop()
   @IsOptional()
-  englishLanguageCertificate?: string;
+  englishLanguageCertificate?: FileObject;
 
   @Prop()
   @IsOptional()
-  bankBalanceCertificate?: string;
+  bankBalanceCertificate?: FileObject;
 
   @Prop()
   @IsOptional()
-  financialAffidavit?: string;
+  financialAffidavit?: FileObject;
 
   @Prop()
   @IsOptional()
-  internshipCertificate?: string;
+  internshipCertificate?: FileObject;
 
   @Prop()
   @IsOptional()
-  detailsOfExtraCurricular?: string;
+  detailsOfExtraCurricular?: FileObject;
 
   @Prop()
   @IsOptional()
-  mediumOfInstructionLetter?: string;
+  mediumOfInstructionLetter?: FileObject;
 
   @Prop()
   @IsOptional()
-  gapExplanationLetter?: string;
+  gapExplanationLetter?: FileObject;
 
   @Prop()
   @IsOptional()
-  birthCertificate?: string;
+  birthCertificate?: FileObject;
 
   @Prop()
   @IsOptional()
-  onlineSubmissionConfirmationPage?: string;
+  onlineSubmissionConfirmationPage?: FileObject;
 
   @Prop()
   @IsOptional()
-  gre?: string;
+  gre?: FileObject;
 
   @Prop()
   @IsOptional()
-  additionalDocuments?: string;
+  additionalDocuments?: FileObject;
 
   @Prop({ default: false })
   @IsOptional()
   isDeleted?: boolean;
+}
+
+export interface FileObject {
+  path: string;
+  fileType: string;
 }
 
 export const UserDocumentsSchema = SchemaFactory.createForClass(UserDocuments);

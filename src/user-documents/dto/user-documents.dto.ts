@@ -5,4 +5,8 @@ export class AddDocumentDto {
   @ApiProperty()
   @IsString()
   documentType: string;
+
+  @ApiProperty()
+  @IsString()
+  fileType: string;
 }

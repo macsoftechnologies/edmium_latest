@@ -36,7 +36,10 @@ export class UserDocumentsController {
       );
 
       const params = { userId: userId };
-      params[body.documentType] = document.Location;
+      params[body.documentType] = {
+        path: document.Location,
+        fileType: body.fileType,
+      };
       let response = await this.userDocumentsService.addUserDocuments(params);
       return response;
     } catch (error) {
