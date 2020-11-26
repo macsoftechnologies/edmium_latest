@@ -71,12 +71,20 @@ export class NotificationService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
+      const filterObject: any = { usersTo: { $in: [user] }, isDeleted: false };
+
+      if (params.findObject.type == 'to-do') {
+        filterObject['notification.action'] = 'to-do';
+      } else if (params.findObject.type == 'notification') {
+        filterObject['notification.action'] = { $ne: 'to-do' };
+      }
+
       const notificationsCount = await this.notificationModel
-        .find({ usersTo: { $in: [user] }, isDeleted: false })
+        .find(filterObject)
         .count();
 
       const notifications = await this.notificationModel
-        .find({ usersTo: { $in: [user] }, isDeleted: false })
+        .find(filterObject)
         .sort(sortObject)
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit);

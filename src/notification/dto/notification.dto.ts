@@ -1,5 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { PaginationDto } from 'src/shared/dto/shared.dto';
+
+enum type {
+  'to-do' = 'to-do',
+  'notification' = 'notification',
+}
 
 export class NotificationDto {
   usersTo: string[];
@@ -42,4 +54,12 @@ export class UpdateNotificationDto {
   @IsBoolean()
   @IsOptional()
   isRead: boolean;
+}
+
+export class NotificationsListingDto extends PaginationDto {
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  @IsEnum(type)
+  type: string;
 }

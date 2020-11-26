@@ -13,6 +13,7 @@ import { PaginationDto } from 'src/shared/dto/shared.dto';
 import { SharedService } from 'src/shared/shared.service';
 import {
   CreateNotificationDto,
+  NotificationsListingDto,
   UpdateNotificationDto,
 } from './dto/notification.dto';
 import { NotificationService } from './notification.service';
@@ -27,7 +28,7 @@ export class NotificationController {
   @ApiTags('Notifications')
   @Post('/listing/:user')
   async getNotifications(
-    @Body() body: PaginationDto,
+    @Body() body: NotificationsListingDto,
     @Param('user') user: string,
   ) {
     try {
