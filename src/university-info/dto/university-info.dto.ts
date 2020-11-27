@@ -40,6 +40,16 @@ export class CreateUniversityInfoDto {
   @IsString()
   @IsOptional()
   comment: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  fileType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  fileName: string;
 }
 
 export class GetUniversityInfoDto extends PaginationDto {

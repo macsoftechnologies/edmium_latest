@@ -47,6 +47,8 @@ export class UniversityInfoController {
           universityId: params.universityId,
           attachment: attachment.Location,
           category: 'university-info',
+          fileType: body.fileType,
+          name: body.fileName,
         });
 
         params.attachment = attachmentObject.data._id;
@@ -100,6 +102,8 @@ export class UniversityInfoController {
           universityId: params.universityId,
           attachment: attachment.Location,
           category: 'university-info',
+          fileType: body.fileType,
+          name: body.fileName,
         });
 
         params.attachment = attachmentObject.data._id;
