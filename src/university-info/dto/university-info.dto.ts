@@ -1,4 +1,4 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsArray } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationDto } from 'src/shared/dto/shared.dto';
 
@@ -25,6 +25,11 @@ export class CreateUniversityInfoDto {
   @IsString()
   @IsOptional()
   concentration: string;
+
+  @ApiProperty()
+  @IsArray()
+  @IsOptional()
+  courses: string[];
 
   @ApiProperty()
   @IsString()

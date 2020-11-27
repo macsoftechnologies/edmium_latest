@@ -1,6 +1,6 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { IsOptional } from 'class-validator';
+import { IsArray, IsOptional } from 'class-validator';
 
 @Schema({ timestamps: true })
 export class UniversityInfo extends Document {
@@ -21,6 +21,10 @@ export class UniversityInfo extends Document {
   @Prop()
   @IsOptional()
   concentration: string;
+
+  @Prop()
+  @IsOptional()
+  courses?: string[];
 
   @Prop()
   @IsOptional()
