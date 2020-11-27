@@ -512,11 +512,8 @@ export class UserController {
   }
 
   // Update Password
-  @Put('/updatePassword/:id')
-  async updatePassword(
-    @Body() body: UpdatePasswordDto,
-    @Param('id') id: string,
-  ) {
+  @Put('/updatePassword')
+  async updatePassword(@Body() body: UpdatePasswordDto) {
     try {
       let response = await this.userService.updatePassword(body);
       return response;
