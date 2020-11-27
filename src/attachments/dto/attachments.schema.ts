@@ -20,6 +20,14 @@ export class Attachment extends Document {
   attachment: string;
 
   @Prop()
+  @IsOptional()
+  name?: string;
+
+  @Prop()
+  @IsOptional()
+  fileType?: string;
+
+  @Prop()
   category: string;
 
   @Prop()

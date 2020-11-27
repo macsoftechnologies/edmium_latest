@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpStatus,
@@ -10,6 +11,7 @@ import {
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { SharedService } from 'src/shared/shared.service';
 import { AttachmentsService } from './attachments.service';
+import { AddAttachmentDto, GetAttachmentsDto } from './dto/attachments.dto';
 
 @Controller('attachments')
 export class AttachmentsController {
@@ -42,6 +44,7 @@ export class AttachmentsController {
   )
   async addCountryAttachments(
     @Param('countryId') countryId: string,
+    @Body() body: AddAttachmentDto,
     @UploadedFiles() files,
   ) {
     try {
@@ -55,6 +58,7 @@ export class AttachmentsController {
           countryId: countryId,
           attachment: res.Location,
           category: 'country',
+          ...body,
         });
       }
 
@@ -72,12 +76,18 @@ export class AttachmentsController {
   }
 
   // Get Country Attachments
-  @Get('/country/:countryId')
-  async getCountryAttachments(@Param('countryId') countryId: string) {
+  @Post('/country/listing/:countryId')
+  async getCountryAttachments(
+    @Param('countryId') countryId: string,
+    @Body() body: GetAttachmentsDto,
+  ) {
     try {
-      let response = await this.attachmentsService.getAttachments({
-        countryId: countryId,
+      const params = await this.sharedService.prepareParams({
+        countryId,
+        ...body,
       });
+      console.log(params);
+      let response = await this.attachmentsService.get(params);
       return response;
     } catch (error) {
       return {

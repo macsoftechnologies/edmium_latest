@@ -6,12 +6,12 @@ import { User } from 'src/user/dto/user.schema';
 const profileCompletionPercentageConfig = {
   profileImage: 10,
   maritalStatus: 10,
-  mailingAddress1: 10,
-  permanentAddress1: 10,
-  passportNumber: 10,
-  nationality: 10,
-  emergencyContactName: 10,
-  userAcademicInfo: 10,
+  mailingAddress1: 5,
+  permanentAddress1: 5,
+  passportNumber: 5,
+  nationality: 5,
+  emergencyContactName: 5,
+  userAcademicInfo: 35,
   userWorkInfo: 5,
   userTests: 5,
 };
