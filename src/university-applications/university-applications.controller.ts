@@ -340,20 +340,23 @@ export class UniversityApplicationsController {
         role = application.createdBy.role;
       }
 
-      await this.sharedService.sendMail({
-        to: toEmail,
-        studentName:
-          application.user.firstName + ' ' + application.user.lastName,
-        applicationId: application.uniqueId,
-        country: application.universityDetails.country.name,
-        institution: application.universityDetails.university.universityName,
-        program: application.universityDetails.course,
-        intake: application.intake,
-        year: application.yearOfPass,
-        status: status.status,
-        comment: params.comment,
-        role: role,
-      });
+      await this.sharedService.sendMail(
+        {
+          to: toEmail,
+          studentName:
+            application.user.firstName + ' ' + application.user.lastName,
+          applicationId: application.uniqueId,
+          country: application.universityDetails.country.name,
+          institution: application.universityDetails.university.universityName,
+          program: application.universityDetails.course,
+          intake: application.intake,
+          year: application.yearOfPass,
+          status: status.status,
+          comment: params.comment,
+          role: role,
+        },
+        'application-status',
+      );
 
       return response;
     } catch (error) {

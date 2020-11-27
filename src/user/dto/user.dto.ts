@@ -6,6 +6,7 @@ import {
   IsEnum,
   isNumber,
   IsArray,
+  IsBoolean,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationDto } from 'src/shared/dto/shared.dto';
@@ -325,6 +326,16 @@ export class changePasswordDto {
   @ApiProperty()
   @IsString()
   oldPassword: string;
+
+  @ApiProperty()
+  @IsString()
+  newPassword: string;
+}
+
+export class UpdatePasswordDto {
+  @ApiProperty()
+  @IsString()
+  emailAddress: string;
 
   @ApiProperty()
   @IsString()

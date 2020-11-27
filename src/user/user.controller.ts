@@ -23,6 +23,7 @@ import {
   UpdateCounselorDto,
   UpdateCommissionStatus,
   changePasswordDto,
+  UpdatePasswordDto,
 } from './dto/user.dto';
 import { UserService } from './user.service';
 import { SearchUniversitiesByIntCourUniNameDto } from 'src/university_details/dto/university_details.dto';
@@ -30,6 +31,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { SharedService } from 'src/shared/shared.service';
 import { PaginationDto } from 'src/shared/dto/shared.dto';
 import { UpdateProfilePercentService } from 'src/update-profile-percent/update-profile-percent.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { application } from 'express';
+import { Model } from 'mongoose';
+import { User } from './dto/user.schema';
 
 @Controller('user')
 export class UserController {
@@ -37,6 +42,7 @@ export class UserController {
     private userService: UserService,
     private sharedService: SharedService,
     private updateProfilePercentService: UpdateProfilePercentService,
+    @InjectModel('User') private userModel: Model<User>,
   ) {}
 
   /* Create User  */
@@ -497,6 +503,61 @@ export class UserController {
     try {
       let response = await this.userService.changePassword(id, body);
       return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Update Password
+  @Put('/updatePassword/:id')
+  async updatePassword(
+    @Body() body: UpdatePasswordDto,
+    @Param('id') id: string,
+  ) {
+    try {
+      let response = await this.userService.updatePassword(body);
+      return response;
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.message,
+      };
+    }
+  }
+
+  // Change Password
+  @Put('/forgetPassword/:emailAddress')
+  async forgetPassword(@Param('emailAddress') emailAddress: string) {
+    try {
+      const user = await this.userModel.findOne({
+        emailAddress: emailAddress,
+        isDeleted: false,
+      });
+
+      if (user) {
+        await this.sharedService.sendMail(
+          {
+            to: user.emailAddress,
+            studentName: user.firstName + ' ' + user.lastName,
+          },
+          'forget-password',
+        );
+
+        return {
+          statusCode: HttpStatus.OK,
+          data: null,
+          message: 'Request Successful',
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          data: null,
+          message: 'Email not registered',
+        };
+      }
     } catch (error) {
       return {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,

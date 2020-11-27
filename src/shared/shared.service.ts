@@ -135,14 +135,28 @@ export class SharedService {
     return config;
   }
 
-  async sendMail(params: any): Promise<any> {
+  async sendMail(params: any, emailType: string): Promise<any> {
     console.log('sendMail');
+
+    let html, subject;
+
+    switch (emailType) {
+      case 'application-status':
+        html = await this.getApplicationStatusEmailTemplate(params);
+        subject = 'Application status updated';
+        break;
+
+      case 'forget-password':
+        html = await this.getForgetPasswordEmailTemplate(params);
+        subject = 'Edmium Reset Password';
+        break;
+    }
     const msg = {
       to: params.to,
       from: 'admissions@edmium.com', // Use the email address or domain you verified above
-      subject: 'Application status updated',
+      subject: subject,
       // text: 'and easy to do anywhere, even with Node.js',
-      html: await this.getEmailTemplate(params),
+      html: html,
     };
 
     sgMail.send(msg).then(
@@ -159,7 +173,7 @@ export class SharedService {
     );
   }
 
-  async getEmailTemplate(params: any): Promise<any> {
+  async getApplicationStatusEmailTemplate(params: any): Promise<any> {
     return `<!DOCTYPE html>
     <html>
     
@@ -298,6 +312,54 @@ export class SharedService {
     </div>
     <p>Thank You, </p>
     <p><b>The Endorse Team</b></p> -->`;
+  }
+
+  async getForgetPasswordEmailTemplate(params: any): Promise<any> {
+    return `<!DOCTYPE html>
+    <html>
+    
+    <head>
+      <title></title>
+      <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+    
+    <body style="background-color: #ccc;font-family: Poppins, Helvetica, sans-serif;">
+      <div class="contact-page"
+        style="width: 60%;margin: auto;background:#fff;padding: 30px;border-radius: 10px;margin-top:50px">
+        <div class="contact-card">
+          <div class="contact-card-body">
+            <div style="text-align:center">
+              <img style="width:45px;height:34px;" src="../Edmium-logo.png" alt="Img"><b style="font-size: 40px">EDMIUM</b> 
+            </div>
+            <div>
+              <h2 style="font-weight: 600;text-align: center;">Reset Password</h2>
+            </div>
+            <div>
+              <p class="" style="font-weight: 600;padding-left: 25px;">Dear : ${params.studentName}</p>
+            </div>
+            <div style="text-align:center;">
+              <p class="">There was recently a request to change the password for your account. </p>
+              <p class="">I you Requested this change, set a new password here:</p>
+            </div>
+            <div style="text-align:center">
+              <button style="background-color:#bb9356;color:#fff;padding:11px 25px;border: none; border-radius:4px"><a
+                  href="http://demo.edmium.com.s3-website.us-east-2.amazonaws.com/auth/forgot-password"
+                  style="text-decoration:none;color:#fff;font-size:17px;font-weight:600;">Set New Password</a></button>
+            </div>
+            <div style="text-align: center">
+              <p>If did not make this request, you can ignore this email and your</p>
+              <p> password will remain the same.</p>
+              <p>Thankyou, Edmium.</p>
+            </div>
+          </div>
+        </div>
+    
+      </div>
+    
+    </body>
+    
+    </html>`;
   }
 
   async getStudentStatusContent(params: any): Promise<any> {

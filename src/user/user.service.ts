@@ -10,6 +10,7 @@ import {
   SwitchFavoriteUniversityRanksDto,
   UpdateCommissionStatus,
   changePasswordDto,
+  UpdatePasswordDto,
 } from './dto/user.dto';
 import { APIResponse } from 'src/dto/api-response-dto';
 import { Education } from 'src/education/dto/education.schema';
@@ -2177,6 +2178,26 @@ export class UserService {
           message: 'Invalid Password',
         };
       }
+    } catch (error) {}
+  }
+
+  async updatePassword(params: UpdatePasswordDto): Promise<any> {
+    try {
+      const user = await this.userModel.findOne({
+        emailAddress: params.emailAddress,
+        isDeleted: false,
+      });
+
+      await this.userAuthenticationModel.updateOne(
+        { _id: user._id },
+        { password: params.newPassword },
+      );
+
+      return {
+        statusCode: HttpStatus.OK,
+        data: null,
+        message: 'Password updated',
+      };
     } catch (error) {}
   }
 }
