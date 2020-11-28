@@ -39,9 +39,10 @@ export class SharedService {
     const excelData = result.Sheets[sheets[0]];
     const keys = Object.keys(result.Sheets[sheets[0]]);
 
-    keys.splice(keys.indexOf('!ref'), 1);
-    keys.splice(keys.indexOf('!margins'), 1);
-    keys.splice(keys.indexOf('!rows'), 1);
+    if (keys.indexOf('!ref') != -1) keys.splice(keys.indexOf('!ref'), 1);
+    if (keys.indexOf('!margins') != -1)
+      keys.splice(keys.indexOf('!margins'), 1);
+    if (keys.indexOf('!rows') != -1) keys.splice(keys.indexOf('!rows'), 1);
 
     const table = [];
 
@@ -330,7 +331,7 @@ export class SharedService {
         <div class="contact-card">
           <div class="contact-card-body">
             <div style="text-align:center">
-              <img style="width:45px;height:34px;" src="../Edmium-logo.png" alt="Img"><b style="font-size: 40px">EDMIUM</b> 
+              <img style="width:45px;height:34px;" src="https://edmium.s3.us-east-2.amazonaws.com/assets/web-logo.png" alt="Img"><b style="font-size: 40px">EDMIUM</b> 
             </div>
             <div>
               <h2 style="font-weight: 600;text-align: center;">Reset Password</h2>
