@@ -20,11 +20,16 @@ import {
 import { SharedService } from 'src/shared/shared.service';
 import { UniversityDetailsService } from './university_details.service';
 import { APIResponse } from 'src/dto/api-response-dto';
+import * as _ from 'lodash';
+import { ConcentrationService } from 'src/concentration/concentration.service';
+import { CourseService } from 'src/course/course.service';
 
 @Controller('university_details')
 export class UniversityDetailsController {
   constructor(
     private universityDetailsService: UniversityDetailsService,
+    private concentrationService: ConcentrationService,
+    private courseService: CourseService,
     private sharedService: SharedService,
   ) {}
 
@@ -37,6 +42,9 @@ export class UniversityDetailsController {
   ) {
     try {
       const colleges: any[] = await this.sharedService.excelToJSON(file.buffer);
+      let concentrations = [],
+        courses = [];
+
       colleges.map(college => {
         college.university = body.university;
         college.country = body.country;
@@ -44,7 +52,42 @@ export class UniversityDetailsController {
         college.campus = college.campus.map((campus: string) => campus.trim());
         college.intake = college.intake ? college.intake.split(',') : [];
         college.intake = college.intake.map((intake: string) => intake.trim());
+
+        concentrations.push({
+          name: college.concentration,
+          code: college.field,
+        });
+        courses.push({
+          name: college.course,
+          education: college.studyLevel,
+          concentrationCode: college.field,
+        });
       });
+
+      concentrations = _.uniqBy(concentrations, 'code');
+      courses = _.uniqBy(courses, 'name');
+
+      for (const concentration of concentrations) {
+        const conResponse = await this.concentrationService.checkAndCreateConcentration(
+          concentration,
+        );
+        concentration._id = conResponse.data._id.toString();
+      }
+
+      for (const course of courses) {
+        const index = concentrations.findIndex(
+          obj => obj.code === course.concentrationCode,
+        );
+        course.concentration = concentrations[index]._id;
+
+        delete course.concentrationCode;
+
+        const conResponse = await this.courseService.checkAndCreateCourse(
+          course,
+        );
+        course._id = conResponse.data._id.toString();
+      }
+
       let response = await this.universityDetailsService.postUniversityDetails(
         colleges,
       );

@@ -10,6 +10,9 @@ export class Course extends Document {
   @Prop()
   name: string;
 
+  @Prop()
+  education: string;
+
   @Prop({ default: false })
   @IsOptional()
   isDeleted?: boolean;

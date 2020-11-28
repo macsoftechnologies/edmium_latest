@@ -36,59 +36,59 @@ export class CourseController {
     }
   }
 
-  /* Create Course */
-  @Post()
-  async createCourse(@Body() createCourseDto: CreateCourseDto) {
-    try {
-      const createCourseResponse = this.courseService.createCourse(
-        createCourseDto,
-      );
-      return createCourseResponse;
-    } catch (error) {
-      return {
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        data: null,
-        errorMessage: error.message,
-      };
-    }
-  }
+  // /* Create Course */
+  // @Post()
+  // async createCourse(@Body() createCourseDto: CreateCourseDto) {
+  //   try {
+  //     const createCourseResponse = this.courseService.createCourse(
+  //       createCourseDto,
+  //     );
+  //     return createCourseResponse;
+  //   } catch (error) {
+  //     return {
+  //       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+  //       data: null,
+  //       errorMessage: error.message,
+  //     };
+  //   }
+  // }
 
-  /* Update Course */
-  @Put('/:id')
-  async updateCourse(
-    @Body() createCourseDto: CreateCourseDto,
-    @Param('id') id: string,
-  ) {
-    try {
-      const updateCourseResponse = this.courseService.updateCourse(
-        createCourseDto,
-        id,
-      );
-      return updateCourseResponse;
-    } catch (error) {
-      return {
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        data: null,
-        errorMessage: error.message,
-      };
-    }
-  }
+  // /* Update Course */
+  // @Put('/:id')
+  // async updateCourse(
+  //   @Body() createCourseDto: CreateCourseDto,
+  //   @Param('id') id: string,
+  // ) {
+  //   try {
+  //     const updateCourseResponse = this.courseService.updateCourse(
+  //       createCourseDto,
+  //       id,
+  //     );
+  //     return updateCourseResponse;
+  //   } catch (error) {
+  //     return {
+  //       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+  //       data: null,
+  //       errorMessage: error.message,
+  //     };
+  //   }
+  // }
 
-  /* Delete Course */
-  @Delete('/:id')
-  async deleteCourse(@Param('id') id: string) {
-    try {
-      const deleteCourseResponse = this.courseService.updateCourse(
-        { isDeleted: true },
-        id,
-      );
-      return deleteCourseResponse;
-    } catch (error) {
-      return {
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        data: null,
-        errorMessage: error.message,
-      };
-    }
-  }
+  // /* Delete Course */
+  // @Delete('/:id')
+  // async deleteCourse(@Param('id') id: string) {
+  //   try {
+  //     const deleteCourseResponse = this.courseService.updateCourse(
+  //       { isDeleted: true },
+  //       id,
+  //     );
+  //     return deleteCourseResponse;
+  //   } catch (error) {
+  //     return {
+  //       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+  //       data: null,
+  //       errorMessage: error.message,
+  //     };
+  //   }
+  // }
 }

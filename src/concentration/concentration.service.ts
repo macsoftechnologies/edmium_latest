@@ -64,6 +64,25 @@ export class ConcentrationService {
     }
   }
 
+  /* Create concentration */
+  async checkAndCreateConcentration(params: CreateConcentrationDto) {
+    try {
+      let response = await this.concentrationModel.findOne(params);
+
+      if (!response) {
+        response = await this.concentrationModel.create(params);
+      }
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: response,
+        message: 'Request Successful',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
   /* Update Concentration */
   async updateConcentration(params: any, id: string) {
     try {

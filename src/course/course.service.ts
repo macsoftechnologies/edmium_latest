@@ -57,6 +57,25 @@ export class CourseService {
     }
   }
 
+  /* Create course */
+  async checkAndCreateCourse(params: CreateCourseDto) {
+    try {
+      let response = await this.courseModel.findOne(params);
+
+      if (!response) {
+        response = await this.courseModel.create(params);
+      }
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: response,
+        message: 'Request Successful',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
   /* Update course */
   async updateCourse(params: any, id): Promise<any> {
     try {

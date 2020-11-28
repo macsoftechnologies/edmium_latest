@@ -10,10 +10,18 @@ export class CreateCourseDto {
   @ApiProperty()
   @IsString()
   name: string;
+
+  @ApiProperty()
+  @IsString()
+  education: string;
 }
 
 export class GetCoursesDto extends PaginationDto {
   @ApiProperty()
   @IsOptional()
   concentration: string;
+
+  @ApiProperty()
+  @IsOptional()
+  education: string;
 }
