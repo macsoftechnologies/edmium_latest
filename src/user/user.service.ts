@@ -2188,16 +2188,24 @@ export class UserService {
         isDeleted: false,
       });
 
-      await this.userAuthenticationModel.updateOne(
-        { _id: user._id },
-        { password: params.newPassword },
-      );
+      if (user) {
+        await this.userAuthenticationModel.updateOne(
+          { _id: user._id },
+          { password: params.newPassword },
+        );
 
-      return {
-        statusCode: HttpStatus.OK,
-        data: null,
-        message: 'Password updated',
-      };
+        return {
+          statusCode: HttpStatus.OK,
+          data: null,
+          message: 'Password updated',
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          data: null,
+          message: 'Email not Registered',
+        };
+      }
     } catch (error) {}
   }
 }

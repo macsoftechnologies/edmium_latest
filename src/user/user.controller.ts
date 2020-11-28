@@ -512,7 +512,7 @@ export class UserController {
   }
 
   // Update Password
-  @Put('/updatePassword')
+  @Put('/update/password')
   async updatePassword(@Body() body: UpdatePasswordDto) {
     try {
       let response = await this.userService.updatePassword(body);
