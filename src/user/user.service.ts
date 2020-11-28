@@ -2190,7 +2190,7 @@ export class UserService {
 
       if (user) {
         await this.userAuthenticationModel.updateOne(
-          { _id: user._id },
+          { user: user._id.toString() },
           { password: params.newPassword },
         );
 
