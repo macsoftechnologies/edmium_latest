@@ -32,12 +32,27 @@ export class UniversityService {
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
 
+      const findObject: any = {
+        isDeleted: false,
+        ...params.findObject,
+      };
+
+      if (params.findObject.searchString) {
+        findObject.universityName = {
+          $regex: '.*' + params.findObject.searchString + '.*',
+          $options: 'i',
+        };
+      }
+      delete findObject.searchString;
+
+      console.log(findObject);
+
       let universitiesCount = await this.universityModel
-        .find({ isDeleted: false, ...params.findObject })
+        .find(findObject)
         .count();
 
       let universities = await this.universityModel
-        .find({ isDeleted: false, ...params.findObject })
+        .find(findObject)
         .sort(sortObject)
         .skip(params.paginationObject.start)
         .limit(params.paginationObject.limit);
@@ -63,6 +78,26 @@ export class UniversityService {
       let apiResponse: APIResponse = {
         statusCode: HttpStatus.OK,
         data: createUniversityRes,
+        message: 'Request Successful!!!',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  /* Create University */
+  async updateUniversity(id: string, params: any) {
+    try {
+      const updateUniversityRes = await this.universityModel.updateOne(
+        { _id: id },
+        params,
+      );
+
+      console.log('create uni resp', updateUniversityRes);
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: updateUniversityRes,
         message: 'Request Successful!!!',
       };
       return apiResponse;

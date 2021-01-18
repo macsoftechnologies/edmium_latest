@@ -8,10 +8,15 @@ import {
   UploadedFile,
   UploadedFiles,
   Param,
+  Put,
 } from '@nestjs/common';
 import { UniversityService } from './university.service';
 import { APIResponse } from 'src/dto/api-response-dto';
-import { CreateUniversityDto } from './dto/create-university.dto';
+import {
+  CreateUniversityDto,
+  ListingUniversityDto,
+  UpdateUniversityDto,
+} from './dto/create-university.dto';
 import {
   FileInterceptor,
   FileFieldsInterceptor,
@@ -44,7 +49,7 @@ export class UniversityController {
 
   /* Get All Universities */
   @Post('/listing')
-  async getUniversities(@Body() body: PaginationDto) {
+  async getUniversities(@Body() body: ListingUniversityDto) {
     try {
       const params = await this.sharedService.prepareParams(body);
       const response = await this.universityService.getAllUniversities(params);
@@ -94,6 +99,62 @@ export class UniversityController {
           ? backgroundImage.Location
           : null,
       });
+      return response;
+    } catch (error) {
+      const apiResponse: APIResponse = {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        message: error.message,
+      };
+      return apiResponse;
+    }
+  }
+
+  /* Update University */
+  @Put('/:id')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'profileImage', maxCount: 1 },
+      { name: 'backgroundImage', maxCount: 1 },
+    ]),
+  )
+  async updateUniversity(
+    @Param('id') id: string,
+    @Body() body: UpdateUniversityDto,
+    @UploadedFiles() files,
+  ) {
+    console.log(files);
+    console.log(body);
+    try {
+      let profileImage, backgroundImage;
+      if (files.profileImage) {
+        profileImage = await this.sharedService.uploadFileToAWSBucket(
+          files.profileImage[0],
+          'university/profile-images',
+        );
+      }
+      if (files.backgroundImage) {
+        backgroundImage = await this.sharedService.uploadFileToAWSBucket(
+          files.backgroundImage[0],
+          'university/background-images',
+        );
+      }
+
+      const params: any = {};
+      body.universityName
+        ? (params.universityName = body.universityName)
+        : null;
+      profileImage && profileImage.Location
+        ? (params.universityProfileImage = profileImage.Location)
+        : null;
+      backgroundImage && backgroundImage.Location
+        ? (params.universityBackgroundImage = backgroundImage.Location)
+        : null;
+
+      const response = await this.universityService.updateUniversity(
+        id,
+        params,
+      );
       return response;
     } catch (error) {
       const apiResponse: APIResponse = {

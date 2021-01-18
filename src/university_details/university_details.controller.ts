@@ -46,22 +46,28 @@ export class UniversityDetailsController {
         courses = [];
 
       colleges.map(college => {
-        college.university = body.university;
-        college.country = body.country;
-        college.campus = college.campus ? college.campus.split(',') : [];
-        college.campus = college.campus.map((campus: string) => campus.trim());
-        college.intake = college.intake ? college.intake.split(',') : [];
-        college.intake = college.intake.map((intake: string) => intake.trim());
+        if (college.university) {
+          college.university = body.university;
+          college.country = body.country;
+          college.campus = college.campus ? college.campus.split(',') : [];
+          college.campus = college.campus.map((campus: string) =>
+            campus.trim(),
+          );
+          college.intake = college.intake ? college.intake.split(',') : [];
+          college.intake = college.intake.map((intake: string) =>
+            intake.trim(),
+          );
 
-        concentrations.push({
-          name: college.concentration,
-          code: college.field,
-        });
-        courses.push({
-          name: college.course,
-          education: college.studyLevel,
-          concentrationCode: college.field,
-        });
+          concentrations.push({
+            name: college.concentration,
+            code: college.field,
+          });
+          courses.push({
+            name: college.course,
+            education: college.studyLevel,
+            concentrationCode: college.field,
+          });
+        }
       });
 
       concentrations = _.uniqBy(concentrations, 'code');
