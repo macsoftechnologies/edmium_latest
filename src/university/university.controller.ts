@@ -9,6 +9,7 @@ import {
   UploadedFiles,
   Param,
   Put,
+  Delete,
 } from '@nestjs/common';
 import { UniversityService } from './university.service';
 import { APIResponse } from 'src/dto/api-response-dto';
@@ -80,13 +81,13 @@ export class UniversityController {
     console.log(body);
     try {
       let profileImage, backgroundImage;
-      if (files.profileImage) {
+      if (files && files.profileImage) {
         profileImage = await this.sharedService.uploadFileToAWSBucket(
           files.profileImage[0],
           'university/profile-images',
         );
       }
-      if (files.backgroundImage) {
+      if (files && files.backgroundImage) {
         backgroundImage = await this.sharedService.uploadFileToAWSBucket(
           files.backgroundImage[0],
           'university/background-images',
@@ -127,13 +128,13 @@ export class UniversityController {
     console.log(body);
     try {
       let profileImage, backgroundImage;
-      if (files.profileImage) {
+      if (files && files.profileImage) {
         profileImage = await this.sharedService.uploadFileToAWSBucket(
           files.profileImage[0],
           'university/profile-images',
         );
       }
-      if (files.backgroundImage) {
+      if (files && files.backgroundImage) {
         backgroundImage = await this.sharedService.uploadFileToAWSBucket(
           files.backgroundImage[0],
           'university/background-images',
@@ -178,6 +179,22 @@ export class UniversityController {
         id,
         params,
       );
+      return response;
+    } catch (error) {
+      const apiResponse: APIResponse = {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        message: error.message,
+      };
+      return apiResponse;
+    }
+  }
+
+  // Get University Applications
+  @Delete('/:id')
+  async deleteUniversity(@Param('id') id: string) {
+    try {
+      const response = await this.universityService.deleteUniversity(id);
       return response;
     } catch (error) {
       const apiResponse: APIResponse = {

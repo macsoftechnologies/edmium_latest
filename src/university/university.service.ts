@@ -86,7 +86,7 @@ export class UniversityService {
     }
   }
 
-  /* Create University */
+  /* Update University */
   async updateUniversity(id: string, params: any) {
     try {
       const updateUniversityRes = await this.universityModel.updateOne(
@@ -153,6 +153,25 @@ export class UniversityService {
         statusCode: HttpStatus.OK,
         data: { applications, total_count: applicationsCount },
         message: 'Request Successful!!!',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  /* Delete University */
+  async deleteUniversity(id: string) {
+    try {
+      const updateUniversityRes = await this.universityModel.updateOne(
+        { _id: id },
+        { isDeleted: true },
+      );
+
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: null,
+        message: 'University deleted Successfully',
       };
       return apiResponse;
     } catch (error) {
