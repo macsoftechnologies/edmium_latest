@@ -106,11 +106,13 @@ export class UserController {
   @Post()
   async getUniversitiesByIntakeCourseUniversity(
     @Body()
-    searchUniversitiesByIntCourUniNameDto: SearchUniversitiesByIntCourUniNameDto,
+    body: SearchUniversitiesByIntCourUniNameDto,
   ) {
     try {
+      const params = await this.sharedService.prepareParams(body);
+
       let universities = await this.userService.getUniversitiesByIntakeCourseUniversity(
-        searchUniversitiesByIntCourUniNameDto,
+        params,
       );
       return universities;
     } catch (error) {

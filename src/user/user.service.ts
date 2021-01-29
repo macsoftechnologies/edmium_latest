@@ -235,34 +235,48 @@ export class UserService {
   }
 
   /* Get university list based on  intake course and university */
-  async getUniversitiesByIntakeCourseUniversity(
-    params: SearchUniversitiesByIntCourUniNameDto,
-  ) {
+  async getUniversitiesByIntakeCourseUniversity(params: FetchParamsDto) {
     try {
-      console.log('req', params);
+      console.log(params);
+
+      const sortObject = {};
+      sortObject[params.paginationObject.sortBy] =
+        params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
+
       const findObject: any = {
-        country: params.country,
-        concentration: params.concentration,
+        country: params.findObject.country,
+        concentration: params.findObject.concentration,
         isDeleted: false,
       };
-      if (params.intake) {
-        findObject.intake = { $in: [params.intake] };
+      if (params.findObject.intake) {
+        findObject.intake = { $in: [params.findObject.intake] };
       }
-      if (params.studyLevel) {
-        findObject.studyLevel = params.studyLevel;
+      if (params.findObject.studyLevel) {
+        findObject.studyLevel = params.findObject.studyLevel;
       }
+
+      let universitiesCount = await this.universityDetailsModel
+        .find(findObject)
+        .count();
+
       let universities = await this.universityDetailsModel
         .find(findObject)
         .populate({
           path: 'university',
           model: this.universityModel,
           retainNullValues: true,
-        });
+        })
+        .sort(sortObject)
+        .skip(params.paginationObject.start)
+        .limit(params.paginationObject.limit);
 
       // console.log('universities', universities);
       let apiReponse: APIResponse = {
         statusCode: HttpStatus.OK,
-        data: universities,
+        data: {
+          universities,
+          total_count: universitiesCount,
+        },
         message: 'Request Successful!!!',
       };
       return apiReponse;

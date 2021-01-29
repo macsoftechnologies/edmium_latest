@@ -145,7 +145,7 @@ export class CollegeDto {
   applicationFee: number;
 }
 
-export class SearchUniversitiesByIntCourUniNameDto {
+export class SearchUniversitiesByIntCourUniNameDto extends PaginationDto {
   @ApiProperty()
   @IsString()
   country: string;
