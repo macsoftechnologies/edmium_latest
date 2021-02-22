@@ -20,6 +20,9 @@ export class UniversityDetails extends Document {
   concentration: string;
 
   @Prop()
+  specialization: string;
+
+  @Prop()
   duration: number;
 
   @Prop()

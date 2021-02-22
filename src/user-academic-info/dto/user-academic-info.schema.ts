@@ -10,6 +10,9 @@ export class UserAcademicInfo extends Document {
   @Prop()
   levelOfStudy: string;
 
+  @Prop({ default: false })
+  otherInstitute: boolean;
+
   @Prop()
   nameOfInstitution: string;
 
@@ -24,7 +27,10 @@ export class UserAcademicInfo extends Document {
   qualificationAchieved: string;
 
   @Prop()
-  percentage: number;
+  scoreType: string; // cgpa, gpa, percentage
+
+  @Prop()
+  score: number;
 
   @Prop()
   primaryLanguage: string;

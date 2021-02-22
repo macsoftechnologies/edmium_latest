@@ -174,6 +174,24 @@ export class UniversityDetailsController {
   }
 
   /* Get Countries of Universities */
+  @Get('/specializations/:concentration')
+  async getSpecializations(@Param('concentration') concentration: string) {
+    try {
+      const response = await this.universityDetailsService.fetchSpecializations(
+        concentration,
+      );
+      return response;
+    } catch (error) {
+      const apiResponse: APIResponse = {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        data: null,
+        message: error.message,
+      };
+      return apiResponse;
+    }
+  }
+
+  /* Get Countries of Universities */
   @Get('/campus/:universityId/:countryId')
   async getCampuses(
     @Param('universityId') universityId: string,

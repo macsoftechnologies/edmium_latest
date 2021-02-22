@@ -36,6 +36,11 @@ export class UserPersonalInfoDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
+  about: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
   DOB: string;
 
   @ApiProperty()

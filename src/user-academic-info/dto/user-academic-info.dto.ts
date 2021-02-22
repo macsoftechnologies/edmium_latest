@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsNumber } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsBoolean } from 'class-validator';
 
 export class UserAcademicInfoDto {
   @ApiProperty()
@@ -9,6 +9,11 @@ export class UserAcademicInfoDto {
   @ApiProperty()
   @IsString()
   levelOfStudy: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  otherInstitute: boolean;
 
   @ApiProperty()
   @IsString()
@@ -28,8 +33,12 @@ export class UserAcademicInfoDto {
   qualificationAchieved: string;
 
   @ApiProperty()
+  @IsString()
+  scoreType: string;
+
+  @ApiProperty()
   @IsNumber()
-  percentage: number;
+  score: number;
 
   @ApiProperty()
   @IsString()

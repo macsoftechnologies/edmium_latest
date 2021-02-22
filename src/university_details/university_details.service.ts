@@ -278,6 +278,28 @@ export class UniversityDetailsService {
     }
   }
 
+  // Fetch Countries
+  async fetchSpecializations(concentration: string): Promise<any> {
+    try {
+      let universityDetails = await this.universityDetailsModel.find(
+        { concentration: concentration },
+        { specialization: 1 },
+      );
+
+      const specializations = universityDetails.map(
+        (details: any) => details.specialization,
+      );
+      let apiResponse: APIResponse = {
+        statusCode: HttpStatus.OK,
+        data: _.uniq(specializations),
+        message: 'Request Successful',
+      };
+      return apiResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
   // Fetch Campuses
   async getCampuses(universityId: string, countryId: string): Promise<any> {
     try {

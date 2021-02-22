@@ -9,6 +9,10 @@ export class UserPersonalInfo extends Document {
 
   @Prop()
   @IsOptional()
+  about: string;
+
+  @Prop()
+  @IsOptional()
   DOB: string;
 
   @Prop()

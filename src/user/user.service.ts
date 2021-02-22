@@ -1102,15 +1102,29 @@ export class UserService {
             preserveNullAndEmptyArrays: true,
           },
         },
-
         {
           $lookup: {
             from: 'usertests',
-            localField: 'userId',
-            foreignField: 'userId',
+            let: {
+              isDeleted: false,
+              userId: '$userId',
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$isDeleted', '$$isDeleted'] },
+                      { $eq: ['$userId', '$$userId'] },
+                    ],
+                  },
+                },
+              },
+            ],
             as: 'userTests',
           },
         },
+
         {
           $unwind: {
             path: '$userTests',
@@ -1396,8 +1410,22 @@ export class UserService {
           {
             $lookup: {
               from: 'usertests',
-              localField: 'userId',
-              foreignField: 'userId',
+              let: {
+                isDeleted: false,
+                userId: '$userId',
+              },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [
+                        { $eq: ['$isDeleted', '$$isDeleted'] },
+                        { $eq: ['$userId', '$$userId'] },
+                      ],
+                    },
+                  },
+                },
+              ],
               as: 'userTests',
             },
           },
@@ -1455,6 +1483,7 @@ export class UserService {
               lastName: { $first: '$lastName' },
               emailAddress: { $first: '$emailAddress' },
               mobileNumber: { $first: '$mobileNumber' },
+              profileImage: { $first: '$profileImage' },
               // country: { $first: '$country' },
               countries: { $addToSet: '$country' },
               createdAt: { $first: '$createdAt' },

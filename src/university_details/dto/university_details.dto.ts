@@ -42,6 +42,10 @@ export class CollegeDto {
 
   @ApiProperty()
   @IsString()
+  specialization: string;
+
+  @ApiProperty()
+  @IsString()
   duration: number;
 
   @ApiProperty()
