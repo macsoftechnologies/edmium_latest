@@ -73,6 +73,8 @@ export class UserAcademicInfoService {
         params,
       );
 
+      await this.markHighestEducation(params.userId);
+
       let response = {
         statusCode: HttpStatus.OK,
         data: data,
@@ -93,6 +95,8 @@ export class UserAcademicInfoService {
   async deleteUserAcademicInfo(id: string): Promise<any> {
     try {
       const data = await this.userAcademicInfoModel.deleteOne({ _id: id });
+
+      await this.markHighestEducation(id);
 
       let response = {
         statusCode: HttpStatus.OK,

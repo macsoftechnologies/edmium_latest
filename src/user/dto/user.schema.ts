@@ -43,6 +43,10 @@ export class User extends Document {
 
   @Prop()
   @IsOptional()
+  location?: string;
+
+  @Prop()
+  @IsOptional()
   profileImage?: string;
 
   @Prop({ default: false })

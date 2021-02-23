@@ -1584,6 +1584,7 @@ export class UserService {
         });
         match = { assignedTo: { $in: counselorIds } };
       }
+
       const response = await this.userModel.aggregate([
         {
           $match: match,
@@ -1649,8 +1650,6 @@ export class UserService {
           },
         },
       ]);
-
-      console.log(response);
 
       const statusResponse: any[] = await this.applicationStatusModel
         .find({ isDeleted: false, isParentStatus: true })

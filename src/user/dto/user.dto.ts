@@ -68,6 +68,11 @@ export class CreateUser {
   @ApiProperty()
   @IsString()
   @IsOptional()
+  location: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
   deviceToken: string;
 
   @ApiProperty()

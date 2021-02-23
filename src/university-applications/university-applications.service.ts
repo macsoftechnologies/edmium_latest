@@ -138,129 +138,29 @@ export class UniversityApplicationsService {
 
       const user = await this.userModel.findById(userId);
 
-      let studentIds: string[] = [];
-
-      if (user.role == 'team-lead') {
-        const counselors = await this.userModel.find(
-          {
-            isDeleted: false,
-            assignedTo: user.assignedTo,
-            countries: { $in: user.countries },
-            role: { $in: ['counselor'] },
-          },
-          { _id: 1 },
-        );
-
-        const counselorIds: string[] = counselors.map((counselor: any) => {
-          return counselor._id;
-        });
-
-        counselorIds.push(userId);
-
-        const students = await this.userModel.find(
-          {
-            isDeleted: false,
-            assignedTo: { $in: counselorIds },
-            role: 'student',
-          },
-          { _id: 1 },
-        );
-
-        studentIds = students.map((student: any) => {
-          return student._id;
-        });
-      } else if (user.role == 'counselor') {
-        const students = await this.userModel.find(
-          {
-            isDeleted: false,
-            assignedTo: { $in: [userId] },
-            role: 'student',
-          },
-          { _id: 1 },
-        );
-
-        studentIds = students.map((student: any) => {
-          return student._id;
-        });
+      let assignedToMatch = {};
+      if (
+        user.role == 'counselor' ||
+        user.role == 'agent-counselor' ||
+        user.role == 'team-lead' ||
+        user.role == 'agent-team-lead'
+      ) {
+        assignedToMatch = { 'user.assignedTo': userId };
       } else if (user.role == 'agent') {
-        const counselors = await this.userModel.find(
-          {
-            isDeleted: false,
-            assignedTo: userId,
-            role: { $in: ['agent-team-lead', 'agent-counselor'] },
-          },
-          { _id: 1 },
-        );
-
-        const counselorIds: string[] = counselors.map((counselor: any) => {
-          return counselor._id;
+        const counselors = await this.userModel.find({
+          isDeleted: false,
+          assignedTo: userId,
         });
-
-        counselorIds.push(userId);
-
-        const students = await this.userModel.find(
-          {
-            isDeleted: false,
-            assignedTo: { $in: counselorIds },
-            role: 'student',
-          },
-          { _id: 1 },
-        );
-
-        studentIds = students.map((student: any) => {
-          return student._id;
+        const counselorIds = [userId];
+        counselors.map((counselor: any) => {
+          counselorIds.push(counselor._id);
         });
-      } else if (user.role == 'agent-team-lead') {
-        const counselors = await this.userModel.find(
-          {
-            isDeleted: false,
-            assignedTo: user.assignedTo,
-            countries: { $in: user.countries },
-            role: { $in: ['agent-counselor'] },
-          },
-          { _id: 1 },
-        );
-
-        const counselorIds: string[] = counselors.map((counselor: any) => {
-          return counselor._id;
-        });
-
-        counselorIds.push(userId);
-
-        const students = await this.userModel.find(
-          {
-            isDeleted: false,
-            assignedTo: { $in: counselorIds },
-            role: 'student',
-          },
-          { _id: 1 },
-        );
-
-        studentIds = students.map((student: any) => {
-          return student._id;
-        });
-      } else if (user.role == 'agent-counselor') {
-        const students = await this.userModel.find(
-          {
-            isDeleted: false,
-            assignedTo: { $in: [userId] },
-            role: 'student',
-          },
-          { _id: 1 },
-        );
-
-        studentIds = students.map((student: any) => {
-          return student._id;
-        });
+        assignedToMatch = { 'user.assignedTo': { $in: counselorIds } };
       }
-
-      console.log(studentIds);
 
       const sortObject = {};
       sortObject[params.paginationObject.sortBy] =
         params.paginationObject.sortOrder == 'ASC' ? 1 : -1;
-
-      console.log(sortObject);
 
       let intakeFilter: any = {};
       let searchFilter = {};
@@ -268,13 +168,6 @@ export class UniversityApplicationsService {
       let toDateFilter = {};
       let statusFilter = {};
       let UniversityFilter = {};
-      let userFilter = {};
-
-      if (user.role != 'admin') {
-        userFilter['user._id'] = {
-          $in: studentIds,
-        };
-      }
 
       if (params.findObject.fromDate && params.findObject.toDate) {
         const toDate = new Date(params.findObject.toDate);
@@ -289,8 +182,11 @@ export class UniversityApplicationsService {
       }
 
       if (params.findObject.status) {
-        statusFilter['status'] = {
-          $in: params.findObject.status,
+        statusFilter = {
+          $or: [
+            { originalStatusId: { $in: params.findObject.status } },
+            { 'status.parentStatus': { $in: params.findObject.status } },
+          ],
         };
       }
 
@@ -337,9 +233,7 @@ export class UniversityApplicationsService {
           {
             $match: toDateFilter,
           },
-          {
-            $match: statusFilter,
-          },
+
           {
             $addFields: {
               statusId: {
@@ -347,6 +241,15 @@ export class UniversityApplicationsService {
               },
             },
           },
+
+          {
+            $addFields: {
+              originalStatusId: {
+                $toString: '$statusId',
+              },
+            },
+          },
+
           {
             $lookup: {
               from: 'applicationstatuses',
@@ -355,8 +258,15 @@ export class UniversityApplicationsService {
               as: 'status',
             },
           },
-          { $unwind: '$status' },
-
+          {
+            $unwind: {
+              path: '$status',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $match: statusFilter,
+          },
           {
             $addFields: {
               universityDetailsId: {
@@ -372,7 +282,12 @@ export class UniversityApplicationsService {
               as: 'universityDetails',
             },
           },
-          { $unwind: '$universityDetails' },
+          {
+            $unwind: {
+              path: '$universityDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
           {
             $match: UniversityFilter,
           },
@@ -391,7 +306,12 @@ export class UniversityApplicationsService {
               as: 'university',
             },
           },
-          { $unwind: '$university' },
+          {
+            $unwind: {
+              path: '$university',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
           {
             $addFields: {
               userId: {
@@ -407,15 +327,17 @@ export class UniversityApplicationsService {
               as: 'user',
             },
           },
-          { $unwind: '$user' },
           {
-            $match: userFilter,
+            $unwind: {
+              path: '$user',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $match: assignedToMatch,
           },
           {
             $match: intakeFilter,
-          },
-          {
-            $match: searchFilter,
           },
 
           {
@@ -437,7 +359,12 @@ export class UniversityApplicationsService {
               as: 'user.createdBy',
             },
           },
-          { $unwind: '$user.createdBy' },
+          {
+            $unwind: {
+              path: '$user.createdBy',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
           {
             $count: 'count',
           },
@@ -452,9 +379,7 @@ export class UniversityApplicationsService {
           {
             $match: toDateFilter,
           },
-          {
-            $match: statusFilter,
-          },
+
           {
             $addFields: {
               statusId: {
@@ -462,6 +387,15 @@ export class UniversityApplicationsService {
               },
             },
           },
+
+          {
+            $addFields: {
+              originalStatusId: {
+                $toString: '$statusId',
+              },
+            },
+          },
+
           {
             $lookup: {
               from: 'applicationstatuses',
@@ -470,8 +404,15 @@ export class UniversityApplicationsService {
               as: 'status',
             },
           },
-          { $unwind: '$status' },
-
+          {
+            $unwind: {
+              path: '$status',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $match: statusFilter,
+          },
           {
             $addFields: {
               universityDetailsId: {
@@ -487,8 +428,12 @@ export class UniversityApplicationsService {
               as: 'universityDetails',
             },
           },
-          { $unwind: '$universityDetails' },
-
+          {
+            $unwind: {
+              path: '$universityDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
           {
             $match: UniversityFilter,
           },
@@ -507,8 +452,12 @@ export class UniversityApplicationsService {
               as: 'university',
             },
           },
-          { $unwind: '$university' },
-
+          {
+            $unwind: {
+              path: '$university',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
           {
             $addFields: {
               userId: {
@@ -524,16 +473,17 @@ export class UniversityApplicationsService {
               as: 'user',
             },
           },
-          { $unwind: '$user' },
-
           {
-            $match: userFilter,
+            $unwind: {
+              path: '$user',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $match: assignedToMatch,
           },
           {
             $match: intakeFilter,
-          },
-          {
-            $match: searchFilter,
           },
 
           {
@@ -555,7 +505,12 @@ export class UniversityApplicationsService {
               as: 'user.createdBy',
             },
           },
-          { $unwind: '$user.createdBy' },
+          {
+            $unwind: {
+              path: '$user.createdBy',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
         ])
         .sort(sortObject)
         .skip(params.paginationObject.start)
