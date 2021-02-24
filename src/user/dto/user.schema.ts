@@ -18,6 +18,9 @@ export class User extends Document {
   emailAddress: string;
 
   @Prop()
+  countryExtension: string;
+
+  @Prop()
   mobileNumber: integer;
 
   @Prop()

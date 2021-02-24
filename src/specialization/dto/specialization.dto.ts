@@ -2,18 +2,26 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional } from 'class-validator';
 import { PaginationDto } from 'src/shared/dto/shared.dto';
 
-export class CreateCourseDto {
+export class CreateSpecializationDto {
+  @ApiProperty()
+  @IsString()
+  concentration: string;
+
   @ApiProperty()
   @IsString()
   name: string;
 
   @ApiProperty()
   @IsString()
-  specialization: string;
+  education: string;
 }
 
-export class GetCoursesDto extends PaginationDto {
+export class GetSpecializationsDto extends PaginationDto {
   @ApiProperty()
   @IsOptional()
-  specialization: string;
+  concentration: string;
+
+  @ApiProperty()
+  @IsOptional()
+  education: string;
 }

@@ -11,6 +11,8 @@ import { CourseService } from 'src/course/course.service';
 import { ConcentrationService } from 'src/concentration/concentration.service';
 import { ConcentrationSchema } from 'src/concentration/dto/concentration.schema';
 import { CourseSchema } from 'src/course/dto/course.schema';
+import { SpecializationSchema } from 'src/specialization/dto/specialization.schema';
+import { SpecializationService } from 'src/specialization/specialization.service';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { CourseSchema } from 'src/course/dto/course.schema';
       { name: 'ApplicationStatus', schema: ApplicationStatusSchema },
       { name: 'Concentration', schema: ConcentrationSchema },
       { name: 'Course', schema: CourseSchema },
+      { name: 'Specialization', schema: SpecializationSchema },
     ]),
   ],
   controllers: [UniversityDetailsController],
@@ -29,6 +32,7 @@ import { CourseSchema } from 'src/course/dto/course.schema';
     SharedService,
     ConcentrationService,
     CourseService,
+    SpecializationService,
   ],
 })
 export class UniversityDetailsModule {}

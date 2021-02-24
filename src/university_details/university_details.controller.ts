@@ -23,6 +23,7 @@ import { APIResponse } from 'src/dto/api-response-dto';
 import * as _ from 'lodash';
 import { ConcentrationService } from 'src/concentration/concentration.service';
 import { CourseService } from 'src/course/course.service';
+import { SpecializationService } from 'src/specialization/specialization.service';
 
 @Controller('university_details')
 export class UniversityDetailsController {
@@ -31,6 +32,7 @@ export class UniversityDetailsController {
     private concentrationService: ConcentrationService,
     private courseService: CourseService,
     private sharedService: SharedService,
+    private specializationService: SpecializationService,
   ) {}
 
   /* Add Colleges */
@@ -43,6 +45,7 @@ export class UniversityDetailsController {
     try {
       const colleges: any[] = await this.sharedService.excelToJSON(file.buffer);
       let concentrations = [],
+        specializations = [],
         courses = [];
 
       colleges.map(college => {
@@ -62,10 +65,16 @@ export class UniversityDetailsController {
             name: college.concentration,
             code: college.field,
           });
-          courses.push({
-            name: college.course,
+
+          specializations.push({
+            name: college.specialization,
             education: college.studyLevel,
             concentrationCode: college.field,
+          });
+
+          courses.push({
+            name: college.course,
+            specialization: college.specialization,
           });
         }
       });
@@ -80,13 +89,25 @@ export class UniversityDetailsController {
         concentration._id = conResponse.data._id.toString();
       }
 
-      for (const course of courses) {
+      for (const specialization of specializations) {
         const index = concentrations.findIndex(
-          obj => obj.code === course.concentrationCode,
+          obj => obj.code === specialization.concentrationCode,
         );
-        course.concentration = concentrations[index]._id;
+        specialization.concentration = concentrations[index]._id;
 
-        delete course.concentrationCode;
+        delete specialization.concentrationCode;
+
+        const speResponse = await this.specializationService.checkAndCreateSpecialization(
+          specialization,
+        );
+        specialization._id = speResponse.data._id.toString();
+      }
+
+      for (const course of courses) {
+        const index = specializations.findIndex(
+          obj => obj.name === course.specialization,
+        );
+        course.specialization = specializations[index]._id;
 
         const conResponse = await this.courseService.checkAndCreateCourse(
           course,

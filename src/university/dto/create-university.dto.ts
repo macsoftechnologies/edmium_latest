@@ -6,6 +6,11 @@ export class CreateUniversityDto {
   @ApiProperty()
   @IsString()
   universityName: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  website: string;
 }
 
 export class UpdateUniversityDto {
@@ -13,6 +18,11 @@ export class UpdateUniversityDto {
   @IsString()
   @IsOptional()
   universityName: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  website: string;
 }
 
 export class ListingUniversityDto extends PaginationDto {

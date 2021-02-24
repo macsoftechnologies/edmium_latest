@@ -193,6 +193,11 @@ export class FilterByCourseDto extends PaginationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
+  specialization: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
   course: string;
 
   @ApiProperty()

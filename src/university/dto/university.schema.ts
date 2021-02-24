@@ -13,6 +13,9 @@ export class University extends Document {
   @Prop({ default: null })
   universityBackgroundImage: string;
 
+  @Prop()
+  website: string;
+
   @Prop({ default: false })
   @IsOptional()
   isDeleted?: boolean;

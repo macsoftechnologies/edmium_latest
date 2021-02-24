@@ -29,6 +29,7 @@ import { UserTestsModule } from './user-tests/user-tests.module';
 import { UpdateProfilePercentModule } from './update-profile-percent/update-profile-percent.module';
 import { ReminderModule } from './reminder/reminder.module';
 import { CronModule } from './cron/cron.module';
+import { SpecializationModule } from './specialization/specialization.module';
 @Module({
   imports: [
     EducationModule,
@@ -62,6 +63,7 @@ import { CronModule } from './cron/cron.module';
     UpdateProfilePercentModule,
     ReminderModule,
     CronModule,
+    SpecializationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -37,6 +37,11 @@ export class CreateUser {
   emailAddress: string;
 
   @ApiProperty()
+  @IsString()
+  @IsOptional()
+  countryExtension: string;
+
+  @ApiProperty()
   @IsNumber()
   mobileNumber: number;
 
@@ -100,6 +105,11 @@ export class AddCounselorDto {
   emailAddress: string;
 
   @ApiProperty()
+  @IsString()
+  @IsOptional()
+  countryExtension: string;
+
+  @ApiProperty()
   @IsNumber()
   mobileNumber: number;
 
@@ -137,6 +147,11 @@ export class UpdateCounselorDto {
   @ApiProperty()
   @IsEmail()
   emailAddress: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  countryExtension: string;
 
   @ApiProperty()
   @IsNumber()
@@ -291,6 +306,12 @@ export class RegisterStudentDto {
   @ApiProperty()
   @IsEmail()
   emailAddress: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  @IsOptional()
+  countryExtension: string;
 
   @ApiProperty()
   @IsNumber()
