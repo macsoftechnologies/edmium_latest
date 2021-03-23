@@ -23,6 +23,7 @@ export class ConcentrationService {
       let concentrationsCount = await this.concentrationModel
         .find({
           isDeleted: false,
+          name: { $ne: null },
           ...params.findObject,
         })
         .count();
@@ -30,6 +31,7 @@ export class ConcentrationService {
       let concentrations = await this.concentrationModel
         .find({
           isDeleted: false,
+          name: { $ne: null },
           ...params.findObject,
         })
         .sort(sortObject)
