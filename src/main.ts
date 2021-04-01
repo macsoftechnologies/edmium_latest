@@ -10,7 +10,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:4200',
       'http://demo.edmium.com.s3-website.us-east-2.amazonaws.com',
-      'http://edmium.com.s3-website.ap-south-1.amazonaws.com/',
+      'http://edmium.com.s3-website.ap-south-1.amazonaws.com',
     ],
   });
   const options = new DocumentBuilder()
