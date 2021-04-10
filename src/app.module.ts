@@ -35,8 +35,9 @@ import { SpecializationModule } from './specialization/specialization.module';
     EducationModule,
     // MongooseModule.forRoot('mongodb://localhost/edmium'),
     //mongodb://adimn:VakK8jKrS6T1XwqB3QyvbywWiudfbP773eZ9wg5egE0=@13.235.254.226:27017/edmium?authSource=admin
+    //mongodb://admin:rOzgzJcIqT@65.2.12.162:27017/edmium?authSource=admin
     MongooseModule.forRoot(
-      'mongodb://admin:rOzgzJcIqT@65.2.12.162:27017/edmium?authSource=admin',
+      'mongodb://adimn:VakK8jKrS6T1XwqB3QyvbywWiudfbP773eZ9wg5egE0=@13.235.254.226:27017/edmium?authSource=admin',
     ),
     CourseModule,
     CountryModule,
