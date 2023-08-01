@@ -37,7 +37,8 @@ import { SpecializationModule } from './specialization/specialization.module';
     //mongodb://adimn:VakK8jKrS6T1XwqB3QyvbywWiudfbP773eZ9wg5egE0=@13.235.254.226:27017/edmium?authSource=admin
     //mongodb://admin:rOzgzJcIqT@65.2.12.162:27017/edmium?authSource=admin
     MongooseModule.forRoot(
-      'mongodb://adimn:VakK8jKrS6T1XwqB3QyvbywWiudfbP773eZ9wg5egE0=@13.235.254.226:27017/edmium?authSource=admin',
+      //'mongodb://adimn:VakK8jKrS6T1XwqB3QyvbywWiudfbP773eZ9wg5egE0=@13.235.254.226:27017/edmium?authSource=admin',
+      'mongodb+srv://macsof:macsof@nextlevelcarwash.yjs3i.mongodb.net/edmium?retryWrites=true&w=majority'
     ),
     CourseModule,
     CountryModule,
